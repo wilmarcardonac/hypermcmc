@@ -1,0 +1,26 @@
+ Starting MCMC analysis 
+ Number of rejected points:        58370
+ Acceptance ratio   0.41630000000000000     
+ Bestfit is :
+ A =    12.597149848899999     
+ bw =   -3.3671567439999999     
+ Means for the samples are :
+ A =    12.597527378700001     
+ bw =   -3.3667111398200000     
+ Hyperparameters are :
+ Point            1  in data set A =    4.9088752667486135     
+ Point            2  in data set A =   0.91103481579805190     
+ Point            3  in data set A =    29.704634526382460     
+ Point            4  in data set A =   0.96804728927525552     
+ Point            5  in data set A =    1064.7038310888902     
+ Point            6  in data set A =   4.01874271229336819E-002
+ Point            7  in data set A =    7.2885382780425356     
+ Point            8  in data set A =   0.42852387986268953     
+ Point            9  in data set A =    2.5634266294642596     
+ Point           10  in data set A =    6.5021573361870679     
+ Point           11  in data set A =   0.43381857941915442     
+ Point           12  in data set A =    44.668487611341590     
+ Point           13  in data set A =    3.6800931524264886     
+ Point           14  in data set A =   0.66800635370335071     
+ For data set B =   0.93737267214695696     
+ For data set C =   5.30484752451869587E-002

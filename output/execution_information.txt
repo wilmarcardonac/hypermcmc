@@ -1,0 +1,9 @@
+ Starting MCMC analysis 
+ Number of rejected points:        55598
+ Acceptance ratio   0.44402000000000003     
+ Bestfit is :
+ A =    12.554696083100000     
+ bw =   -3.2413153648400002     
+ Means for the samples are :
+ A =    12.554766067299999     
+ bw =   -3.2414846338799999     
