@@ -1,57 +1,57 @@
 Program mcmc 
-!#############################################
-!#############################################
-! Here we load all the modules we need
-!#############################################
-!#############################################
+!####################
+!####################
+! LOAD NEEDED MODULES 
+!####################
+!####################
 
 use fiducial
 use arrays
 use functions 
 
-!################################
-!################################
-! We declare variables to be used
-!################################
-!################################
+!#################################
+!#################################
+! DECLARE VARIABLES AND PARAMETERS
+!#################################
+!#################################
 
 Implicit none
-Integer*4 :: m,n,i,j,q    ! integers for small loops
-Integer*4 :: seed1,seed2                        ! seeds needed by random number generator 
-character*16 :: phrase                          ! phrase needed by number random generator  
-Real*8 :: old_loglikelihood,current_loglikelihood      ! likelihood values
-Real*4 :: genunf,gennor                                ! random uniform deviates 
-Real*4,dimension(number_of_parameters*(number_of_parameters+3)/2 + 1) :: parm ! array needed by random number generator
-Real*4,dimension(number_of_parameters) :: work,x_old,x_new  ! array needed by random number generator 
-Real*8,dimension(number_of_parameters) :: bestfit,means    ! array MCMC analysis
-logical :: start_from_fiducial,testing_Gaussian_likelihood,using_hyperparameters  ! explanation below in assignments
-logical :: c1,c2,c4,c5,c6,c7,non_plausible_parameters ! control plausible values of cosmological parameters
-Real*8,dimension(number_of_parameters,number_of_parameters) :: Covgauss ! Covariance matrix of Gaussian likelihood
-Real*8,dimension(number_of_parameters,number_of_parameters) :: Covguess ! Covariance matrix 
-Real*8 :: jumping_factor    ! jumping factor for MCMC (increase if  you want bigger step size, decrease otherwise)
+Integer*4 :: m,n,i,j,q    ! INTERGER FOR SHORT LOOPS 
+Integer*4 :: seed1,seed2    ! SEEDS FOR RANDOM NUMBER GENERATOR 
+character*16 :: phrase    ! PHRASE NEEDED BY RANDOM NUMBER GENERATOR 
+Real*8 :: old_loglikelihood,current_loglikelihood    ! LIKELIHOOD VALUES 
+Real*4 :: genunf,gennor   ! RANDOM UNIFOR DEVIATES 
+Real*4,dimension(number_of_parameters*(number_of_parameters+3)/2 + 1) :: parm    ! ARRAY NEEDED BY RANDON NUMBER GENERATOR 
+Real*4,dimension(number_of_parameters) :: work,x_old,x_new    ! ARRAYS NEEDED BY RANDOM NUMBER GENERATOR 
+Real*8,dimension(number_of_parameters) :: bestfit,means    ! ARRAYS NEEDED FOR MCMC ANALYSIS 
+logical :: start_from_fiducial,testing_Gaussian_likelihood,using_hyperparameters   ! EXPLANATION BELOW IN ASSIGNMENTS 
+logical :: c1,c2,c4,c5,c6,c7,non_plausible_parameters   ! IT CONTROLS PLAUSIBLE VALUES OF COSMOLOGICAL PARAMETERS 
+Real*8,dimension(number_of_parameters,number_of_parameters) :: Covgauss    ! COVARIANCE MATRIX OF GAUSSIAN LIKELIHOOD 
+Real*8,dimension(number_of_parameters,number_of_parameters) :: Covguess    ! COVARIANCE MATRIX 
+Real*8 :: jumping_factor    ! JUMPING FACTOR FOR MCMC (INCREASE IF YOU WANT BIGGER STEP SIZE, DECREASE OTHERWISE) 
 Real*4 :: average_acceptance_probability
-Real*8 :: random_uniform    ! Random uniform deviate between o and 1
-Integer*4 :: number_accepted_points,number_rejected_points ! MCMC parameters 
-Integer*4 :: weight    ! It counts the number of steps taken before moving to a new point in MCMC 
-character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! It loads the data
-character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! It loads the data
-character(len=*),parameter :: path_to_datafileC = './data/dataC.txt'    ! It loads the data
-character(len=*),parameter :: path_to_datafileAB = './data/dataAB.txt'    ! It loads the data
-!character(len=*),parameter :: path_to_datafileABC = './data/dataABC.txt'    ! It loads the data
+Real*8 :: random_uniform    ! RANDOM UNIFORM DEVIATE BETWEEN 0 AND 1 
+Integer*4 :: number_accepted_points,number_rejected_points    ! MCMC PARAMETERS
+Integer*4 :: weight    ! IT COUNTS THE NUMBER OF STEPS TAKEN BEFORE MOVING TO A NEW POINT IN MCMC 
+character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
+character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 
+character(len=*),parameter :: path_to_datafileC = './data/dataC.txt'    ! PATH TO DATA SET C
+character(len=*),parameter :: path_to_datafileAB = './data/dataAB.txt'    ! PATH TO JOINT DATA SET AB
+!character(len=*),parameter :: path_to_datafileABC = './data/dataABC.txt'    ! PATH TO JOINT DATA SET ABC
 
 !##########################################################
 !##########################################################
-! Assignments and initialization of random number generator 
+! ASSIGNMENTS AND INITIALIZATION OF RANDOM NUMBER GENERATOR
 !##########################################################
 !##########################################################
 
 weight = 1
 
-start_from_fiducial = .false.                    ! starting MCMC analysis from fiducial point if true
+start_from_fiducial = .false.                    ! START MCMC ANALYSIS FROM FIDUCIAL POINT IF SET IT TRUE 
 
-testing_Gaussian_likelihood = .false.           ! If testing Gaussian likelihood 
+testing_Gaussian_likelihood = .false.            ! TEST GAUSSIAN LIKELIHOOD IF SET IT TRUE 
 
-using_hyperparameters = .true.    ! True if you want to use hyperparameters
+using_hyperparameters = .true.                   ! USE HYPERPARAMETERS IF SET IT TRUE 
 
 If (using_hyperparameters) then
 
@@ -61,13 +61,13 @@ If (using_hyperparameters) then
 
     call read_data_EfstathiouC(path_to_datafileC)
 
-    open(15,file='./output/execution_information_HP.txt')    ! Opening file which will contain execution information
+    open(15,file='./output/execution_information_HP.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
 
 Else
 
     call read_data_Efstathiou(path_to_datafileAB)
 
-    open(15,file='./output/execution_information.txt')    ! Opening file which will contain execution information
+    open(15,file='./output/execution_information.txt')    ! OPEN FILE FOR EXECUTION INFORMATION 
 
 End If
 
@@ -75,21 +75,21 @@ number_rejected_points = 0
 
 number_accepted_points = 0
 
-phrase = 'randomizer'                           ! random number generator initializer
+phrase = 'randomizer'                           ! RANDOM NUMBER GENERATOR INITIALIZER 
 
-call initialize()                               ! initialize random number generators
+call initialize()                               ! INITIALIZE RANDOM NUMBER GENERATOR
 
-call phrtsd(phrase,seed1,seed2)                 ! generate seeds for random numbers from phrase
+call phrtsd(phrase,seed1,seed2)                 ! GENERATE SEEDS FOR RANDOM NUMBERS FROM PHRASE
 
-call set_initial_seed(seed1,seed2)              ! set initial seeds for random number generator 
+call set_initial_seed(seed1,seed2)              ! SET INITIAL SEEDS FOR RANDOM NUMBER GENERATOR
 
 If (testing_Gaussian_likelihood) then
 
-    Do m=1,number_of_parameters                    ! Set covariance matrix when testing Gaussian 
+    Do m=1,number_of_parameters                    ! SET COVARIANCE MATRIX
 
-        Do n=1,number_of_parameters                !
+        Do n=1,number_of_parameters                ! WHEN TESTING GAUSSIAN
 
-            If (m .eq. n) then                     ! likelihood 
+            If (m .eq. n) then                     ! LIKELIHOOD
 
                 Covgauss(m,n) = 1.d0
 
@@ -103,13 +103,13 @@ If (testing_Gaussian_likelihood) then
 
     End Do
 
-    jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))    ! Modify according to wanted initial acceptance probability
+    jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))    ! MODIFY ACCORDING TO WANTED INITIAL ACCEPTANCE PROBABILITY
 
     Go to 1
 
 Else
 
-    Covguess = 0.d0    !    Set covariance matrix
+    Covguess = 0.d0    !    SET COVARIANCE MATRIX 
 
     Covguess(1,1) = sigma_A**2 
 
@@ -125,7 +125,7 @@ Else
 
 !    Covguess(7,7) = sigma_MG_beta2**2
 
-    jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))*1.d-3    !    Modify according to wanted initial acceptance probability
+    jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))*1.d-3    !    MODIFY ACCORDING TO WANTED ACCEPTANCE PROBABILITY
 
 End If
 
@@ -133,17 +133,14 @@ End If
 !########################################################################################
 !                   MARKOV CHAIN MONTE CARLO ANALYSIS STARTS HERE 
 ! 
-! We will use the fiducial model computed above for the Fisher matrix analysis in order 
-! to compare results of the two methods afterwards. The observed Cl's include El files 
-! and shot noise, Nl.
 !########################################################################################
 !########################################################################################
 
 write(15,*) 'Starting MCMC analysis '
 
-!########################################################################################
-! Allocate memory for both old and current points in parameter space. Also for current Cl
-!########################################################################################
+!################
+! ALLOCATE MEMORY 
+!################
 
 1 If (testing_Gaussian_likelihood) then
       write(15,*) 'Testing MCMC analysis with Gaussian likelihood'
@@ -160,7 +157,7 @@ allocate (old_point(1:number_of_parameters),current_point(1:number_of_parameters
 allocate (acceptance_probability(number_iterations),stat = status2)
 
 ! #####################################################################################################
-! First, we generate a random point in parameter space 
+! GENERATE A RANDOM POINT IN PARAMETER SPACE
 ! Random number generators work with single precision whereas our function use double; we change it.
 ! #####################################################################################################
 
@@ -180,7 +177,7 @@ Else
 
             If (m .eq. 3) then
 
-                x_old(m) = real(log10(old_point(m)))    ! convert to log10(sigma_int)
+                x_old(m) = real(log10(old_point(m)))    ! CONVERT TO log10(sigma_int)
 
             else
 
@@ -200,7 +197,7 @@ Else
 
             If (m .eq. 3) then
 
-                old_point(m) = 10**(dble(x_old(m)))    !    convert to sigma_int
+                old_point(m) = 10**(dble(x_old(m)))    !    CONVERT TO sigma_int
 
             else
 
@@ -213,7 +210,7 @@ Else
     End If
 
 !#########################################
-! Compute log_likelihood for initial point
+! COMPUTE log_likelihood FOR INITIAL POINT
 !#########################################
 
     If (using_hyperparameters) then
@@ -228,9 +225,9 @@ Else
 
     End If
 
-!#########################################
-! Open data file to store MCMC computation 
-!#########################################
+!####################################
+! OPEN FILE TO STORE MCMC COMPUTATION
+!####################################
 
     If (using_hyperparameters) then
 
@@ -244,7 +241,7 @@ Else
 
 End If
 
-open(14,file='./output/mcmc_output.txt')    !    Temporary file 
+open(14,file='./output/mcmc_output.txt')    !    OPEND TEMPORARY FILE 
 
 write(13,*) '# Number of iterations in MCMC : ', number_iterations - steps_taken_before_definite_run
 
@@ -261,11 +258,11 @@ write(13,*) '# Weight   -ln(L/L_{max})    A    bw '
 
 If (using_hyperparameters) then
 
-    open(16,file='./output/mcmc_final_output_HP.paramnames')    !    File with names of parameters needed by Getdist
+    open(16,file='./output/mcmc_final_output_HP.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
 
 Else
 
-    open(16,file='./output/mcmc_final_output.paramnames')    !    File with names of parameters needed by Getdist
+    open(16,file='./output/mcmc_final_output.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
 
 End If
 
@@ -279,7 +276,7 @@ close(16)
 
 If (testing_Gaussian_likelihood) then 
 
-    open(17,file='./output/mcmc_final_output.ranges')    !    File with hard bounds needed by Getdist
+    open(17,file='./output/mcmc_final_output.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
 
     write(17,*) 'A    N    N '
 
@@ -293,11 +290,11 @@ Else
 
     If (using_hyperparameters) then
 
-        open(17,file='./output/mcmc_final_output_HP.ranges')    !    File with hard bounds needed by Getdist
+        open(17,file='./output/mcmc_final_output_HP.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
 
     Else
 
-        open(17,file='./output/mcmc_final_output.ranges')    !    File with hard bounds needed by Getdist
+        open(17,file='./output/mcmc_final_output.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST 
 
     End If
 
@@ -312,7 +309,7 @@ Else
 End If
 
 !############################################
-! Loop to explore parameter space starts here
+! LOOP TO EXPLORE PARAMETER SPACE STARTS HERE
 !############################################
 
 If (testing_Gaussian_likelihood) then        ! Used if testing Gaussian likelihood
@@ -346,9 +343,8 @@ End If
 Do m=1,number_iterations
 
     !######################################################################################################
-    ! Generate new point in parameter space from a multivariate normal distribution and the covariance 
-    ! matrix computed out of the Fisher matrix  analysis above. We use RANLIB library. Be careful with 
-    ! x_old and old_point definitions 
+    ! Generate new point in parameter space from a multivariate normal distribution. We use RANLIB library.  
+    ! Be careful with x_old and old_point definitions 
     !######################################################################################################
 
     Do q=1,number_iterations 
@@ -722,11 +718,37 @@ If (using_hyperparameters) then
 
     End If
 
-!    write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),bestfit(3))
-    write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),prior_sigma_int)
+    If (separate_dataB) then
 
-    !write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),bestfit(3))
-    write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),prior_sigma_int)
+        Do m=1,size(NameB)
+
+            write(15,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+
+        End Do
+
+    Else
+
+    !    write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),bestfit(3))
+        write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),prior_sigma_int)
+
+    End If
+
+    If (separate_dataC) then
+
+        Do m=1,size(NameC)
+
+            write(15,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+
+        End Do
+
+    Else
+
+        !write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),bestfit(3))
+        write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),prior_sigma_int)
+
+    End If
+
+write(15,*) '\sum_j N_j \ln(\chi^2_j) at the bestfit is ', log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),prior_sigma_int)
 
 End If
 

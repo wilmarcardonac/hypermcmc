@@ -319,6 +319,52 @@ function N_tilde_A_i(sigma_int,m)    !    It computes equation (3) in published 
 
 end function N_tilde_A_i
 
+function chi2B_i(A,bw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+    use arrays
+    use fiducial
+    Implicit none
+    Real*8 :: A,bw,sigma_int,chi2B_i
+    Integer*4 :: m
+
+    chi2B_i = ( observed_wesenheit_magnitude(HB(m),VB(m),IIB(m)) - wesenheit_magnitude(A,bw,PeriodB(m)) )**2/&
+    ( Sigma_mB(m)**2 + sigma_int**2 ) 
+
+end function chi2B_i
+
+function N_tilde_B_i(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+    use arrays
+    use fiducial
+    Implicit none
+    Real*8 :: sigma_int,N_tilde_B_i
+    Integer*4 :: m
+
+    N_tilde_B_i = 1.d0/sqrt( Sigma_mB(m)**2 + sigma_int**2 ) 
+
+end function N_tilde_B_i
+
+function chi2C_i(A,bw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+    use arrays
+    use fiducial
+    Implicit none
+    Real*8 :: A,bw,sigma_int,chi2C_i
+    Integer*4 :: m
+
+    chi2C_i = ( observed_wesenheit_magnitude(HC(m),VC(m),IIC(m)) - wesenheit_magnitude(A,bw,PeriodC(m)) )**2/&
+    ( Sigma_mC(m)**2 + sigma_int**2 ) 
+
+end function chi2C_i
+
+function N_tilde_C_i(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+    use arrays
+    use fiducial
+    Implicit none
+    Real*8 :: sigma_int,N_tilde_C_i
+    Integer*4 :: m
+
+    N_tilde_C_i = 1.d0/sqrt( Sigma_mC(m)**2 + sigma_int**2 ) 
+
+end function N_tilde_C_i
+
 function log_Efstathiou_likelihoodB(A,bw,sigma_int)    !    It computes equation (3) in published version of 1311.3461
     use arrays
     use fiducial
@@ -326,22 +372,45 @@ function log_Efstathiou_likelihoodB(A,bw,sigma_int)    !    It computes equation
     Real*8 :: log_Efstathiou_likelihoodB,A,bw,sigma_int,normalizationB
     Integer*4 :: m
 
-    normalizationB = 0.d0
+    If (separate_dataB) then
+    
+        Do m=1,size(NameB)
 
-    Do m=1, size(NameB)
+            log_Efstathiou_likelihoodB = -log(chi2B_i(A,bw,sigma_int,m))/2.d0 + log(N_tilde_B_i(sigma_int,m))&
+            + log_Efstathiou_likelihoodB
 
-        normalizationB = log(Sigma_mB(m)**2 + sigma_int**2) + normalizationB 
-   
-    End Do
+        End Do
 
-    If ((abs(chi2B(A,bw,sigma_int)) .ge. 0.d0) .and. (normalizationB**2 .ge. 0.d0)) then
+        If ( abs(log_Efstathiou_likelihoodB) .ge. 0.d0 ) then
 
-        log_Efstathiou_likelihoodB = -dble(size(NameB))*log(chi2B(A,bw,sigma_int))/2.d0 - normalizationB/2.d0
+            continue
+
+        Else 
+
+            log_Efstathiou_likelihoodB = -1.d10
+
+        End If
 
     Else
 
-        log_Efstathiou_likelihoodB = -1.d10
+        normalizationB = 0.d0
+
+        Do m=1, size(NameB)
+
+            normalizationB = log(Sigma_mB(m)**2 + sigma_int**2) + normalizationB 
    
+        End Do
+
+        If ((abs(chi2B(A,bw,sigma_int)) .ge. 0.d0) .and. (normalizationB**2 .ge. 0.d0)) then
+
+            log_Efstathiou_likelihoodB = -dble(size(NameB))*log(chi2B(A,bw,sigma_int))/2.d0 - normalizationB/2.d0
+
+        Else
+
+            log_Efstathiou_likelihoodB = -1.d10
+   
+        End If
+
     End If
 
 end function log_Efstathiou_likelihoodB
@@ -372,22 +441,45 @@ function log_Efstathiou_likelihoodC(A,bw,sigma_int)    !    It computes equation
     Real*8 :: log_Efstathiou_likelihoodC,A,bw,sigma_int,normalizationC
     Integer*4 :: m
 
-    normalizationC = 0.d0
+    If (separate_dataC) then
+    
+        Do m=1,size(NameC)
 
-    Do m=1, size(NameC)
+            log_Efstathiou_likelihoodC = -log(chi2C_i(A,bw,sigma_int,m))/2.d0 + log(N_tilde_C_i(sigma_int,m))&
+            + log_Efstathiou_likelihoodC
 
-        normalizationC = log(Sigma_mC(m)**2 + sigma_int**2) + normalizationC 
-   
-    End Do
+        End Do
 
-    If ((abs(chi2C(A,bw,sigma_int)) .ge. 0.d0) .and. (normalizationC**2 .ge. 0.d0)) then
+        If ( abs(log_Efstathiou_likelihoodC) .ge. 0.d0 ) then
 
-        log_Efstathiou_likelihoodC = -dble(size(NameC))*log(chi2C(A,bw,sigma_int))/2.d0 - normalizationC/2.d0
+            continue
+
+        Else 
+
+            log_Efstathiou_likelihoodC = -1.d10
+
+        End If
 
     Else
 
-        log_Efstathiou_likelihoodC = -1.d10
+        normalizationC = 0.d0
+
+        Do m=1, size(NameC)
+
+            normalizationC = log(Sigma_mC(m)**2 + sigma_int**2) + normalizationC 
    
+        End Do
+
+        If ((abs(chi2C(A,bw,sigma_int)) .ge. 0.d0) .and. (normalizationC**2 .ge. 0.d0)) then
+
+            log_Efstathiou_likelihoodC = -dble(size(NameC))*log(chi2C(A,bw,sigma_int))/2.d0 - normalizationC/2.d0
+
+        Else
+
+            log_Efstathiou_likelihoodC = -1.d10
+   
+        End If
+
     End If
 
 end function log_Efstathiou_likelihoodC

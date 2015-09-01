@@ -66,5 +66,7 @@ Integer*4,parameter :: covariance_matrix_update = 2d3 ! number of steps before u
 Real*8,parameter :: step_size_changes = 1.d-1        ! It helps to change step size 
 Integer*4,parameter :: steps_taken_before_definite_run = 1d4
 logical,parameter :: separate_dataA = .true.
+logical,parameter :: separate_dataB = .true.
+logical,parameter :: separate_dataC = .true.
 
 End Module fiducial
