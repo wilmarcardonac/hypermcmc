@@ -59,14 +59,17 @@ Real*8,parameter :: Pi = 3.141592653589793d0
 ! MCMC parameters
 !################
 
-Integer*4,parameter :: number_iterations = 11d4        ! total number of iterations in MCMC run
+Integer*4,parameter :: number_iterations = 11d6        ! total number of iterations in MCMC run
 Integer*4,parameter :: number_of_parameters = 2       ! number of cosmological parameters 
-Integer*4,parameter :: jumping_factor_update = 1d2    ! number of steps before updating jumping factor (if needed)
-Integer*4,parameter :: covariance_matrix_update = 2d3 ! number of steps before updating covariance matrix (if needed)
+Integer*4,parameter :: jumping_factor_update = 5d2    ! number of steps before updating jumping factor (if needed)
+Integer*4,parameter :: covariance_matrix_update = 1d4 ! number of steps before updating covariance matrix (if needed)
 Real*8,parameter :: step_size_changes = 1.d-1        ! It helps to change step size 
-Integer*4,parameter :: steps_taken_before_definite_run = 1d4
+Integer*4,parameter :: steps_taken_before_definite_run = 1d7
 logical,parameter :: separate_dataA = .true.
 logical,parameter :: separate_dataB = .true.
 logical,parameter :: separate_dataC = .true.
+logical,parameter :: include_dataA = .true.
+logical,parameter :: include_dataB = .true.
+logical,parameter :: include_dataC = .true.
 
 End Module fiducial

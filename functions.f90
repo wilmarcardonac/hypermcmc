@@ -228,6 +228,23 @@ function log_Efstathiou_likelihood(A,bw,sigma_int)    !    It computes equation 
 
 end function log_Efstathiou_likelihood
 
+function new_chi2(chi2)
+    use fiducial
+    Implicit none
+    Real*8 :: chi2,new_chi2
+
+    If (chi2 .eq. 0.d0) then
+  
+        new_chi2 = sqrt(2.d0/Pi/9.d0)
+  
+    Else
+
+        new_chi2 = erf(sqrt(chi2/2.d0))/chi2**(3.d0/2.d0) - sqrt(2.d0/Pi)/chi2*exp(-chi2/2.d0)
+
+    End If
+
+end function new_chi2
+
 function log_Efstathiou_likelihoodA(A,bw,sigma_int)    !    It computes equation (3) in published version of 1311.3461
     use arrays
     use fiducial
@@ -239,7 +256,7 @@ function log_Efstathiou_likelihoodA(A,bw,sigma_int)    !    It computes equation
     
         Do m=1,size(NameA)
 
-            log_Efstathiou_likelihoodA = -log(chi2A_i(A,bw,sigma_int,m))/2.d0 + log(N_tilde_A_i(sigma_int,m))&
+            log_Efstathiou_likelihoodA = log(new_chi2(chi2A_i(A,bw,sigma_int,m))) + log(N_tilde_A_i(sigma_int,m))&
             + log_Efstathiou_likelihoodA
 
         End Do
@@ -376,7 +393,7 @@ function log_Efstathiou_likelihoodB(A,bw,sigma_int)    !    It computes equation
     
         Do m=1,size(NameB)
 
-            log_Efstathiou_likelihoodB = -log(chi2B_i(A,bw,sigma_int,m))/2.d0 + log(N_tilde_B_i(sigma_int,m))&
+            log_Efstathiou_likelihoodB = log(new_chi2(chi2B_i(A,bw,sigma_int,m))) + log(N_tilde_B_i(sigma_int,m))&
             + log_Efstathiou_likelihoodB
 
         End Do
@@ -445,7 +462,7 @@ function log_Efstathiou_likelihoodC(A,bw,sigma_int)    !    It computes equation
     
         Do m=1,size(NameC)
 
-            log_Efstathiou_likelihoodC = -log(chi2C_i(A,bw,sigma_int,m))/2.d0 + log(N_tilde_C_i(sigma_int,m))&
+            log_Efstathiou_likelihoodC = log(new_chi2(chi2C_i(A,bw,sigma_int,m))) + log(N_tilde_C_i(sigma_int,m))&
             + log_Efstathiou_likelihoodC
 
         End Do
@@ -503,12 +520,50 @@ function chi2C(A,bw,sigma_int)    !    It computes equation (3) in published ver
 end function chi2C
 
 function log_Efstathiou_likelihood_hyperparameters(A,bw,sigma_int)
-    use arrays 
+    use arrays
+    use fiducial 
     Implicit none
     Real*8 :: log_Efstathiou_likelihood_hyperparameters,A,bw,sigma_int
+ 
+    If ((include_dataA .and. include_dataB) .and. include_dataC) then
 
-    log_Efstathiou_likelihood_hyperparameters = log_Efstathiou_likelihoodA(A,bw,sigma_int) + &
-    log_Efstathiou_likelihoodB(A,bw,sigma_int) + log_Efstathiou_likelihoodC(A,bw,sigma_int)
+        log_Efstathiou_likelihood_hyperparameters = log_Efstathiou_likelihoodA(A,bw,sigma_int) + &
+        log_Efstathiou_likelihoodB(A,bw,sigma_int) + log_Efstathiou_likelihoodC(A,bw,sigma_int)
+
+    Else if ( (include_dataA .and. include_dataB) .and. .not.include_dataC ) then
+
+        log_Efstathiou_likelihood_hyperparameters = log_Efstathiou_likelihoodA(A,bw,sigma_int) + &
+        log_Efstathiou_likelihoodB(A,bw,sigma_int) 
+
+    Else if ( (include_dataA .and. .not.include_dataB) .and. include_dataC ) then
+
+        log_Efstathiou_likelihood_hyperparameters = log_Efstathiou_likelihoodA(A,bw,sigma_int) + &
+        log_Efstathiou_likelihoodC(A,bw,sigma_int)
+
+    Else if ( (include_dataA .and. .not.include_dataB) .and. .not.include_dataC ) then
+
+        log_Efstathiou_likelihood_hyperparameters = log_Efstathiou_likelihoodA(A,bw,sigma_int) 
+
+    Else if ( (.not.include_dataA .and. include_dataB) .and. .not.include_dataC ) then
+
+        log_Efstathiou_likelihood_hyperparameters = log_Efstathiou_likelihoodB(A,bw,sigma_int) 
+
+    Else if ( (.not.include_dataA .and. .not.include_dataB) .and. include_dataC ) then
+
+        log_Efstathiou_likelihood_hyperparameters = log_Efstathiou_likelihoodC(A,bw,sigma_int)
+
+    Else if ( (.not.include_dataA .and. include_dataB) .and. include_dataC ) then
+
+        log_Efstathiou_likelihood_hyperparameters = log_Efstathiou_likelihoodB(A,bw,sigma_int) + &
+        log_Efstathiou_likelihoodC(A,bw,sigma_int)
+
+    Else 
+
+        print *,'Data must be included from fiducial module in order to compute likelihood '
+
+        stop
+
+    End If
     
 end function log_Efstathiou_likelihood_hyperparameters
 

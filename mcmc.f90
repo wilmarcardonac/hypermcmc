@@ -55,11 +55,23 @@ using_hyperparameters = .true.                   ! USE HYPERPARAMETERS IF SET IT
 
 If (using_hyperparameters) then
 
-    call read_data_EfstathiouA(path_to_datafileA)
+    If (include_dataA) then
 
-    call read_data_EfstathiouB(path_to_datafileB)
+        call read_data_EfstathiouA(path_to_datafileA)
 
-    call read_data_EfstathiouC(path_to_datafileC)
+    End If
+
+    If (include_dataB) then
+
+        call read_data_EfstathiouB(path_to_datafileB)
+
+    End If
+
+    If (include_dataC) then
+
+        call read_data_EfstathiouC(path_to_datafileC)
+
+    End If
 
     open(15,file='./output/execution_information_HP.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
 
@@ -125,7 +137,7 @@ Else
 
 !    Covguess(7,7) = sigma_MG_beta2**2
 
-    jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))*1.d-3    !    MODIFY ACCORDING TO WANTED ACCEPTANCE PROBABILITY
+    jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))!*1.d-3    !    MODIFY ACCORDING TO WANTED ACCEPTANCE PROBABILITY
 
 End If
 
@@ -298,9 +310,9 @@ Else
 
     End If
 
-    write(17,*) 'A    N    N '
+    write(17,*) 'A    0.    50. '
 
-    write(17,*) 'bw    N    N '
+    write(17,*) 'bw    -20.    0. '
 
 !    write(17,*) 'sigma_int    1.e-10    1 '
 
@@ -365,14 +377,14 @@ Do m=1,number_iterations
 
         End If
 
-!        c1 = .false. !x_new(1) .lt. real(0.d0)
-!        c2 = .false. !x_new(2) .lt. real(0.d0)
+        c1 = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
+        c2 = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
 !        c4 =  (x_new(3) .gt. real(0.d0)) .or. (x_new(3) .lt. real(-10.d0))    ! limit log10(sigma_int)
         !c5 = .false. !(x_new(5) .lt. real(0.d0)).or.(x_new(5).gt.real(85.d0))
         !c6 = .false. !x_new(6) .lt. real(0.d0)
         !c7 = .false. !x_new(7) .le. real(0.d0)
 !        non_plausible_parameters = ((c1 .or. c2) .or. (c4 .or. c5)) .or. (c6 .or. c7) 
-        non_plausible_parameters = .false. !c4
+        non_plausible_parameters = c1 .or. c2
 
         If (non_plausible_parameters .and. (q .ne. number_iterations)) then
 
@@ -703,52 +715,77 @@ If (using_hyperparameters) then
 
     write(15,*) 'Hyperparameters are :'
 
-    If (separate_dataA) then
+    If (separate_dataA .and. include_dataA) then
 
         Do m=1,size(NameA)
 
-            write(15,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+            If (chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m) .lt. 1.d0 ) then
+
+                write(15,*) 'Point ', m,' in data set A = ', 0.d0
+
+            Else
+
+                write(15,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+
+            End If
 
         End Do
 
-    Else
+    Else if (include_dataA .and. .not.separate_dataA) then
 
     !    write(15,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),bestfit(3))
         write(15,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),prior_sigma_int)
 
     End If
 
-    If (separate_dataB) then
+    If (separate_dataB .and. include_dataB) then
 
         Do m=1,size(NameB)
 
-            write(15,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+            If (chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m) .lt. 1.d0 ) then
+
+                write(15,*) 'Point ', m,' in data set B = ', 0.d0
+
+            Else
+
+                write(15,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+
+            End If
 
         End Do
 
-    Else
+    Else if (include_dataB .and. .not.separate_dataB) then
 
     !    write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),bestfit(3))
         write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),prior_sigma_int)
 
     End If
 
-    If (separate_dataC) then
+    If (separate_dataC .and. include_dataC) then
 
         Do m=1,size(NameC)
 
-            write(15,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+            If (chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m) .lt. 1.d0) then
+
+                write(15,*) 'Point ', m,' in data set C = ', 0.d0
+
+            Else
+
+                write(15,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+
+            End If
 
         End Do
 
-    Else
+    Else if (include_dataC .and. .not.separate_dataC) then
 
         !write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),bestfit(3))
         write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),prior_sigma_int)
 
     End If
 
-write(15,*) '\sum_j N_j \ln(\chi^2_j) at the bestfit is ', log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),prior_sigma_int)
+write(15,*) '\sum_j N_j \ln(\chi^2_j) at the bestfit is ', log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),&
+prior_sigma_int)
 
 End If
 
