@@ -237,7 +237,7 @@ function new_chi2(chi2)
   
         new_chi2 = sqrt(2.d0/Pi/9.d0)
   
-    Else
+    Else 
 
         new_chi2 = erf(sqrt(chi2/2.d0))/chi2**(3.d0/2.d0) - sqrt(2.d0/Pi)/chi2*exp(-chi2/2.d0)
 
@@ -254,10 +254,21 @@ function log_Efstathiou_likelihoodA(A,bw,sigma_int)    !    It computes equation
 
     If (separate_dataA) then
     
-        Do m=1,size(NameA)
+        log_Efstathiou_likelihoodA = 0.d0
 
-            log_Efstathiou_likelihoodA = log(new_chi2(chi2A_i(A,bw,sigma_int,m))) + log(N_tilde_A_i(sigma_int,m))&
-            + log_Efstathiou_likelihoodA
+        Do m=1,size(NameA)
+ 
+            If (using_jeffreys_prior) then
+
+                log_Efstathiou_likelihoodA = -log(chi2A_i(A,bw,sigma_int,m))/2.d0 + log(N_tilde_A_i(sigma_int,m))&
+                + log_Efstathiou_likelihoodA
+
+            Else
+
+                log_Efstathiou_likelihoodA = log(new_chi2(chi2A_i(A,bw,sigma_int,m))) + log(N_tilde_A_i(sigma_int,m))&
+                + log_Efstathiou_likelihoodA
+
+            End If
 
         End Do
 
@@ -390,11 +401,22 @@ function log_Efstathiou_likelihoodB(A,bw,sigma_int)    !    It computes equation
     Integer*4 :: m
 
     If (separate_dataB) then
+
+        log_Efstathiou_likelihoodB = 0.d0
     
         Do m=1,size(NameB)
 
-            log_Efstathiou_likelihoodB = log(new_chi2(chi2B_i(A,bw,sigma_int,m))) + log(N_tilde_B_i(sigma_int,m))&
-            + log_Efstathiou_likelihoodB
+            If (using_jeffreys_prior) then
+
+                log_Efstathiou_likelihoodB = -log(chi2B_i(A,bw,sigma_int,m))/2.d0 + log(N_tilde_B_i(sigma_int,m))&
+                + log_Efstathiou_likelihoodB
+
+            Else
+
+                log_Efstathiou_likelihoodB = log(new_chi2(chi2B_i(A,bw,sigma_int,m))) + log(N_tilde_B_i(sigma_int,m))&
+                + log_Efstathiou_likelihoodB
+
+            End If
 
         End Do
 
@@ -460,10 +482,21 @@ function log_Efstathiou_likelihoodC(A,bw,sigma_int)    !    It computes equation
 
     If (separate_dataC) then
     
+        log_Efstathiou_likelihoodC = 0.d0
+
         Do m=1,size(NameC)
 
-            log_Efstathiou_likelihoodC = log(new_chi2(chi2C_i(A,bw,sigma_int,m))) + log(N_tilde_C_i(sigma_int,m))&
-            + log_Efstathiou_likelihoodC
+            If (using_jeffreys_prior) then
+
+                log_Efstathiou_likelihoodC = -log(chi2C_i(A,bw,sigma_int,m))/2.d0 + log(N_tilde_C_i(sigma_int,m))&
+                + log_Efstathiou_likelihoodC
+
+            Else
+
+                log_Efstathiou_likelihoodC = log(new_chi2(chi2C_i(A,bw,sigma_int,m))) + log(N_tilde_C_i(sigma_int,m))&
+                + log_Efstathiou_likelihoodC
+
+            End If
 
         End Do
 
