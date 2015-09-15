@@ -31,7 +31,8 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 11d5              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_of_parameters = 2              ! NUMBER OF PARAMETERS
+    Integer*4,parameter :: number_hyperparameters = 0!53           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
+    Integer*4,parameter :: number_of_parameters = 2 + number_hyperparameters              ! NUMBER OF PARAMETERS IN MODEL
     Integer*4,parameter :: jumping_factor_update = 2d2           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)
     Integer*4,parameter :: covariance_matrix_update = 2d3        ! STEPS TAKEN BEFORE UPDATING COVARIANCE MATRIX (IF NEEDED)
     Integer*4,parameter :: steps_taken_before_definite_run = 3d5 ! STEPS TAKEN BEFORE DEFINITE RUN
@@ -46,8 +47,9 @@ Module fiducial
     Logical,parameter   :: include_dataC = .true.                ! INCLUDE DATA SET C IF SET IT TRUE
     Logical,parameter   :: start_from_fiducial = .true.         ! START MCMC ANALYSIS FROM FIDUCIAL POINT IF SET IT TRUE 
     Logical,parameter   :: testing_Gaussian_likelihood = .false. ! TEST GAUSSIAN LIKELIHOOD IF SET IT TRUE
-    Logical,parameter   :: using_hyperparameters = .true.        ! USE HYPERPARAMETERS IF SET IT TRUE
+    Logical,parameter   :: using_hyperparameters = .true.        ! USE HYPER-PARAMETERS IF SET IT TRUE
     Logical,parameter   :: using_jeffreys_prior = .true. ! USE JEFFREYS PRIOR IF SET IT TRUE, OTHERWISE USE UNIFORM PRIOR [0,1] 
+    Logical,parameter   :: hyperparameters_as_mcmc = .false. ! SET HYPER-PARAMETERS AS MCMC PARAMETERS IF SET IT TRUE
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 

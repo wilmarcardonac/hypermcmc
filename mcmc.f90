@@ -110,6 +110,35 @@ Program mcmc
             End If
 
             open(15,file='./output/execution_information_HP.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
+            
+            If (hyperparameters_as_mcmc) then
+
+                If (number_hyperparameters .ne. (size(NameA)+size(NameB)+size(NameC))) then
+                
+                    write(15,*) 'NUMBER OF HYPER-PARAMETERS MUST MATCH TOTAL NUMBER OF DATA POINTS ',&
+                    size(NameA)+size(NameB)+size(NameC)
+
+                    write(15,*) 'CHECK FIDUCIAL MODULE'
+       
+                    stop
+
+                End If
+
+            Else
+
+                If (number_hyperparameters .ne. 0) then
+                
+                    write(15,*) 'NUMBER OF HYPER-PARAMETERS MUST BE ZERO WHEN SETTING FALSE "hyperparameters_as_mcmc" '
+ 
+                    write(15,*) 'CHECK FIDUCIAL MODULE'
+       
+                    stop
+
+                End If
+
+            End If
+
+            stop
 
         Else
 
