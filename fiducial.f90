@@ -10,7 +10,8 @@ Module fiducial
 
     Real*8,parameter    :: prior_A = 12.5d0
     Real*8,parameter    :: prior_bw = -3.d0
-    Real*8,parameter    :: prior_sigma_int = 1.d-1
+    Real*8,parameter    :: prior_sigma_int = 0.d0!1.d-1
+    Real*8,parameter    :: prior_alpha_j = 5.d-1
 
     !################################################
     ! 1-SIGMA VALUES FOR PARAMETERS IN FIDUCIAL MODEL
@@ -18,7 +19,8 @@ Module fiducial
 
     Real*8,parameter    :: sigma_A = 1.8d-2
     Real*8,parameter    :: sigma_bw = 6.d-2
-    !Real*8,parameter :: sigma_sigma_int = 2.d2
+    Real*8,parameter :: sigma_sigma_int = 1.d-2
+    Real*8,parameter :: sigma_alpha_j = 1.d-3
 
     !#####################
     ! OTHER SPECIFICATIONS
@@ -30,14 +32,15 @@ Module fiducial
     ! MCMC PARAMETERS
     !################
 
-    Integer*4,parameter :: number_iterations = 11d5              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_hyperparameters = 0!53           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
-    Integer*4,parameter :: number_of_parameters = 2 + number_hyperparameters              ! NUMBER OF PARAMETERS IN MODEL
-    Integer*4,parameter :: jumping_factor_update = 2d2           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)
-    Integer*4,parameter :: covariance_matrix_update = 2d3        ! STEPS TAKEN BEFORE UPDATING COVARIANCE MATRIX (IF NEEDED)
-    Integer*4,parameter :: steps_taken_before_definite_run = 3d5 ! STEPS TAKEN BEFORE DEFINITE RUN
+    Integer*4,parameter :: number_iterations = 11d6              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
+    Integer*4,parameter :: number_model_parameters = 2           ! NUMBER OF PARAMETER IN MODEL
+    Integer*4,parameter :: number_hyperparameters = 53           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
+    Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
+    Integer*4,parameter :: jumping_factor_update = 1d2           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)
+    Integer*4,parameter :: covariance_matrix_update = 1d4        ! STEPS TAKEN BEFORE UPDATING COVARIANCE MATRIX (IF NEEDED)
+    Integer*4,parameter :: steps_taken_before_definite_run = 1d5 ! STEPS TAKEN BEFORE DEFINITE RUN
 
-    Real*8,parameter    :: step_size_changes = 1.d-1             ! CHANGES IN STEP SIZE
+    Real*8,parameter    :: step_size_changes = 1.d-2             ! CHANGES IN STEP SIZE
 
     Logical,parameter   :: separate_dataA = .true.               ! INCLUDE DATA SET A AS SINGLE POINTS IF SET IT TRUE
     Logical,parameter   :: separate_dataB = .true.               ! INCLUDE DATA SET B AS SINGLE POINTS IF SET IT TRUE
@@ -48,14 +51,14 @@ Module fiducial
     Logical,parameter   :: start_from_fiducial = .true.         ! START MCMC ANALYSIS FROM FIDUCIAL POINT IF SET IT TRUE 
     Logical,parameter   :: testing_Gaussian_likelihood = .false. ! TEST GAUSSIAN LIKELIHOOD IF SET IT TRUE
     Logical,parameter   :: using_hyperparameters = .true.        ! USE HYPER-PARAMETERS IF SET IT TRUE
-    Logical,parameter   :: using_jeffreys_prior = .true. ! USE JEFFREYS PRIOR IF SET IT TRUE, OTHERWISE USE UNIFORM PRIOR [0,1] 
-    Logical,parameter   :: hyperparameters_as_mcmc = .false. ! SET HYPER-PARAMETERS AS MCMC PARAMETERS IF SET IT TRUE
+    Logical,parameter   :: using_jeffreys_prior = .false. ! USE JEFFREYS PRIOR IF SET IT TRUE, OTHERWISE USE UNIFORM PRIOR [0,1] 
+    Logical,parameter   :: hyperparameters_as_mcmc = .true. ! SET HYPER-PARAMETERS AS MCMC PARAMETERS IF SET IT TRUE
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 
     Character(len=*),parameter :: path_to_datafileC = './data/dataC.txt'    ! PATH TO DATA SET C
     Character(len=*),parameter :: path_to_datafileAB = './data/dataAB.txt'    ! PATH TO JOINT DATA SET AB
-    !Character(len=*),parameter :: path_to_datafileABC = './data/dataABC.txt'    ! PATH TO JOINT DATA SET ABC
+    Character(len=*),parameter :: path_to_datafileABC = './data/dataABC.txt'    ! PATH TO JOINT DATA SET ABC
     Character*16,parameter :: phrase = 'randomizer'    ! PHRASE NEEDED BY RANDOM NUMBER GENERATOR 
 
 End Module fiducial

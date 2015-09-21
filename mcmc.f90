@@ -30,7 +30,11 @@ Program mcmc
     Real*4,dimension(number_of_parameters) :: work,x_old,x_new                        ! ARRAYS NEEDED BY RANDOM NUMBER GENERATOR 
     Real*8,dimension(number_of_parameters) :: bestfit,means                           ! SAVES BESTFIT AND MEANS OF PARAMETERS 
 
-    Logical :: c1,c2,c4,c5,c6,c7,non_plausible_parameters   ! IT CONTROLS PLAUSIBLE VALUES OF COSMOLOGICAL PARAMETERS 
+    Logical :: not_good_aap,non_plausible_parameters   ! IT CONTROLS PLAUSIBLE VALUES OF COSMOLOGICAL PARAMETERS
+    Logical,dimension(number_of_parameters) :: plausibility  
+
+    Character(len=10) :: string ! STORES STRINGS FOR INTEGERS
+    Character(len=12),dimension(number_hyperparameters) :: alpha_string
 
 !##########################################################
 ! ASSIGNMENTS AND INITIALIZATION OF RANDOM NUMBER GENERATOR
@@ -53,6 +57,7 @@ Program mcmc
     acceptance_probability(number_iterations),stat = status1)
 
     If (testing_Gaussian_likelihood) then
+
         ! SETTING COVARIANCE MATRIX
         Do m=1,number_of_parameters
 
@@ -73,10 +78,13 @@ Program mcmc
         End Do
         ! COVARIANCE MATRIX SET
         jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))    ! MODIFY ACCORDING TO WANTED INITIAL ACCEPTANCE PROBABILITY
+        ! COVARIANCE MATRIX ADJUSTED
+        Covgauss = jumping_factor*Covgauss
 
         open(15,file='./output/execution_information.txt')    ! OPEN FILE FOR EXECUTION INFORMATION 
 
     Else
+
         ! SETTING COVARIANCE MATRIX
         Covguess = 0.d0  
 
@@ -85,13 +93,27 @@ Program mcmc
         Covguess(2,2) = sigma_bw**2
 
         !Covguess(3,3) = sigma_sigma_int**2
+
+        If (hyperparameters_as_mcmc) then
+            ! SETTING PIECE OF COVARIANCE MATRIX FOR HYPER-PARAMETERS
+            Do m=number_model_parameters+1,number_of_parameters
+
+                Covguess(m,m) = sigma_alpha_j**2
+
+            End Do
+            
+        End If
+        
         ! COVARIANCE MATRIX SET
 
         jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))!*1.d-3    !    MODIFY ACCORDING TO WANTED ACCEPTANCE PROBABILITY
 
+        ! COVARIANCE MATRIX ADJUSTED 
+        Covguess = jumping_factor*Covguess
+
         If (using_hyperparameters) then
 
-            If (include_dataA) then
+           If (include_dataA) then
 
                 call read_data_EfstathiouA(path_to_datafileA)
 
@@ -108,10 +130,16 @@ Program mcmc
                 call read_data_EfstathiouC(path_to_datafileC)
 
             End If
-
-            open(15,file='./output/execution_information_HP.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
             
             If (hyperparameters_as_mcmc) then
+
+                open(15,file='./output/execution_information_HP_as_MCMC.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
+            
+                write(15,*) 'WORKING WITH HYPER-PARAMETERS'     
+
+                write(15,*) 'HYPER-PARAMETERS USED AS MCMC PARAMETERS'
+
+                call read_data_Efstathiou(path_to_datafileABC)
 
                 If (number_hyperparameters .ne. (size(NameA)+size(NameB)+size(NameC))) then
                 
@@ -126,6 +154,10 @@ Program mcmc
 
             Else
 
+                open(15,file='./output/execution_information_HP.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
+            
+                write(15,*) 'WORKING WITH HYPER-PARAMETERS'     
+
                 If (number_hyperparameters .ne. 0) then
                 
                     write(15,*) 'NUMBER OF HYPER-PARAMETERS MUST BE ZERO WHEN SETTING FALSE "hyperparameters_as_mcmc" '
@@ -138,7 +170,6 @@ Program mcmc
 
             End If
 
-            stop
 
         Else
 
@@ -207,12 +238,30 @@ Program mcmc
             old_point(1) = prior_A         ! A 
             old_point(2) = prior_bw        ! bw 
             !old_point(3) = prior_sigma_int ! sigma_int 
+
+            If (hyperparameters_as_mcmc) then
+                ! SETTING INITIAL POINT FOR HYPER-PARAMETERS
+                Do m=number_model_parameters+1,number_of_parameters
+
+                    old_point(m) = prior_alpha_j
+
+                End Do
+            
+            End If
     
             Do m=1,number_of_parameters
 
-                If (m .eq. 3) then
+                If (m .gt. number_model_parameters) then
+                    
+                    If (using_jeffreys_prior) then
 
-                    x_old(m) = real(log10(old_point(m)))    ! CONVERT TO log10(sigma_int)
+                        x_old(m) = real(log10(old_point(m)))    ! CONVERT TO log10(\alpha_j)
+
+                    Else
+
+                        x_old(m) = real(old_point(m))
+
+                    End If
 
                 else
 
@@ -228,11 +277,37 @@ Program mcmc
             x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
             !x_old(3) = genunf(real(-10.d0),real(0.d0)) ! log10(sigma_int)
 
+            If (hyperparameters_as_mcmc) then
+                ! SETTING INITIAL POINT FOR HYPER-PARAMETERS
+                Do m=number_model_parameters+1,number_of_parameters
+                    
+                    If (using_jeffreys_prior) then
+
+                        x_old(m) = genunf(real(-1.d0),real(1.d0)) ! log10(\alpha_j)
+
+                    Else
+
+                        x_old(m) = genunf(real(0.d0),real(1.d0))
+
+                    End If
+
+                End Do
+            
+            End If
+
             Do m=1,number_of_parameters
 
-                If (m .eq. 3) then
+                If (m .gt. number_model_parameters) then
+                  
+                    If (using_jeffreys_prior) then
 
-                    old_point(m) = 10**(dble(x_old(m)))    !    CONVERT TO sigma_int
+                        old_point(m) = 10**(dble(x_old(m)))    !    CONVERT TO \alpha_j
+
+                    Else
+
+                        old_point(m) = dble(x_old(m)) 
+
+                    End If
 
                 else
 
@@ -251,10 +326,10 @@ Program mcmc
             write(15,*) 'WORKING WITH HYPER-PARAMETERS'
 
             write(15,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
-
-            !old_loglikelihood = log_Efstathiou_likelihood_hyperparameters(old_point(1),old_point(2),old_point(3))    !    Compute initial likelihood value
-            old_loglikelihood = log_Efstathiou_likelihood_hyperparameters(old_point(1),old_point(2),prior_sigma_int)    !    Compute initial likelihood value
-
+            
+            ! COMPUTE INITIAL LIKELIHOOD 
+            old_loglikelihood = log_Efstathiou_likelihood_hyperparameters(old_point(1),old_point(2),prior_sigma_int)
+            
             open(16,file='./output/mcmc_final_output_HP.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
 
             open(17,file='./output/mcmc_final_output_HP.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
@@ -267,8 +342,8 @@ Program mcmc
 
             write(15,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
 
-            !old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),old_point(3))    !    Compute initial likelihood value
-            old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),prior_sigma_int)    !    Compute initial likelihood value
+            ! COMPUTE INITIAL LIKELIHOOD
+            old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),prior_sigma_int) 
 
             open(16,file='./output/mcmc_final_output.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
 
@@ -282,6 +357,20 @@ Program mcmc
 
         !write(16,*) 'sigma_int    \sigma_{int}'
 
+        If (hyperparameters_as_mcmc) then
+                ! WRITING PARAMNAMES FOR HYPER-PARAMETERS
+                Do m=number_model_parameters+1,number_of_parameters
+
+                    write(string,'(i2.2)') m-number_model_parameters
+
+                    write(16,*) 'alpha_'//trim(string)//'    \alpha_{'//trim(string)//'}'
+
+                    alpha_string(m-number_model_parameters) = 'alpha_'//trim(string)//'    '
+
+                End Do
+            
+        End If
+
         close(16)
 
         write(17,*) 'A    0.    50. '
@@ -289,6 +378,28 @@ Program mcmc
         write(17,*) 'bw    -20.    0. '
 
     !    write(17,*) 'sigma_int    1.e-10    1 '
+
+        If (hyperparameters_as_mcmc) then
+                ! WRITING HARD BOUNDS FOR HYPER-PARAMETERS
+                Do m=number_model_parameters+1,number_of_parameters
+
+                    write(string,'(i2.2)') m-number_model_parameters
+                    
+                    If (using_jeffreys_prior) then
+
+                        print *,'MODIFY THIS PART ACCORDING TO PRIOR'
+
+                        stop
+
+                    Else
+
+                       write(17,*) 'alpha_'//trim(string)//'    0.    1.'
+
+                    End If
+
+                End Do
+            
+        End If
 
         close(17)
 
@@ -301,486 +412,583 @@ Program mcmc
 
     If (start_from_fiducial .and. (.not.testing_Gaussian_likelihood)) then
 
-        write(15,*) '# Fiducial model is (parameters ordered as below) :', prior_A, prior_bw, prior_sigma_int
+        write(15,*) '# FIDUCIAL MODEL IS (PARAMETERS ARE ORDERED AS IN CHAINS FILES) :', prior_A, prior_bw, prior_sigma_int
 
-        write(15,'(a37,es18.10)') '# ln(L/L_max) at the fiducial model :', old_loglikelihood
+        write(15,'(a37,es18.10)') '# ln(L/L_max) AT THE FIDUCIAL MODEL :', old_loglikelihood
 
     End If
 
-    !write(13,*) '# Weight   -ln(L/L_{max})    A    bw    sigma_int ' 
-    write(13,*) '# WEIGHT   -ln(L/L_{max})    A    bw ' 
+    If (hyperparameters_as_mcmc) then
+
+        write(13,*) '# WEIGHT   -ln(L/L_{max})    A    bw   ', alpha_string(1:number_hyperparameters)
+ 
+    Else
+
+        !write(13,*) '# Weight   -ln(L/L_{max})    A    bw    sigma_int ' 
+        write(13,*) '# WEIGHT   -ln(L/L_{max})    A    bw ' 
+
+    End If
+
+    write(15,*)'STARTING SAMPLING OF PARAMETER SPACE'
 
     ! LOOP TO EXPLORE PARAMETER SPACE STARTS HERE
-Do m=1,number_iterations
+    Do m=1,number_iterations
 
-    !######################################################################################################
-    ! Generate new point in parameter space from a multivariate normal distribution. We use RANLIB library.  
-    ! Be careful with x_old and old_point definitions 
-    !######################################################################################################
-
-    Do q=1,number_iterations 
-
-        If (testing_Gaussian_likelihood) then
-
-            call setgmn(x_old,real(jumping_factor*Covgauss),number_of_parameters,parm) ! used if testing Gaussian likelihood
- 
-            call genmn(parm,x_new,work)
-
-            exit
-
-        else
-
-            call setgmn(x_old,real(jumping_factor*Covguess),number_of_parameters,parm) 
-
-            call genmn(parm,x_new,work)
-
-        End If
-
-        c1 = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
-        c2 = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
-!        c4 =  (x_new(3) .gt. real(0.d0)) .or. (x_new(3) .lt. real(-10.d0))    ! limit log10(sigma_int)
-        !c5 = .false. !(x_new(5) .lt. real(0.d0)).or.(x_new(5).gt.real(85.d0))
-        !c6 = .false. !x_new(6) .lt. real(0.d0)
-        !c7 = .false. !x_new(7) .le. real(0.d0)
-!        non_plausible_parameters = ((c1 .or. c2) .or. (c4 .or. c5)) .or. (c6 .or. c7) 
-        non_plausible_parameters = c1 .or. c2
-
-        If (non_plausible_parameters .and. (q .ne. number_iterations)) then
-
-            call genmn(parm,x_new,work)
-
-        else if (q .eq. number_iterations) then
-
-            write(15,*) 'Loop to generate multivariate Gaussian deviate hit maximum number of iterations '
-
-            stop
-
-        else 
-
-            exit
-
-        End If
-
-    End Do
-    
-    Do n=1,number_of_parameters
-
-        If (n .eq. 3) then
+        ! GENERATE NEW POINT IN PARAMETER SPACE FROM MULTIVARIATE DISTRIBUTION; CODE USES RANLIB LIBRARY (BE CAREFUL WITH X_OLD AND OLD_POINT DEFINITIONS)
+        Do q=1,number_iterations 
 
             If (testing_Gaussian_likelihood) then
 
-                current_point(n) = dble(x_new(n)) ! used if testing Gaussian likelihood
+                call setgmn(x_old,real(Covgauss),number_of_parameters,parm) 
+ 
+                call genmn(parm,x_new,work)
 
-            else
+                exit
 
-                current_point(n) = 10**(dble(x_new(n))) ! Converting log10(sigma_int) to sigma_int 
+            Else
+
+                call setgmn(x_old,real(Covguess),number_of_parameters,parm) 
+
+                call genmn(parm,x_new,work)
 
             End If
 
-        else
+            plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
+            plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
+            !plausibility(3) =  (x_new(3) .gt. real(0.d0)) .or. (x_new(3) .lt. real(-10.d0))    ! limit log10(sigma_int)
 
-            current_point(n) = dble(x_new(n))
+            If (hyperparameters_as_mcmc) then
+                ! CHECKING PLAUSIBILITY FOR HYPER-PARAMETERS
+                Do n=number_model_parameters+1,number_of_parameters
+                   
+                    If (x_new(n) .gt. real(1.d0)) then
+                     
+                        x_new(n) = x_old(n)
 
-        End If
+                    Else If (x_new(n) .lt. real(0.d0)) then
 
-    End Do
+                        x_new(n) = x_old(n)
 
-    If (testing_Gaussian_likelihood) then
+                    End If
 
-        Go to 3        ! used if testing Gaussian likelihood
+                    plausibility(n) =  (x_new(n) .gt. real(1.d0)) .or. (x_new(n) .lt. real(0.d0))    ! limit alpha_j
 
-    End If
+                End Do
+            
+            End If
 
-    !#############################################################
-    ! Evaluate log_likelihood for current point in parameter space
-    !#############################################################
+            Do n=1,number_of_parameters
 
-    If (using_hyperparameters) then    
+                If (plausibility(n)) then
 
-!        current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),current_point(2),current_point(3))
-        current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),current_point(2),prior_sigma_int)
+                    non_plausible_parameters = .true.
 
-    Else
+                    exit
 
-!        current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),current_point(3))
-        current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int)
+                Else if (n .eq. number_of_parameters) then
 
-    End If
+                    non_plausible_parameters = .false.
 
-    3 If (testing_Gaussian_likelihood) then 
-    
-          current_loglikelihood = log_Gaussian_likelihood(current_point) ! used if testing Gaussian likelihood
+                End If
 
-      End If
+            End Do
 
-    !######################################################################################################
-    ! Decide whether or not the current_point in parameter space becomes old_point in parameter space 
-    !######################################################################################################
+            If (non_plausible_parameters .and. (q .ne. number_iterations)) then
 
-    If (current_loglikelihood .ge. old_loglikelihood) then ! It accepts the current point
+                call genmn(parm,x_new,work)
 
-        number_accepted_points = number_accepted_points + 1    ! Used to compute acceptance rate
+            Else If (q .eq. number_iterations) then
 
-        acceptance_probability(m) = min(1.d0,dexp(current_loglikelihood - old_loglikelihood))    
+                write(15,*) 'LOOP TO GENERATE MULTIVARIATE GAUSSIAN DEVIATE HIT MAXIMUM NUMBER OF'
+                write(15,*) 'ITERATIONS WITHOUT FINDING AN ALLOWED POINT'
 
-        If (m .le. steps_taken_before_definite_run) then
- 
-            write(14,*) weight,-old_loglikelihood,old_point(1),old_point(2)!,old_point(3) 
+                stop
 
-        else
+            Else 
 
-            write(13,*) weight,-old_loglikelihood,old_point(1),old_point(2)!,old_point(3)
-
-        End If
-       
-        weight = 1    
-
-        old_loglikelihood = current_loglikelihood
-        
-        Do i=1,number_of_parameters 
-
-            old_point(i) = current_point(i)
-
-            If (i .eq. 3) then
-
-                If (testing_Gaussian_likelihood) then
-
-                    x_old(i) = real(old_point(i)) ! used if testing Gaussian likelihood
-
-                else
-
-                    x_old(i) = log10(real(old_point(i))) ! converting sigma_int to log10(sigma_int)
-
-                End If 
-
-            else
-
-                x_old(i) = real(old_point(i))
+                exit
 
             End If
 
         End Do
-   
-    else 
+        ! NEW POINT GENERATED 
 
-        random_uniform = dble(genunf(real(0.),real(1.)))
- 
-        If ( random_uniform .le. dexp(current_loglikelihood-old_loglikelihood)) then 
-            ! It accetps the current point 
+        Do n=1,number_of_parameters
 
-            number_accepted_points = number_accepted_points + 1    ! Used to compute acceptance rate
+            If (n .gt. number_model_parameters) then
 
-            acceptance_probability(m) = min(1.d0,dexp(current_loglikelihood - old_loglikelihood))    
+                If (using_jeffreys_prior) then
 
-            If (m .le. steps_taken_before_definite_run) then
+                    current_point(n) = 10**(dble(x_new(n))) ! CONVERTING LOG10(alpha_j) to alpha_j 
 
-                write(14,*) weight,-old_loglikelihood,old_point(1),old_point(2)!,old_point(3)
+                Else
 
-            else
+                    current_point(n) = dble(x_new(n))
+              
+                End If
 
-                write(13,*) weight,-old_loglikelihood,old_point(1),old_point(2)!,old_point(3)
+            Else
+
+                current_point(n) = dble(x_new(n))
 
             End If
 
-            weight = 1
+        End Do
+
+        ! EVALUATE LOG_LIKELIHOOD FOR CURRENT POINT IN PARAMETER SPACE
+        If (testing_Gaussian_likelihood) then
+
+            current_loglikelihood = log_Gaussian_likelihood(current_point)
+
+        Else
+
+            If (using_hyperparameters) then    
+
+                current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),current_point(2),prior_sigma_int)
+
+            Else
+
+                current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int)
+
+            End If
+
+        End If
+        ! LOG_LIKELIHOOD FOR CURRENT POINT COMPUTED
+
+        !MAKE DECISION ABOUT CURRENT POINT : ACCEPT OR REJECT IT
+        If (current_loglikelihood .ge. old_loglikelihood) then ! ACCEPT CURRENT POINT
+
+            If (m .gt. steps_taken_before_definite_run) then
+
+                number_accepted_points = number_accepted_points + 1         
+
+            End If
+
+            ! COMPUTING ACCEPTANCE PROBABILITY FOR CURRENT POINT
+            acceptance_probability(m) = min(1.d0,exp(current_loglikelihood - old_loglikelihood))    
+        
+            If (m .le. steps_taken_before_definite_run) then ! WRITE OUT INFORMATION IN TEMPORARY FILE
+ 
+                write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+
+            Else ! WRITE OUT INFORMATION IN DEFINITE FILE
+
+                write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+
+            End If
+       
+            weight = 1    
 
             old_loglikelihood = current_loglikelihood
-
+        
             Do i=1,number_of_parameters 
 
                 old_point(i) = current_point(i)
 
-                If (i .eq. 3) then
+                If (i .gt. number_model_parameters) then
 
-                    If (testing_Gaussian_likelihood) then
+                    If (using_jeffreys_prior) then
 
-                        x_old(i) = real(old_point(i)) ! used when testing Gaussian likelihood
+                        x_old(i) = log10(real(old_point(i))) ! CONVERTING alpha_j TO  log10(alpha_j)
 
                     Else
 
-                        x_old(i) = real(log10(old_point(i))) ! converting sigma_int to log10(sigma_int)
+                        x_old(i) = real(old_point(i))
 
                     End If
 
-                else
+                Else
 
                     x_old(i) = real(old_point(i))
 
                 End If
 
             End Do
+   
+        Else ! ACCEPT OR REJECT THE CURRENT POINT ACCORDING TO :
 
-        else   ! The code rejects the current point 
+            random_uniform = dble(genunf(real(0.),real(1.)))
 
-            If (m .gt. steps_taken_before_definite_run) then
+            If ( random_uniform .le. exp(current_loglikelihood-old_loglikelihood)) then ! ACCEPT CURRENT POINT
 
-                number_rejected_points = number_rejected_points + 1            
+                If (m .gt. steps_taken_before_definite_run) then
 
-            End If
+                    number_accepted_points = number_accepted_points + 1         
 
-            acceptance_probability(m) = min(1.d0,dexp(current_loglikelihood - old_loglikelihood))    
+                End If
+                
+                acceptance_probability(m) = min(1.d0,dexp(current_loglikelihood - old_loglikelihood))    
 
-            weight = weight + 1
+                If (m .le. steps_taken_before_definite_run) then ! WRITE OUT INFORMATION TO TEMPORARY FILE
 
-            Do i=1,number_of_parameters 
+                    write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
 
-                If (i .eq. 3) then
+                Else ! WRITE OUT INFORMATION TO DEFINITE FILE
 
-                    If (testing_Gaussian_likelihood) then
-
-                        x_old(i) = real(old_point(i)) ! Used if testing Gaussian likelihood
-
-                    Else
-
-                        x_old(i) = real(log10(old_point(i))) ! convert sigma_int to log10(sigma_int)
-
-                    End If
-
-                else
-
-                    x_old(i) = real(old_point(i))
+                    write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
 
                 End If
 
-            End Do
+                weight = 1
 
-        End If
+                old_loglikelihood = current_loglikelihood
 
-    End If
+                Do i=1,number_of_parameters 
 
-    !###################################################################################################
-    ! Compute average acceptance probability and update covariance matrix and jumping factor (if needed)
-    !###################################################################################################
+                    old_point(i) = current_point(i)
 
-    If ((mod(m,jumping_factor_update) .eq. 0) .and. (m .le. steps_taken_before_definite_run) ) then
+                    If (i .gt. number_model_parameters) then
+                        
+                        If (using_jeffreys_prior) then
 
-        average_acceptance_probability = sum(acceptance_probability(m-jumping_factor_update+1:m))&
-        /real(jumping_factor_update)
+                            x_old(i) = real(log10(old_point(i))) ! CONVERTING alpha_j TO log10(alpha_j)
 
-!        write(15,*) 'Current average acceptance probability ',average_acceptance_probability
-        
-        If (average_acceptance_probability .lt. 0.1) then 
+                        Else
 
-            jumping_factor = jumping_factor*(1.d0 - step_size_changes)    !    Decreasing step size
+                            x_old(i) = real(old_point(i))
 
-        Else if (average_acceptance_probability .gt. 0.4) then
+                        End If
 
-            jumping_factor = jumping_factor*(1.d0 + step_size_changes)    !    Increasing step size 
+                    Else
 
-        End If
+                        x_old(i) = real(old_point(i))
 
-        If (testing_Gaussian_likelihood) then
+                    End If
 
-            If ( mod(m,covariance_matrix_update) .eq. 0 ) then
+                End Do
 
-                call system('cd output; python compute_covariance_matrix_Gaussian.py')
-     
-                close(14)
+            Else   ! REJECT CURRENT POINT 
 
-                call system('rm ./output/mcmc_output.txt')
+                If (m .gt. steps_taken_before_definite_run) then
 
-                call read_covariance_matrix_mcmc(Covgauss)
+                    number_rejected_points = number_rejected_points + 1            
 
-!                write(15,*) 'Iteration ', m
+                End If
 
-!                write(15,*) 'Current covariance matrix ', Covgauss
+                acceptance_probability(m) = min(1.d0,exp(current_loglikelihood - old_loglikelihood))    
 
-                open(14,file='./output/mcmc_output.txt')
+                weight = weight + 1
 
-                jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))
+                Do i=1,number_of_parameters 
 
-            End If
+                    If (i .gt. number_model_parameters) then
 
-        Else   
+                        If (using_jeffreys_prior) then
 
-            If ( mod(m,covariance_matrix_update) .eq. 0 ) then
+                            x_old(i) = real(log10(old_point(i))) ! CONVERT alpha_j TO log10(alpha_j)
 
-                call system('cd output; python compute_covariance_matrix.py')
-     
-                close(14)
+                        Else
 
-                call system('rm ./output/mcmc_output.txt')
+                            x_old(i) = real(old_point(i))
 
-                call read_covariance_matrix_mcmc(Covguess)
+                        End If
 
-!                write(15,*) 'Iteration ', m
+                    Else
 
-!                write(15,*) 'Current covariance matrix ', Covguess
+                        x_old(i) = real(old_point(i))
 
-                open(14,file='./output/mcmc_output.txt')
+                    End If
 
-                jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))
+                End Do
 
             End If
 
         End If
+        ! DECISION ABOUT CURRENT POINT MADE
+
+        ! COMPUTING AVERAGE ACCEPTANCE PROBABILITY AND UPDATING BOTH COVARIANCE MATRIX AND JUMPING FACTOR (IF NEEDED)
+        If ((mod(m,jumping_factor_update) .eq. 0) .and. (m .le. steps_taken_before_definite_run) ) then
+
+            average_acceptance_probability = sum(acceptance_probability(m-jumping_factor_update+1:m))&
+            /real(jumping_factor_update)
+
+!            write(15,*) 'CURRENT AVERAGE ACCEPTANCE PROBABILITY = ',average_acceptance_probability
+            
+            ! UPDATE JUMPING FACTOR IF NEEDED        
+            If (average_acceptance_probability .lt. 0.1) then 
+               
+                jumping_factor = (1.d0 - step_size_changes)    !    Decreasing step size
+
+                If (testing_Gaussian_likelihood) then
+
+                    Covgauss = jumping_factor*Covgauss
+
+                Else
+
+                    Covguess = jumping_factor*Covguess
+
+                End If
+
+            Else if (average_acceptance_probability .gt. 0.4) then
+
+                jumping_factor = (1.d0 + step_size_changes)    !    Increasing step size 
+
+                If (testing_Gaussian_likelihood) then
+
+                    Covgauss = jumping_factor*Covgauss
+
+                Else
+
+                    Covguess = jumping_factor*Covguess
+
+                End If
+
+            End If
+            ! JUMPING FACTOR UPDATED (IF IT WAS NEEDED)
+             
+            not_good_aap = (average_acceptance_probability .lt. 0.1) .or. (average_acceptance_probability .gt. 0.4)
+
+            If ( (mod(m,covariance_matrix_update) .eq. 0) .and. not_good_aap) then
+                
+                call stat('./output/mcmc_output.txt',buff,status1)
+
+                If ((status1 .eq. 0) .and. (buff(8) .gt. 0)) then
+              
+                    If (testing_Gaussian_likelihood) then
+
+                        call system('cd output; python compute_covariance_matrix_Gaussian.py')
+
+                        call read_covariance_matrix_mcmc(Covgauss)
+
+                        close(14)
+
+                        call system('rm ./output/mcmc_output.txt')
+
+                        open(14,file='./output/mcmc_output.txt')
+
+                    Else
+
+                        If (using_hyperparameters) then
+
+                            If (hyperparameters_as_mcmc) then
+                                
+                                call system('cd output; python compute_covariance_matrix_HP.py')
+                                
+                            Else
+
+                                call system('cd output; python compute_covariance_matrix.py')
+
+                            End If
+
+                        Else
+
+                            call system('cd output; python compute_covariance_matrix.py')
+
+                        End If
+
+!                        write(15,*) 'CURRENT COVARIANCE MATRIX BEFORE',Covguess
+
+                        call read_covariance_matrix_mcmc(Covguess)
+
+!                        write(15,*) 'CURRENT COVARIANCE MATRIX AFTER',Covguess
+
+                        close(14)
+
+                        call system('rm ./output/mcmc_output.txt')
+
+                        open(14,file='./output/mcmc_output.txt')
+
+                    End If
+
+                End If
+
+            End If
+
+        End If
+
+    End Do
+    ! LOOP TO EXPLORE PARAMETER SPACE ENDED
+
+    write(15,*) 'NUMBER OF REJECTED POINTS = ', number_rejected_points
+
+    write(15,*) 'ACCEPTANCE RATIO = ', dble(number_iterations - steps_taken_before_definite_run - number_rejected_points)/&
+    dble(number_iterations - steps_taken_before_definite_run)
+ 
+    ! CLOSE FILE STORING CHAIN
+    close(13)
+    ! CLOSE TEMPORARY FILE FOR CHAINS
+    close(14)
+
+    !ANALYZE SAMPLES, MAKE FIGURES, COMPUTE BESTFIT AND HYPER-PARAMETERS (IF NEEDED)
+    If (testing_Gaussian_likelihood) then
+
+        call system('cd analyzer; python analyze.py')
+
+    Else
+
+        If (using_hyperparameters) then
+
+            If (hyperparameters_as_mcmc) then
+
+                call system('cd analyzer; python analyze_HP_as_MCMC.py')
+
+            Else
+
+                call system('cd analyzer; python analyze_HP.py')
+
+            End If
+
+        Else
+
+            call system('cd analyzer; python analyze.py')
+
+        End If    
 
     End If
 
-    !#########################################
-    ! Loop to sample parameter space ends here
-    !#########################################
+    call read_bestfit_mcmc(bestfit)
 
-End Do
+    call read_means_mcmc(means)
 
-!#######################################################
-! Write last informations and close not needed data file 
-!#######################################################
+    write(15,*) 'BESTFIT IS : '
 
-write(15,*) 'Number of rejected points: ', number_rejected_points
+    write(15,*) 'A = ', bestfit(1)
 
-write(15,*) 'Acceptance ratio ', dble(number_iterations - steps_taken_before_definite_run - number_rejected_points)/&
-dble(number_iterations - steps_taken_before_definite_run)
+    write(15,*) 'bw = ', bestfit(2)
 
-close(13)
+    !write(15,*) 'sigma_int = ', bestfit(3)
 
-close(14)
+    If (hyperparameters_as_mcmc .and. using_hyperparameters) then
+    ! WRITING BESTFIT FOR HYPER-PARAMETERS
+        Do m=number_model_parameters+1,number_of_parameters
 
-!###############################################################################
-! Analyze samples, make figures, compute bestfit and hyperparameters (if needed)
-!###############################################################################
+            write(string,'(i2)') m-number_model_parameters
 
-If (using_hyperparameters) then
+            write(15,*) 'alpha_'//trim(string)//' = ', bestfit(m)
 
-    call system('cd analyzer; python analyze_HP.py')
+        End Do
+            
+    End If
 
-Else
+    write(15,*) 'MEANS FOR THE SAMPLES ARE : '
 
-    call system('cd analyzer; python analyze.py')
+    write(15,*) 'A = ', means(1)
 
-End If
-
-call read_bestfit_mcmc(bestfit)
-
-call read_means_mcmc(means)
-
-write(15,*) 'Bestfit is :'
-
-write(15,*) 'A = ', bestfit(1)
-
-write(15,*) 'bw = ', bestfit(2)
-
-!write(15,*) 'sigma_int = ', bestfit(3)
-
-write(15,*) 'Means for the samples are :'
-
-write(15,*) 'A = ', means(1)
-
-write(15,*) 'bw = ', means(2)
+    write(15,*) 'bw = ', means(2)
 
 !write(15,*) 'sigma_int = ', means(3)
 
-If (using_hyperparameters) then
+    If (hyperparameters_as_mcmc .and. using_hyperparameters) then
+    ! WRITING SAMPLE MEANS FOR HYPER-PARAMETERS
+        Do m=number_model_parameters+1,number_of_parameters
 
-    write(15,*) 'Hyperparameters are :'
+            write(string,'(i2)') m-number_model_parameters
 
-    If (separate_dataA .and. include_dataA) then
+            write(15,*) 'alpha_'//trim(string)//' = ', means(m)
 
-        Do m=1,size(NameA)
+        End Do
+            
+    End If
 
-            If (using_jeffreys_prior) then
+    If (using_hyperparameters .and. .not.hyperparameters_as_mcmc) then
 
-                write(15,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+        write(15,*) 'Hyperparameters are :'
 
-            Else
+        If (separate_dataA .and. include_dataA) then
 
-                If (chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m) .lt. 1.d0 ) then
+            Do m=1,size(NameA)
 
-                    write(15,*) 'Point ', m,' in data set A = ', 0.d0
-
-                Else
+                If (using_jeffreys_prior) then
 
                     write(15,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
+                Else
+
+                    If (chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m) .le. 1.d0 ) then
+
+                        write(15,*) 'Point ', m,' in data set A = ', 1.d0
+
+                    Else
+
+                        write(15,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+
+                    End If
+
                 End If
 
-            End If
+            End Do
 
-        End Do
-
-    Else if (include_dataA .and. .not.separate_dataA) then
+        Else if (include_dataA .and. .not.separate_dataA) then
 
     !    write(15,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),bestfit(3))
-        write(15,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),prior_sigma_int)
+            write(15,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),prior_sigma_int)
 
-    End If
+        End If
 
-    If (separate_dataB .and. include_dataB) then
+        If (separate_dataB .and. include_dataB) then
 
-        Do m=1,size(NameB)
+            Do m=1,size(NameB)
 
-            If (using_jeffreys_prior) then
-
-                write(15,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
-
-            Else
-
-                If (chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m) .lt. 1.d0 ) then
-
-                    write(15,*) 'Point ', m,' in data set B = ', 0.d0
-
-                Else
+                If (using_jeffreys_prior) then
 
                     write(15,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
+                Else
+
+                    If (chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m) .le. 1.d0 ) then
+
+                        write(15,*) 'Point ', m,' in data set B = ', 1.d0
+
+                    Else
+
+                        write(15,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+
+                    End If
+
                 End If
 
-            End If
+            End Do
 
-        End Do
-
-    Else if (include_dataB .and. .not.separate_dataB) then
+        Else if (include_dataB .and. .not.separate_dataB) then
 
     !    write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),bestfit(3))
-        write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),prior_sigma_int)
+            write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),prior_sigma_int)
 
-    End If
+        End If
 
-    If (separate_dataC .and. include_dataC) then
+        If (separate_dataC .and. include_dataC) then
 
-        Do m=1,size(NameC)
+            Do m=1,size(NameC)
 
-            If (using_jeffreys_prior) then
-
-                write(15,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
-
-            Else
-
-                If (chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m) .lt. 1.d0) then
-
-                    write(15,*) 'Point ', m,' in data set C = ', 0.d0
-
-                Else
+                If (using_jeffreys_prior) then
 
                     write(15,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
+                Else
+
+                    If (chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m) .le. 1.d0) then
+
+                        write(15,*) 'Point ', m,' in data set C = ', 1.d0
+
+                    Else
+
+                        write(15,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+
+                    End If
+
                 End If
 
-            End If
+            End Do
 
-        End Do
-
-    Else if (include_dataC .and. .not.separate_dataC) then
+        Else if (include_dataC .and. .not.separate_dataC) then
 
         !write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),bestfit(3))
-        write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),prior_sigma_int)
+            write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),prior_sigma_int)
+
+        End If
+
+    write(15,*) '\ln P(\vec{w},D) at the bestfit is ', log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),&
+    prior_sigma_int)
 
     End If
 
-write(15,*) '\ln P(\vec{w},D) at the bestfit is ', log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),&
-prior_sigma_int)
+    close(15)
 
-End If
+    If ((.not. testing_Gaussian_likelihood) .and. (.not. using_hyperparameters) ) then
 
-close(15)
+        deallocate (old_point,current_point,acceptance_probability,Name,Period,H,Sigma_m,V,II)
 
-If ((.not. testing_Gaussian_likelihood) .and. (.not. using_hyperparameters) ) then
-
-    deallocate (old_point,current_point,acceptance_probability,Name,Period,H,Sigma_m,V,II)
-
-End If
-
-
+    End If
 
 End Program mcmc
 

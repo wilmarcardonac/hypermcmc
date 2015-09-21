@@ -228,6 +228,77 @@ function log_Efstathiou_likelihood(A,bw,sigma_int)    !    It computes equation 
 
 end function log_Efstathiou_likelihood
 
+function log_likelihood_hyperparameters_as_mcmc(A,bw,sigma_int,oldpoint)    !    It computes equation (3) in published version of 1311.3461
+    use arrays
+    use fiducial
+    Implicit none
+    Real*8 :: log_likelihood_hyperparameters_as_mcmc,A,bw,sigma_int
+    Integer*4 :: m
+    logical :: oldpoint
+
+    If (hyperparameters_as_mcmc) then
+    
+        log_likelihood_hyperparameters_as_mcmc = 0.d0
+
+        Do m=1,size(Name)
+ 
+            If (using_jeffreys_prior) then
+
+                If (oldpoint) then
+
+                    log_likelihood_hyperparameters_as_mcmc = -log(old_point(number_model_parameters+m))/2.d0 - &
+                    old_point(number_model_parameters+m)*chi2_i(A,bw,sigma_int,m)/2.d0 + log(N_tilde_i(sigma_int,m))&
+                    + log_likelihood_hyperparameters_as_mcmc
+
+                Else
+
+                    log_likelihood_hyperparameters_as_mcmc = -log(current_point(number_model_parameters+m))/2.d0 - &
+                    current_point(number_model_parameters+m)*chi2_i(A,bw,sigma_int,m)/2.d0 + log(N_tilde_i(sigma_int,m))&
+                    + log_likelihood_hyperparameters_as_mcmc
+
+                End If
+
+            Else
+                
+                If (oldpoint) then
+
+                    log_likelihood_hyperparameters_as_mcmc = log(old_point(number_model_parameters+m))/2.d0 - &
+                    old_point(number_model_parameters+m)*chi2_i(A,bw,sigma_int,m)/2.d0 + log(N_tilde_i(sigma_int,m))&
+                    + log_likelihood_hyperparameters_as_mcmc 
+
+                Else
+
+                    log_likelihood_hyperparameters_as_mcmc = log(current_point(number_model_parameters+m))/2.d0 - &
+                    current_point(number_model_parameters+m)*chi2_i(A,bw,sigma_int,m)/2.d0 + log(N_tilde_i(sigma_int,m))&
+                    + log_likelihood_hyperparameters_as_mcmc 
+
+                End If
+
+            End If
+
+        End Do
+
+        If ( abs(log_likelihood_hyperparameters_as_mcmc) .ge. 0.d0 ) then
+
+            continue
+
+        Else 
+
+            log_likelihood_hyperparameters_as_mcmc = -1.d10
+
+        End If
+
+    Else
+
+        print *,'CURRENTLY NOT USING HYPER-PARAMETERS AS MCMC PARAMETERS. CHECK FIDUCIAL MODULE '
+
+        stop
+
+    End If
+
+end function log_likelihood_hyperparameters_as_mcmc
+
+
 function new_chi2(chi2)
     use fiducial
     Implicit none
@@ -336,6 +407,18 @@ function chi2A_i(A,bw,sigma_int,m)    !    It computes equation (3) in published
 
 end function chi2A_i
 
+function chi2_i(A,bw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+    use arrays
+    use fiducial
+    Implicit none
+    Real*8 :: A,bw,sigma_int,chi2_i
+    Integer*4 :: m
+
+    chi2_i = ( observed_wesenheit_magnitude(H(m),V(m),II(m)) - wesenheit_magnitude(A,bw,Period(m)) )**2/&
+    ( Sigma_m(m)**2 + sigma_int**2 ) 
+
+end function chi2_i
+
 function N_tilde_A_i(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
     use arrays
     use fiducial
@@ -346,6 +429,17 @@ function N_tilde_A_i(sigma_int,m)    !    It computes equation (3) in published 
     N_tilde_A_i = 1.d0/sqrt( Sigma_mA(m)**2 + sigma_int**2 ) 
 
 end function N_tilde_A_i
+
+function N_tilde_i(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+    use arrays
+    use fiducial
+    Implicit none
+    Real*8 :: sigma_int,N_tilde_i
+    Integer*4 :: m
+
+    N_tilde_i = 1.d0/sqrt( Sigma_m(m)**2 + sigma_int**2 ) 
+
+end function N_tilde_i
 
 function chi2B_i(A,bw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
     use arrays
@@ -557,11 +651,37 @@ function log_Efstathiou_likelihood_hyperparameters(A,bw,sigma_int)
     use fiducial 
     Implicit none
     Real*8 :: log_Efstathiou_likelihood_hyperparameters,A,bw,sigma_int
- 
+    logical :: oldpoint
+  
     If ((include_dataA .and. include_dataB) .and. include_dataC) then
+ 
+        If (hyperparameters_as_mcmc) then
 
-        log_Efstathiou_likelihood_hyperparameters = log_Efstathiou_likelihoodA(A,bw,sigma_int) + &
-        log_Efstathiou_likelihoodB(A,bw,sigma_int) + log_Efstathiou_likelihoodC(A,bw,sigma_int)
+            If (A .eq. old_point(1)) then
+
+                oldpoint = .true.
+
+            Else if (A .eq. current_point(1)) then
+
+                oldpoint = .false.
+
+            Else 
+
+                print *,'BESTFIT WILL BE IMPLEMENTED LATER'
+
+                stop
+  
+            End If
+
+            log_Efstathiou_likelihood_hyperparameters = log_likelihood_hyperparameters_as_mcmc(A,bw,&
+            sigma_int,oldpoint)
+
+        Else
+
+            log_Efstathiou_likelihood_hyperparameters = log_Efstathiou_likelihoodA(A,bw,sigma_int) + &
+            log_Efstathiou_likelihoodB(A,bw,sigma_int) + log_Efstathiou_likelihoodC(A,bw,sigma_int)
+
+        End If
 
     Else if ( (include_dataA .and. include_dataB) .and. .not.include_dataC ) then
 
@@ -613,44 +733,128 @@ function log_Gaussian_likelihood(array)
     log_Gaussian_likelihood = -log_Gaussian_likelihood/2.d0
 end function log_Gaussian_likelihood
 
-!function compute_determinant(A)
-!    use fiducial
-!    Implicit none
-!    Integer*4 :: INFO,index
-!    Real*8,dimension(max(1,nbins),nbins) :: A
-!    Integer*4,dimension(min(nbins,nbins)) :: IPIV
-!    Real*8,dimension(max(1,max(1,nbins))) :: WORK
-
-!    Real*8 :: det,sgn,compute_determinant
-
-!    call dgetrf(nbins,nbins,A,nbins,IPIV,INFO)
-
-!    det = 1.d0
-!    Do index=1,nbins
-
-!        det = det*A(index,index)
-!    End Do 
-
-!    sgn = 1.d0
-!    Do index=1,nbins
-!        If (IPIV(index) .ne. index) then
-!            sgn = -sgn
-!        End If
-!    End Do
- 
-!    compute_determinant = sgn*det
-!end function compute_determinant
-
-subroutine read_covariance_matrix_mcmc(matrix)
+function compute_determinant(A)
     use fiducial
     Implicit none
-    Real*8,dimension(number_of_parameters,number_of_parameters) :: matrix
-    Integer*4 :: index1
-    open(12,file='./output/covariance_matrix.txt')
-    Do index1=1,number_of_parameters
-        read(12,*) matrix(index1,1),matrix(index1,2)!,matrix(index1,3)
+    Integer*4 :: INFO,index
+    Real*8,dimension(max(1,number_of_parameters),number_of_parameters) :: A
+    Integer*4,dimension(min(number_of_parameters,number_of_parameters)) :: IPIV
+    Real*8,dimension(max(1,max(1,number_of_parameters))) :: WORK
+    Real*8 :: det,sgn,compute_determinant
+
+    call dgetrf(number_of_parameters,number_of_parameters,A,number_of_parameters,IPIV,INFO)
+
+    det = 1.d0
+    Do index=1,number_of_parameters
+
+        det = det*A(index,index)
+    End Do 
+
+    sgn = 1.d0
+    Do index=1,number_of_parameters
+        If (IPIV(index) .ne. index) then
+            sgn = -sgn
+        End If
     End Do
+ 
+    compute_determinant = sgn*det
+end function compute_determinant
+
+function compute_eigenvalues(A)
+    use fiducial
+    Implicit none
+    Integer*4 :: INFO,index
+    Integer*4,parameter :: LWORK = max(1,3*number_of_parameters-1)
+    Real*8,dimension(max(1,number_of_parameters),number_of_parameters) :: A
+    Real*8,dimension(max(1,LWORK)) :: WORK
+    Real*8,dimension(number_of_parameters) :: W,compute_eigenvalues
+    Character*1,parameter :: JOBZ = 'N'
+    Character*1,parameter :: UPLO = 'U'
+
+
+    call dsyev(JOBZ,UPLO,number_of_parameters,A,number_of_parameters,W,WORK,LWORK,INFO)
+
+
+    If (INFO .eq. 0) then
+
+        Do index=1,number_of_parameters
+         
+            compute_eigenvalues(index) = W(index)
+
+        End Do
+
+    Else
+
+        print *,'ERROR COMPUTING EIGENVALUES'
+
+    End If
+ 
+end function compute_eigenvalues
+
+subroutine read_covariance_matrix_mcmc(matrix1)
+    use fiducial
+    Implicit none
+    Real*8,dimension(number_of_parameters,number_of_parameters) :: matrix,matrix1
+    Integer*4 :: index1,index2,INFO
+    Integer*4,parameter :: LWORK = max(1,3*number_of_parameters-1)
+    Real*8,dimension(max(1,LWORK)) :: WORK
+    Real*8,dimension(number_of_parameters) :: W
+    Character*1,parameter :: JOBZ = 'N'
+    Character*1,parameter :: UPLO = 'U'
+    Logical :: pos_def 
+ 
+    open(12,file='./output/covariance_matrix.txt')
+
+    Do index1=1,number_of_parameters
+
+        read(12,*) matrix(index1,1:number_of_parameters)
+
+    End Do
+
     close(12)
+
+    call dsyev(JOBZ,UPLO,number_of_parameters,matrix,number_of_parameters,W,WORK,LWORK,INFO)
+
+    If (INFO .eq. 0) then
+ 
+        pos_def = .true.
+        
+        Do index1=1,number_of_parameters
+         
+            If (W(index1) .le. 0.d0) then
+
+                pos_def = .false.
+
+                exit
+
+            End If
+
+        End Do
+      
+        If (pos_def) then
+
+            open(12,file='./output/covariance_matrix.txt')
+
+            Do index1=1,number_of_parameters
+
+                read(12,*) matrix1(index1,1:number_of_parameters)
+
+            End Do
+
+            close(12)
+
+        Else
+
+            print *,'COVARIANCE MATRIX IS NOT POSITIVE DEFINITE, KEEPING CURRENT COVARIANCE MATRIX'
+            
+        End If
+
+    Else
+
+        print *,'EIGENVALUES WERE NOT COMPUTED'
+
+    End If
+
 end subroutine read_covariance_matrix_mcmc
 
 subroutine read_bestfit_mcmc(vector)
@@ -658,11 +862,17 @@ subroutine read_bestfit_mcmc(vector)
     Implicit none
     Real*8,dimension(number_of_parameters) :: vector
     Integer*4 :: index1
+
     open(12,file='./output/bestfit.txt')
+
     Do index1=1,number_of_parameters
+
         read(12,*) vector(index1)
+
     End Do
+
     close(12)
+
 end subroutine read_bestfit_mcmc
 
 subroutine read_means_mcmc(vector)
@@ -670,11 +880,17 @@ subroutine read_means_mcmc(vector)
     Implicit none
     Real*8,dimension(number_of_parameters) :: vector
     Integer*4 :: index1
+
     open(12,file='./output/means.txt')
+
     Do index1=1,number_of_parameters
+
         read(12,*) vector(index1)
+
     End Do
+
     close(12)
+
 end subroutine read_means_mcmc
 
 
