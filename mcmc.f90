@@ -14,13 +14,13 @@ Program mcmc
 
     Implicit none
 
-    Integer*4 :: m,n,i,j,q                                        ! INTERGER FOR SHORT LOOPS 
+    Integer*4 :: m,n,i,q                                        ! INTERGER FOR SHORT LOOPS 
     Integer*4 :: seed1,seed2                                      ! SEEDS FOR RANDOM NUMBER GENERATOR 
     Integer*4 :: number_accepted_points,number_rejected_points    ! MCMC PARAMETERS
     Integer*4 :: weight                                           ! IT COUNTS THE NUMBER OF STEPS TAKEN BEFORE MOVING TO A NEW POINT IN MCMC 
 
     Real*4 :: average_acceptance_probability           ! SAVES ACCEPTANCE PROBABILITY 
-    Real*4 :: genunf,gennor                            ! RANDOM UNIFOR DEVIATES 
+    Real*4 :: genunf                            ! RANDOM UNIFOR DEVIATES 
     Real*8 :: jumping_factor                           ! SAVES JUMPING FACTOR FOR MCMC (INCREASE IF WANT BIGGER STEP SIZE, DECREASE OTHERWISE) 
     Real*8 :: random_uniform                           ! SAVES RANDOM UNIFORM DEVIATE BETWEEN 0 AND 1 
     Real*8 :: old_loglikelihood,current_loglikelihood  ! TEMPORALY SAVES LIKELIHOOD VALUES 
@@ -86,13 +86,116 @@ Program mcmc
     Else
 
         ! SETTING COVARIANCE MATRIX
-        Covguess = 0.d0  
+        Covguess = 0.d0
+  
+        If (doing_R11_analysis) then
 
-        Covguess(1,1) = sigma_A**2 
+            If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+               print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
-        Covguess(2,2) = sigma_bw**2
+               stop
 
-        !Covguess(3,3) = sigma_sigma_int**2
+            Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+               print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+               stop
+
+            Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+               print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+               stop
+
+            Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+               print *,'MW+LMC NOT IMPLEMENTED YET'
+
+               stop
+
+            Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+               print *,'MW NOT IMPLEMENTED YET'
+
+               stop
+
+            Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+               print *,'LMC NOT IMPLEMENTED YET'
+
+               stop
+
+            Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+               If (use_metallicity) then 
+
+                  print *,'METALLICITY NOT IMPLEMENTED'
+
+                  stop
+
+               Else
+
+                  If (use_H_band) then
+                     
+                     If (number_model_parameters .eq. 10) then
+
+                        Covguess(1,1) = sigma_zpH**2 
+
+                        Covguess(2,2) = sigma_zpH**2 
+
+                        Covguess(3,3) = sigma_zpH**2 
+
+                        Covguess(4,4) = sigma_zpH**2 
+
+                        Covguess(5,5) = sigma_zpH**2 
+
+                        Covguess(6,6) = sigma_zpH**2 
+
+                        Covguess(7,7) = sigma_zpH**2 
+
+                        Covguess(8,8) = sigma_zpH**2 
+
+                        Covguess(9,9) = sigma_zpH**2 
+
+                        Covguess(10,10) = sigma_bH**2
+
+                     Else
+                        
+                        print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE AND COMPARE WITH EQUATION (3) IN R09'
+
+                        stop
+
+                     End If
+
+                  Else
+
+                     print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                     stop
+
+                  End If
+
+               End If
+
+            Else
+
+               print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+               stop
+
+            End If
+
+    
+        Else
+
+            Covguess(1,1) = sigma_A**2 
+
+            Covguess(2,2) = sigma_bw**2
+
+            !Covguess(3,3) = sigma_sigma_int**2
+ 
+        End If
 
         If (hyperparameters_as_mcmc) then
             ! SETTING PIECE OF COVARIANCE MATRIX FOR HYPER-PARAMETERS
@@ -113,7 +216,7 @@ Program mcmc
 
         If (using_hyperparameters) then
 
-           If (include_dataA) then
+            If (include_dataA) then
 
                 call read_data_EfstathiouA(path_to_datafileA)
 
@@ -128,6 +231,12 @@ Program mcmc
             If (include_dataC) then
 
                 call read_data_EfstathiouC(path_to_datafileC)
+
+            End If
+
+            If (include_table2_R11) then
+
+                call read_table2_R11(path_to_table2_R11)
 
             End If
             
@@ -154,9 +263,19 @@ Program mcmc
 
             Else
 
-                open(15,file='./output/execution_information_HP.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
+                If (doing_R11_analysis) then
+
+                   open(15,file='./output/execution_information_HP_R11.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
             
-                write(15,*) 'WORKING WITH HYPER-PARAMETERS'     
+                   write(15,*) 'WORKING WITH HYPER-PARAMETERS AND DOING R11 ANALYSIS'
+                   
+                Else
+
+                   open(15,file='./output/execution_information_HP.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
+            
+                   write(15,*) 'WORKING WITH HYPER-PARAMETERS'
+   
+                End If
 
                 If (number_hyperparameters .ne. 0) then
                 
@@ -174,6 +293,12 @@ Program mcmc
         Else
 
             call read_data_Efstathiou(path_to_datafileAB)
+
+            If (include_table2_R11) then
+
+                call read_table2_R11(path_to_table2_R11)
+
+            End If
 
             open(15,file='./output/execution_information.txt')    ! OPEN FILE FOR EXECUTION INFORMATION 
 
@@ -235,9 +360,101 @@ Program mcmc
 
             write(15,*) 'STARTING FROM FIDUCIAL POINT'
 
-            old_point(1) = prior_A         ! A 
-            old_point(2) = prior_bw        ! bw 
-            !old_point(3) = prior_sigma_int ! sigma_int 
+            If (doing_R11_analysis) then
+
+               If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+                  print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                  print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                  print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                  print *,'MW+LMC NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                  print *,'MW NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                  print *,'LMC NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                  If (use_metallicity) then 
+
+                     print *,'METALLICITY NOT IMPLEMENTED'
+
+                     stop
+
+                  Else
+
+                     If (use_H_band) then
+                     
+                        old_point(1) = prior_zpH
+
+                        old_point(2) = prior_zpH
+
+                        old_point(3) = prior_zpH 
+
+                        old_point(4) = prior_zpH
+
+                        old_point(5) = prior_zpH
+
+                        old_point(6) = prior_zpH
+
+                        old_point(7) = prior_zpH
+
+                        old_point(8) = prior_zpH
+
+                        old_point(9) = prior_zpH
+
+                        old_point(10) = prior_bH
+
+                     Else
+
+                        print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                        stop
+                        
+                     End If
+
+                  End If
+
+               Else
+
+                  print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+                  stop
+
+               End If
+    
+            Else
+
+               old_point(1) = prior_A         ! A 
+               old_point(2) = prior_bw        ! bw 
+               !old_point(3) = prior_sigma_int ! sigma_int 
+ 
+            End If
 
             If (hyperparameters_as_mcmc) then
                 ! SETTING INITIAL POINT FOR HYPER-PARAMETERS
@@ -273,9 +490,101 @@ Program mcmc
 
         Else
 
-            x_old(1) = genunf(real(prior_A - sigma_A),real(prior_A + sigma_A))         ! A
-            x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
-            !x_old(3) = genunf(real(-10.d0),real(0.d0)) ! log10(sigma_int)
+            If (doing_R11_analysis) then
+
+               If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+                  print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                  print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                  print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                  print *,'MW+LMC NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                  print *,'MW NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                  print *,'LMC NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                  If (use_metallicity) then 
+
+                     print *,'METALLICITY NOT IMPLEMENTED'
+
+                     stop
+
+                  Else
+
+                     If (use_H_band) then
+                     
+                        x_old(1) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                        x_old(2) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                        x_old(3) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                        x_old(4) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                        x_old(5) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                        x_old(6) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                        x_old(7) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                        x_old(8) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                        x_old(9) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                        x_old(10) = genunf(real(prior_bH - sigma_bH),real(prior_bH + sigma_bH))
+
+                     Else
+
+                        print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                        stop
+                        
+                     End If
+
+                  End If
+
+               Else
+
+                  print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+                  stop
+
+               End If
+    
+            Else
+
+               x_old(1) = genunf(real(prior_A - sigma_A),real(prior_A + sigma_A))         ! A
+               x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
+               !x_old(3) = genunf(real(-10.d0),real(0.d0)) ! log10(sigma_int)
+
+            End If
 
             If (hyperparameters_as_mcmc) then
                 ! SETTING INITIAL POINT FOR HYPER-PARAMETERS
@@ -320,19 +629,28 @@ Program mcmc
         End If
 
         If (using_hyperparameters) then
-            ! OPEN FILE TO STORE MCMC COMPUTATION
-            open(13,file='./output/mcmc_final_output_HP.txt')
+           ! OPEN FILE TO STORE MCMC COMPUTATION
+           open(13,file='./output/mcmc_final_output_HP.txt')
 
-            write(15,*) 'WORKING WITH HYPER-PARAMETERS'
+           write(15,*) 'WORKING WITH HYPER-PARAMETERS'
 
-            write(15,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
+           write(15,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
             
-            ! COMPUTE INITIAL LIKELIHOOD 
-            old_loglikelihood = log_Efstathiou_likelihood_hyperparameters(old_point(1),old_point(2),prior_sigma_int)
-            
-            open(16,file='./output/mcmc_final_output_HP.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
+           ! COMPUTE INITIAL LIKELIHOOD
+           If (doing_R11_analysis) then
 
-            open(17,file='./output/mcmc_final_output_HP.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
+              old_loglikelihood = log_R11_likelihood_H(old_point(1:number_model_parameters-1),&
+                   old_point(number_model_parameters),prior_sigma_int)
+
+           Else
+
+              old_loglikelihood = log_Efstathiou_likelihood_hyperparameters(old_point(1),old_point(2),prior_sigma_int)
+
+           End If
+
+           open(16,file='./output/mcmc_final_output_HP.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
+
+           open(17,file='./output/mcmc_final_output_HP.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
 
         Else
             ! OPEN FILE TO STORE MCMC COMPUTATION
@@ -351,11 +669,104 @@ Program mcmc
 
         End If
 
-        write(16,*) 'A    A'
+        If (doing_R11_analysis) then
 
-        write(16,*) 'bw    b_{w}'
+           If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+              print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
-        !write(16,*) 'sigma_int    \sigma_{int}'
+              stop
+
+           Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+              print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+              stop
+
+           Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+              print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+              stop
+
+           Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+              print *,'MW+LMC NOT IMPLEMENTED YET'
+
+              stop
+
+           Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+              print *,'MW NOT IMPLEMENTED YET'
+
+              stop
+
+           Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+              print *,'LMC NOT IMPLEMENTED YET'
+
+              stop
+
+           Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+              If (use_metallicity) then 
+
+                 print *,'METALLICITY NOT IMPLEMENTED'
+
+                 stop
+
+              Else
+
+                 If (use_H_band) then
+
+                    write(16,*) 'zpH1_zpH4258    zp_{H1}-zp_{H4258}'
+
+                    write(16,*) 'zpH2_zpH4258    zp_{H2}-zp_{H4258}'
+
+                    write(16,*) 'zpH3_zpH4258    zp_{H3}-zp_{H4258}'
+
+                    write(16,*) 'zpH4_zpH4258    zp_{H4}-zp_{H4258}'
+
+                    write(16,*) 'zpH5_zpH4258    zp_{H5}-zp_{H4258}'
+
+                    write(16,*) 'zpH6_zpH4258    zp_{H6}-zp_{H4258}'
+
+                    write(16,*) 'zpH7_zpH4258    zp_{H7}-zp_{H4258}'
+
+                    write(16,*) 'zpH8_zpH4258    zp_{H8}-zp_{H4258}'
+
+                    write(16,*) 'zpH4258    zp_{H4258}'
+
+                    write(16,*) 'bH    b_H'
+
+                 Else
+
+                    print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                    stop
+                        
+                 End If
+
+              End If
+
+           Else
+
+              print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+              stop
+
+           End If
+    
+        Else
+
+           write(16,*) 'A    A'
+
+           write(16,*) 'bw    b_{w}'
+
+           !write(16,*) 'sigma_int    \sigma_{int}'
+
+        End If
+
 
         If (hyperparameters_as_mcmc) then
                 ! WRITING PARAMNAMES FOR HYPER-PARAMETERS
@@ -373,11 +784,103 @@ Program mcmc
 
         close(16)
 
-        write(17,*) 'A    0.    50. '
+        If (doing_R11_analysis) then
 
-        write(17,*) 'bw    -20.    0. '
+           If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+              print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
-    !    write(17,*) 'sigma_int    1.e-10    1 '
+              stop
+
+           Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+              print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+              stop
+
+           Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+              print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+              stop
+
+           Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+              print *,'MW+LMC NOT IMPLEMENTED YET'
+
+              stop
+
+           Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+              print *,'MW NOT IMPLEMENTED YET'
+
+              stop
+
+           Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+              print *,'LMC NOT IMPLEMENTED YET'
+
+              stop
+
+           Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+              If (use_metallicity) then 
+
+                 print *,'METALLICITY NOT IMPLEMENTED'
+
+                 stop
+
+              Else
+
+                 If (use_H_band) then
+
+                    write(17,*) 'zpH1_zpH4258    0.    20.'
+
+                    write(17,*) 'zpH2_zpH4258    0.    20.'
+
+                    write(17,*) 'zpH3_zpH4258    0.    20.'
+
+                    write(17,*) 'zpH4_zpH4258    0.    20.'
+
+                    write(17,*) 'zpH5_zpH4258    0.    20.'
+
+                    write(17,*) 'zpH6_zpH4258    0.    20.'
+
+                    write(17,*) 'zpH7_zpH4258    0.    20.'
+
+                    write(17,*) 'zpH8_zpH4258    0.    20.'
+
+                    write(17,*) 'zpH4258    0.    50.'
+
+                    write(17,*) 'bH    -20.    0.'
+
+                 Else
+
+                    print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                    stop
+                        
+                 End If
+
+              End If
+
+           Else
+
+              print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+              stop
+
+           End If
+    
+        Else
+
+           write(17,*) 'A    0.    50. '
+
+           write(17,*) 'bw    -20.    0. '
+
+           !    write(17,*) 'sigma_int    1.e-10    1 '
+
+        End If
 
         If (hyperparameters_as_mcmc) then
                 ! WRITING HARD BOUNDS FOR HYPER-PARAMETERS
@@ -410,7 +913,7 @@ Program mcmc
 
     write(13,*) '# NUMBER OF ITERATIONS IN MCMC : ', number_iterations - steps_taken_before_definite_run
 
-    If (start_from_fiducial .and. (.not.testing_Gaussian_likelihood)) then
+    If (start_from_fiducial .and. (.not.testing_Gaussian_likelihood .and. .not.doing_R11_analysis)) then
 
         write(15,*) '# FIDUCIAL MODEL IS (PARAMETERS ARE ORDERED AS IN CHAINS FILES) :', prior_A, prior_bw, prior_sigma_int
 
@@ -424,8 +927,83 @@ Program mcmc
  
     Else
 
-        !write(13,*) '# Weight   -ln(L/L_{max})    A    bw    sigma_int ' 
-        write(13,*) '# WEIGHT   -ln(L/L_{max})    A    bw ' 
+       If (doing_R11_analysis) then
+
+          If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+             print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+
+             stop
+
+          Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+             print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+             stop
+
+          Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+             print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+             stop
+
+          Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+             print *,'MW+LMC NOT IMPLEMENTED YET'
+
+             stop
+
+          Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+             print *,'MW NOT IMPLEMENTED YET'
+
+             stop
+
+          Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+             print *,'LMC NOT IMPLEMENTED YET'
+
+             stop
+
+          Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+             If (use_metallicity) then 
+
+                print *,'METALLICITY NOT IMPLEMENTED'
+
+                stop
+
+             Else
+
+                If (use_H_band) then
+
+                   write(13,*) '# WEIGHT   -ln(L/L_{max})    zpH1_zpH4258    zpH2_zpH4258    zpH3_zpH4258'//trim(&
+                   '    zpH4_zpH4258    zpH5_zpH4258    zpH6_zpH4258    zpH7_zpH4258    zpH8_zpH4258    zpH4258    bH')//'' 
+
+                Else
+
+                   print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                   stop
+                        
+                End If
+
+             End If
+
+          Else
+
+             print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+             stop
+
+          End If
+    
+       Else
+
+          !write(13,*) '# Weight   -ln(L/L_{max})    A    bw    sigma_int ' 
+          write(13,*) '# WEIGHT   -ln(L/L_{max})    A    bw ' 
+
+       End If
 
     End If
 
@@ -453,9 +1031,101 @@ Program mcmc
 
             End If
 
-            plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
-            plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
-            !plausibility(3) =  (x_new(3) .gt. real(0.d0)) .or. (x_new(3) .lt. real(-10.d0))    ! limit log10(sigma_int)
+            If (doing_R11_analysis) then
+
+               If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+                  print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                  print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                  print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                  print *,'MW+LMC NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                  print *,'MW NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                  print *,'LMC NOT IMPLEMENTED YET'
+
+                  stop
+
+               Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                  If (use_metallicity) then 
+
+                     print *,'METALLICITY NOT IMPLEMENTED'
+
+                     stop
+
+                  Else
+
+                     If (use_H_band) then
+
+                        plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(2.d1))
+
+                        plausibility(2) = (x_new(2) .le. real(0.d0)) .or. (x_new(2) .ge. real(2.d1))
+
+                        plausibility(3) = (x_new(3) .le. real(0.d0)) .or. (x_new(3) .ge. real(2.d1))
+
+                        plausibility(4) = (x_new(4) .le. real(0.d0)) .or. (x_new(4) .ge. real(2.d1))
+
+                        plausibility(5) = (x_new(5) .le. real(0.d0)) .or. (x_new(5) .ge. real(2.d1))
+
+                        plausibility(6) = (x_new(6) .le. real(0.d0)) .or. (x_new(6) .ge. real(2.d1))
+
+                        plausibility(7) = (x_new(7) .le. real(0.d0)) .or. (x_new(7) .ge. real(2.d1))
+
+                        plausibility(8) = (x_new(8) .le. real(0.d0)) .or. (x_new(8) .ge. real(2.d1))
+
+                        plausibility(9) = (x_new(9) .le. real(0.d0)) .or. (x_new(9) .ge. real(50.d0))
+
+                        plausibility(10) =  (x_new(10) .gt. real(-20.d0)) .or. (x_new(3) .lt. real(0.d0)) 
+
+                     Else
+
+                        print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                        stop
+                        
+                     End If
+
+                  End If
+
+               Else
+
+                  print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+                  stop
+
+               End If
+    
+            Else
+
+               plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
+               plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
+               !plausibility(3) =  (x_new(3) .gt. real(0.d0)) .or. (x_new(3) .lt. real(-10.d0))    ! limit log10(sigma_int)
+
+            End If
 
             If (hyperparameters_as_mcmc) then
                 ! CHECKING PLAUSIBILITY FOR HYPER-PARAMETERS
@@ -544,7 +1214,17 @@ Program mcmc
 
             If (using_hyperparameters) then    
 
-                current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),current_point(2),prior_sigma_int)
+               If (doing_R11_analysis) then
+
+                  current_loglikelihood = log_R11_likelihood_H(current_point(1:number_model_parameters-1),&
+                       current_point(number_model_parameters),prior_sigma_int)
+
+               Else
+
+                  current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),&
+                       current_point(2),prior_sigma_int)
+
+               End If
 
             Else
 
@@ -568,12 +1248,30 @@ Program mcmc
             acceptance_probability(m) = min(1.d0,exp(current_loglikelihood - old_loglikelihood))    
         
             If (m .le. steps_taken_before_definite_run) then ! WRITE OUT INFORMATION IN TEMPORARY FILE
- 
-                write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+               
+               If (doing_R11_analysis) then
+
+                  write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters-2)-old_point(number_of_parameters-1),&
+                       old_point(number_of_parameters-1:number_of_parameters)
+
+               Else
+
+                  write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+
+               End If
 
             Else ! WRITE OUT INFORMATION IN DEFINITE FILE
 
-                write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+               If (doing_R11_analysis) then
+
+                  write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters-2)-old_point(number_of_parameters-1),&
+                       old_point(number_of_parameters-1:number_of_parameters)
+
+               Else
+
+                  write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+
+               End If
 
             End If
        
@@ -621,11 +1319,29 @@ Program mcmc
 
                 If (m .le. steps_taken_before_definite_run) then ! WRITE OUT INFORMATION TO TEMPORARY FILE
 
-                    write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+                   If (doing_R11_analysis) then
+
+                      write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters-2)-old_point(number_of_parameters-1),&
+                           old_point(number_of_parameters-1:number_of_parameters)
+
+                   Else
+
+                      write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+
+                   End If
 
                 Else ! WRITE OUT INFORMATION TO DEFINITE FILE
+                   
+                   If (doing_R11_analysis) then
 
-                    write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+                      write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters-2)-old_point(number_of_parameters-1),&
+                           old_point(number_of_parameters-1:number_of_parameters)
+
+                   Else
+
+                      write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+
+                   End If
 
                 End If
 
@@ -823,8 +1539,16 @@ Program mcmc
                 call system('cd analyzer; python analyze_HP_as_MCMC.py')
 
             Else
+               
+               If (doing_R11_analysis) then  !MUST IMPLEMENT OTHER OPTIONS LATER!!!!!!!!!!!!!!!!!
 
-                call system('cd analyzer; python analyze_HP.py')
+                  call system('cd analyzer; python analyze_HP_R11_H.py')
+
+               Else
+
+                  call system('cd analyzer; python analyze_HP.py')
+
+               End If
 
             End If
 
@@ -840,13 +1564,90 @@ Program mcmc
 
     call read_means_mcmc(means)
 
-    write(15,*) 'BESTFIT IS : '
+    If (doing_R11_analysis) then
 
-    write(15,*) 'A = ', bestfit(1)
+       If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+          print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
-    write(15,*) 'bw = ', bestfit(2)
+          stop
 
-    !write(15,*) 'sigma_int = ', bestfit(3)
+       Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+          print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+          stop
+
+       Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+          print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+          stop
+          
+       Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+          print *,'MW+LMC NOT IMPLEMENTED YET'
+
+          stop
+
+       Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+          print *,'MW NOT IMPLEMENTED YET'
+
+          stop
+
+       Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+          print *,'LMC NOT IMPLEMENTED YET'
+
+          stop
+
+       Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+          If (use_metallicity) then 
+
+             print *,'METALLICITY NOT IMPLEMENTED'
+
+             stop
+
+          Else
+
+             If (use_H_band) then
+
+                write(15,*) 'BESTFIT IS : '
+
+                write(15,*) 'bH = ', bestfit(number_of_parameters)
+
+             Else
+
+                print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                stop
+                        
+             End If
+
+          End If
+
+       Else
+
+          print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+          stop
+
+       End If
+    
+    Else
+
+       write(15,*) 'BESTFIT IS : '
+
+       write(15,*) 'A = ', bestfit(1)
+
+       write(15,*) 'bw = ', bestfit(2)
+
+       !write(15,*) 'sigma_int = ', bestfit(3)
+
+    End If
+
 
     If (hyperparameters_as_mcmc .and. using_hyperparameters) then
     ! WRITING BESTFIT FOR HYPER-PARAMETERS
@@ -860,13 +1661,90 @@ Program mcmc
             
     End If
 
-    write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+    If (doing_R11_analysis) then
 
-    write(15,*) 'A = ', means(1)
+       If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+          print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
-    write(15,*) 'bw = ', means(2)
+          stop
 
-!write(15,*) 'sigma_int = ', means(3)
+       Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+          print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+          stop
+
+       Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+          print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+          stop
+          
+       Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+          print *,'MW+LMC NOT IMPLEMENTED YET'
+
+          stop
+
+       Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+          print *,'MW NOT IMPLEMENTED YET'
+
+          stop
+
+       Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+          print *,'LMC NOT IMPLEMENTED YET'
+
+          stop
+
+       Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+          If (use_metallicity) then 
+
+             print *,'METALLICITY NOT IMPLEMENTED'
+
+             stop
+
+          Else
+
+             If (use_H_band) then
+
+                write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+
+                write(15,*) 'bH = ', means(number_of_parameters)
+
+             Else
+
+                print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                stop
+                        
+             End If
+
+          End If
+
+       Else
+
+          print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+          stop
+
+       End If
+    
+    Else
+
+       write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+
+       write(15,*) 'A = ', means(1)
+
+       write(15,*) 'bw = ', means(2)
+
+       !write(15,*) 'sigma_int = ', means(3)
+
+    End If
+
 
     If (hyperparameters_as_mcmc .and. using_hyperparameters) then
     ! WRITING SAMPLE MEANS FOR HYPER-PARAMETERS
@@ -884,105 +1762,113 @@ Program mcmc
 
         write(15,*) 'Hyperparameters are :'
 
-        If (separate_dataA .and. include_dataA) then
+        If (doing_R11_analysis) then
 
-            Do m=1,size(NameA)
+           print *,'MUST IMPLEMENT EFFECTIVE HYPERPARAMETERS FOR R11 ANALYSIS'
 
-                If (using_jeffreys_prior) then
+        Else
+
+           If (separate_dataA .and. include_dataA) then
+
+              Do m=1,size(NameA)
+
+                 If (using_jeffreys_prior) then
 
                     write(15,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
-
-                Else
+                    
+                 Else
 
                     If (chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m) .le. 1.d0 ) then
 
-                        write(15,*) 'Point ', m,' in data set A = ', 1.d0
+                       write(15,*) 'Point ', m,' in data set A = ', 1.d0
 
                     Else
 
-                        write(15,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+                       write(15,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
                     End If
 
-                End If
+                 End If
 
-            End Do
+              End Do
 
-        Else if (include_dataA .and. .not.separate_dataA) then
+           Else if (include_dataA .and. .not.separate_dataA) then
 
-    !    write(15,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),bestfit(3))
-            write(15,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),prior_sigma_int)
+              !    write(15,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),bestfit(3))
+              write(15,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),prior_sigma_int)
 
-        End If
+           End If
 
-        If (separate_dataB .and. include_dataB) then
+           If (separate_dataB .and. include_dataB) then
 
-            Do m=1,size(NameB)
+              Do m=1,size(NameB)
 
-                If (using_jeffreys_prior) then
+                 If (using_jeffreys_prior) then
 
                     write(15,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
-                Else
+                 Else
 
                     If (chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m) .le. 1.d0 ) then
 
-                        write(15,*) 'Point ', m,' in data set B = ', 1.d0
+                       write(15,*) 'Point ', m,' in data set B = ', 1.d0
 
                     Else
 
-                        write(15,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+                       write(15,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
                     End If
 
-                End If
+                 End If
 
-            End Do
+              End Do
 
-        Else if (include_dataB .and. .not.separate_dataB) then
+           Else if (include_dataB .and. .not.separate_dataB) then
 
-    !    write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),bestfit(3))
-            write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),prior_sigma_int)
+              !    write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),bestfit(3))
+              write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),prior_sigma_int)
 
-        End If
+           End If
 
-        If (separate_dataC .and. include_dataC) then
+           If (separate_dataC .and. include_dataC) then
 
-            Do m=1,size(NameC)
+              Do m=1,size(NameC)
 
-                If (using_jeffreys_prior) then
+                 If (using_jeffreys_prior) then
 
                     write(15,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
-                Else
+                 Else
 
                     If (chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m) .le. 1.d0) then
 
-                        write(15,*) 'Point ', m,' in data set C = ', 1.d0
+                       write(15,*) 'Point ', m,' in data set C = ', 1.d0
 
                     Else
 
-                        write(15,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+                       write(15,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
                     End If
 
-                End If
+                 End If
 
-            End Do
+              End Do
 
-        Else if (include_dataC .and. .not.separate_dataC) then
+           Else if (include_dataC .and. .not.separate_dataC) then
 
-        !write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),bestfit(3))
-            write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),prior_sigma_int)
+              !write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),bestfit(3))
+              write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),prior_sigma_int)
 
+           End If
+
+           write(15,*) '\ln P(\vec{w},D) at the bestfit is ', log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),&
+                prior_sigma_int)
+           
         End If
 
-    write(15,*) '\ln P(\vec{w},D) at the bestfit is ', log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),&
-    prior_sigma_int)
+     End If
 
-    End If
-
-    close(15)
+     close(15)
 
     If ((.not. testing_Gaussian_likelihood) .and. (.not. using_hyperparameters) ) then
 

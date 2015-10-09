@@ -4,6 +4,51 @@ module functions
      
 contains
 
+subroutine read_table2_R11(path_to_datafile)
+    use arrays
+    Implicit none
+    Integer*4 :: arrays_dimension,p
+    Integer :: stat
+    character(len=*) :: path_to_datafile
+
+    open(11,file=path_to_datafile)
+
+    arrays_dimension = 0
+
+    Do 
+
+        read(11,*,iostat=stat)
+
+        If (stat .ne. 0) then
+
+            exit
+
+        Else
+
+            arrays_dimension = arrays_dimension + 1 
+
+        End If
+
+    End Do
+
+    close(11)
+
+    allocate (Field(1:arrays_dimension),ID(1:arrays_dimension),PeriodR11(1:arrays_dimension),&
+    VIR11(1:arrays_dimension),F160WR11(1:arrays_dimension),eF160WR11(1:arrays_dimension),&
+    OHR11(1:arrays_dimension),stat=status1)
+
+    open(11,file=path_to_datafile)
+
+    Do p=1,arrays_dimension
+
+        read(11,'(a5,i8,f9.3,4f6.2)') Field(p),ID(p),PeriodR11(p),VIR11(p),F160WR11(p),eF160WR11(p),OHR11(p)
+
+    End Do
+
+    close(11)
+
+end subroutine read_table2_R11
+
 subroutine read_data_Efstathiou(path_to_datafile)
     use arrays
     Implicit none
@@ -181,12 +226,24 @@ subroutine read_data_EfstathiouC(path_to_datafile)
 end subroutine read_data_EfstathiouC
 
 function observed_wesenheit_magnitude(H_band_magnitude,V_magnitude,I_magnitude)    !    It computes Wesenheit magnitudes: equation (1) in 
+    
+    use fiducial
     Implicit none    !    published version of 1311.3461.
     Real*8 :: observed_wesenheit_magnitude,H_band_magnitude,V_magnitude,I_magnitude
 
-    observed_wesenheit_magnitude =  H_band_magnitude - 0.41d0*(V_magnitude - I_magnitude)
+    observed_wesenheit_magnitude =  H_band_magnitude - R*(V_magnitude - I_magnitude)
 
 end function observed_wesenheit_magnitude
+
+function observed_m_H(W_band_magnitude,V_I_magnitude)    ! EQUATION (6) IN R09 
+    
+    use fiducial
+    Implicit none
+    Real*8 :: observed_m_H,W_band_magnitude,V_I_magnitude
+
+    observed_m_H =  W_band_magnitude + R*V_I_magnitude
+
+end function observed_m_H
 
 function wesenheit_magnitude(A,bw,P)    !    It computes equation (2) in published version of 1311.3461
     Implicit none
@@ -195,6 +252,33 @@ function wesenheit_magnitude(A,bw,P)    !    It computes equation (2) in publish
     wesenheit_magnitude = A + bw*(log10(P) - 1.d0)
 
 end function wesenheit_magnitude
+
+function P_L_relation_passband_H(zpH_j,zpH_ref,bH,P_ij) ! EQUATION (2) IN R09
+
+    Implicit none
+    Real*8 :: P_L_relation_passband_H,zpH_j,zpH_ref,bH,P_ij
+
+    P_L_relation_passband_H = ( zpH_j - zpH_ref ) + zpH_ref + bH*log10(P_ij)
+
+end function P_L_relation_passband_H
+
+function P_L_relation_passband_W(mu0i_mu0_ref,zpW_ref,bW,P,Zw,OH) ! EQUATION (7) IN R09
+
+    Implicit none
+    Real*8 :: P_L_relation_passband_W,mu0i_mu0_ref,zpW_ref,bW,P,Zw,OH
+
+    P_L_relation_passband_W = mu0i_mu0_ref + zpW_ref + bW*log10(P) + Zw*OH
+
+end function P_L_relation_passband_W
+
+function reddening_free_magnitude_SNIa(mu0i_mu0_ref,m0v_ref) ! EQUATION (17) IN R09
+
+    Implicit none
+    Real*8 :: reddening_free_magnitude_SNIa,mu0i_mu0_ref,m0v_ref
+
+    reddening_free_magnitude_SNIa = mu0i_mu0_ref + m0v_ref
+
+end function reddening_free_magnitude_SNIa
 
 function log_Efstathiou_likelihood(A,bw,sigma_int)    !    It computes equation (3) in published version of 1311.3461
     use arrays
@@ -227,6 +311,128 @@ function log_Efstathiou_likelihood(A,bw,sigma_int)    !    It computes equation 
     End If
 
 end function log_Efstathiou_likelihood
+
+function log_R11_likelihood_H(zpH,bH,sigma_int)    !    EQUATION (4) IN R09
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: log_R11_likelihood_H,bH,sigma_int
+    Real*8,dimension(number_of_hosts_galaxies) :: zpH 
+    Integer*4 :: m,index_host
+
+    If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+        print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+        print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+        print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+        print *,'MW+LMC NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+        print *,'MW NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+        print *,'LMC NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+        log_R11_likelihood_H = 0.d0
+
+        Do m=1,size(Field)
+
+            Do index_host=1,number_of_hosts_galaxies
+ 
+                If (host(index_host) .eq. Field(m)) then
+    
+                    If (using_jeffreys_prior) then
+
+                        print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+                        stop
+
+                    Else
+
+                        log_R11_likelihood_H = log(new_chi2(chi2R11_H(zpH(index_host),zpH(9),bH,sigma_int,m))) + &
+                        log(N_tilde_R11_H(sigma_int,m)) + log_R11_likelihood_H
+
+                    End If
+
+                End If 
+
+            End Do
+
+        End Do
+
+        If ( abs(log_R11_likelihood_H) .ge. 0.d0 ) then
+
+            continue
+
+        Else 
+
+            log_R11_likelihood_H = -1.d10
+
+        End If
+
+    Else
+
+        print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+        stop
+
+    End If
+
+end function log_R11_likelihood_H
+
+function chi2R11_H(zpH_j,zpH_ref,bH,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: zpH_j,zpH_ref,bH,sigma_int,chi2R11_H
+    Integer*4 :: m
+
+    chi2R11_H = ( observed_m_H(F160WR11(m),VIR11(m)) - P_L_relation_passband_H(zpH_j,zpH_ref,bH,PeriodR11(m)) )**2/&
+    ( eF160WR11(m)**2 + sigma_int**2 ) 
+
+end function chi2R11_H
+
+function N_tilde_R11_H(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: sigma_int,N_tilde_R11_H
+    Integer*4 :: m
+
+    N_tilde_R11_H = 1.d0/sqrt( eF160WR11(m)**2 + sigma_int**2 ) 
+
+end function N_tilde_R11_H
 
 function log_likelihood_hyperparameters_as_mcmc(A,bw,sigma_int,oldpoint)    !    It computes equation (3) in published version of 1311.3461
     use arrays
@@ -739,7 +945,7 @@ function compute_determinant(A)
     Integer*4 :: INFO,index
     Real*8,dimension(max(1,number_of_parameters),number_of_parameters) :: A
     Integer*4,dimension(min(number_of_parameters,number_of_parameters)) :: IPIV
-    Real*8,dimension(max(1,max(1,number_of_parameters))) :: WORK
+!    Real*8,dimension(max(1,max(1,number_of_parameters))) :: WORK
     Real*8 :: det,sgn,compute_determinant
 
     call dgetrf(number_of_parameters,number_of_parameters,A,number_of_parameters,IPIV,INFO)
@@ -795,7 +1001,7 @@ subroutine read_covariance_matrix_mcmc(matrix1)
     use fiducial
     Implicit none
     Real*8,dimension(number_of_parameters,number_of_parameters) :: matrix,matrix1
-    Integer*4 :: index1,index2,INFO
+    Integer*4 :: index1,INFO
     Integer*4,parameter :: LWORK = max(1,3*number_of_parameters-1)
     Real*8,dimension(max(1,LWORK)) :: WORK
     Real*8,dimension(number_of_parameters) :: W
