@@ -1151,11 +1151,12 @@ Program mcmc
 
                 If (plausibility(n)) then
 
-                    non_plausible_parameters = .true.
+                   x_new(n) = x_old(n)
+!                    non_plausible_parameters = .true.
 
-                    exit
+!                    exit
 
-                Else if (n .eq. number_of_parameters) then
+!                Else if (n .eq. number_of_parameters) then
 
                     non_plausible_parameters = .false.
 
