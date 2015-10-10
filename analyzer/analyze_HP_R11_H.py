@@ -6,7 +6,7 @@ samples = loadMCSamples('../output/mcmc_final_output_HP',settings={'ignore_rows'
 
 g = plots.getSinglePlotter()
 
-g.settings.rcSizes(axes_fontsize = 4,lab_fontsize = 7)
+g.settings.rcSizes(axes_fontsize = 2,lab_fontsize = 7)
 
 g.triangle_plot(samples,filled=True)
 

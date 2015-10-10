@@ -719,21 +719,21 @@ Program mcmc
 
                  If (use_H_band) then
 
-                    write(16,*) 'zpH1_zpH4258    zp_{H1}-zp_{H4258}'
+                    write(16,*) 'zpH1    zp_{H1}'
 
-                    write(16,*) 'zpH2_zpH4258    zp_{H2}-zp_{H4258}'
+                    write(16,*) 'zpH2    zp_{H2}'
 
-                    write(16,*) 'zpH3_zpH4258    zp_{H3}-zp_{H4258}'
+                    write(16,*) 'zpH3    zp_{H3}'
 
-                    write(16,*) 'zpH4_zpH4258    zp_{H4}-zp_{H4258}'
+                    write(16,*) 'zpH4    zp_{H4}'
 
-                    write(16,*) 'zpH5_zpH4258    zp_{H5}-zp_{H4258}'
+                    write(16,*) 'zpH5    zp_{H5}'
 
-                    write(16,*) 'zpH6_zpH4258    zp_{H6}-zp_{H4258}'
+                    write(16,*) 'zpH6    zp_{H6}'
 
-                    write(16,*) 'zpH7_zpH4258    zp_{H7}-zp_{H4258}'
+                    write(16,*) 'zpH7    zp_{H7}'
 
-                    write(16,*) 'zpH8_zpH4258    zp_{H8}-zp_{H4258}'
+                    write(16,*) 'zpH8    zp_{H8}'
 
                     write(16,*) 'zpH4258    zp_{H4258}'
 
@@ -834,21 +834,21 @@ Program mcmc
 
                  If (use_H_band) then
 
-                    write(17,*) 'zpH1_zpH4258    0.    20.'
+                    write(17,*) 'zpH1    0.    50.'
 
-                    write(17,*) 'zpH2_zpH4258    0.    20.'
+                    write(17,*) 'zpH2    0.    50.'
 
-                    write(17,*) 'zpH3_zpH4258    0.    20.'
+                    write(17,*) 'zpH3    0.    50.'
 
-                    write(17,*) 'zpH4_zpH4258    0.    20.'
+                    write(17,*) 'zpH4    0.    50.'
 
-                    write(17,*) 'zpH5_zpH4258    0.    20.'
+                    write(17,*) 'zpH5    0.    50.'
 
-                    write(17,*) 'zpH6_zpH4258    0.    20.'
+                    write(17,*) 'zpH6    0.    50.'
 
-                    write(17,*) 'zpH7_zpH4258    0.    20.'
+                    write(17,*) 'zpH7    0.    50.'
 
-                    write(17,*) 'zpH8_zpH4258    0.    20.'
+                    write(17,*) 'zpH8    0.    50.'
 
                     write(17,*) 'zpH4258    0.    50.'
 
@@ -977,8 +977,8 @@ Program mcmc
 
                 If (use_H_band) then
 
-                   write(13,*) '# WEIGHT   -ln(L/L_{max})    zpH1_zpH4258    zpH2_zpH4258    zpH3_zpH4258'//trim(&
-                   '    zpH4_zpH4258    zpH5_zpH4258    zpH6_zpH4258    zpH7_zpH4258    zpH8_zpH4258    zpH4258    bH')//'' 
+                   write(13,*) '# WEIGHT   -ln(L/L_{max})    zpH1    zpH2    zpH3'//trim(&
+                   '    zpH4    zpH5    zpH6    zpH7    zpH8    zpH4258    bH')//'' 
 
                 Else
 
@@ -1081,25 +1081,25 @@ Program mcmc
 
                      If (use_H_band) then
 
-                        plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(2.d1))
+                        plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
 
-                        plausibility(2) = (x_new(2) .le. real(0.d0)) .or. (x_new(2) .ge. real(2.d1))
+                        plausibility(2) = (x_new(2) .le. real(0.d0)) .or. (x_new(2) .ge. real(5.d1))
 
-                        plausibility(3) = (x_new(3) .le. real(0.d0)) .or. (x_new(3) .ge. real(2.d1))
+                        plausibility(3) = (x_new(3) .le. real(0.d0)) .or. (x_new(3) .ge. real(5.d1))
 
-                        plausibility(4) = (x_new(4) .le. real(0.d0)) .or. (x_new(4) .ge. real(2.d1))
+                        plausibility(4) = (x_new(4) .le. real(0.d0)) .or. (x_new(4) .ge. real(5.d1))
 
-                        plausibility(5) = (x_new(5) .le. real(0.d0)) .or. (x_new(5) .ge. real(2.d1))
+                        plausibility(5) = (x_new(5) .le. real(0.d0)) .or. (x_new(5) .ge. real(5.d1))
 
-                        plausibility(6) = (x_new(6) .le. real(0.d0)) .or. (x_new(6) .ge. real(2.d1))
+                        plausibility(6) = (x_new(6) .le. real(0.d0)) .or. (x_new(6) .ge. real(5.d1))
 
-                        plausibility(7) = (x_new(7) .le. real(0.d0)) .or. (x_new(7) .ge. real(2.d1))
+                        plausibility(7) = (x_new(7) .le. real(0.d0)) .or. (x_new(7) .ge. real(5.d1))
 
-                        plausibility(8) = (x_new(8) .le. real(0.d0)) .or. (x_new(8) .ge. real(2.d1))
+                        plausibility(8) = (x_new(8) .le. real(0.d0)) .or. (x_new(8) .ge. real(5.d1))
 
                         plausibility(9) = (x_new(9) .le. real(0.d0)) .or. (x_new(9) .ge. real(50.d0))
 
-                        plausibility(10) =  (x_new(10) .gt. real(-20.d0)) .or. (x_new(3) .lt. real(0.d0)) 
+                        plausibility(10) =  (x_new(10) .le. real(-20.d0)) .or. (x_new(10) .ge. real(0.d0)) 
 
                      Else
 
@@ -1252,8 +1252,7 @@ Program mcmc
                
                If (doing_R11_analysis) then
 
-                  write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters-2)-old_point(number_of_parameters-1),&
-                       old_point(number_of_parameters-1:number_of_parameters)
+                  write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
 
                Else
 
@@ -1265,8 +1264,8 @@ Program mcmc
 
                If (doing_R11_analysis) then
 
-                  write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters-2)-old_point(number_of_parameters-1),&
-                       old_point(number_of_parameters-1:number_of_parameters)
+                  write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+
 
                Else
 
@@ -1322,8 +1321,7 @@ Program mcmc
 
                    If (doing_R11_analysis) then
 
-                      write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters-2)-old_point(number_of_parameters-1),&
-                           old_point(number_of_parameters-1:number_of_parameters)
+                      write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
 
                    Else
 
@@ -1335,8 +1333,7 @@ Program mcmc
                    
                    If (doing_R11_analysis) then
 
-                      write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters-2)-old_point(number_of_parameters-1),&
-                           old_point(number_of_parameters-1:number_of_parameters)
+                      write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
 
                    Else
 

@@ -18,8 +18,8 @@ Module fiducial
     Real*8,parameter    :: mu_0_NGC4258 = 5.d0*log10(NGC4258_distance) + 25.d0 ! DEFINITION OF DISTANCE MODULUS
     Real*8,parameter    :: LMC_distance = 49.97d0       ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : KPC
     Real*8,parameter    :: mu_0_LMC = 5.d0*log10(LMC_distance) + 25.d0 
-    Real*8,parameter    :: prior_zpH = 20.d0
-    Real*8,parameter    :: prior_bH = -3.09d0
+    Real*8,parameter    :: prior_zpH = 28.d0
+    Real*8,parameter    :: prior_bH = -2.7d0
 
     !################################################
     ! 1-SIGMA VALUES FOR PARAMETERS IN FIDUCIAL MODEL
@@ -34,8 +34,8 @@ Module fiducial
     Real*8,parameter    :: sigma_mu_0_NGC4258 = 5.d0/log(10.d0)/NGC4258_distance*sigma_NGC4258_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_LMC_quadrature = 1.13d0 ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : KPC
     Real*8,parameter    :: sigma_mu_0_LMC = 5.d0/log(10.d0)/LMC_distance*sigma_LMC_quadrature ! ERROR ON DISTANCE MODULUS
-    Real*8,parameter    :: sigma_zpH = 0.5d0
-    Real*8,parameter    :: sigma_bH = 0.11d0
+    Real*8,parameter    :: sigma_zpH = 0.2d0
+    Real*8,parameter    :: sigma_bH = 0.1d0
 
     !#####################
     ! OTHER SPECIFICATIONS
@@ -66,7 +66,7 @@ Module fiducial
     Logical,parameter   :: include_dataB = .true.                ! INCLUDE DATA SET B IF SET IT TRUE
     Logical,parameter   :: include_dataC = .true.                ! INCLUDE DATA SET C IF SET IT TRUE
     Logical,parameter   :: include_table2_R11 = .true.            ! INCLUDE TABLE 2 IN R11 IF SET IT TRUE
-    Logical,parameter   :: start_from_fiducial = .false.          ! START MCMC ANALYSIS FROM FIDUCIAL POINT IF SET IT TRUE 
+    Logical,parameter   :: start_from_fiducial = .true.          ! START MCMC ANALYSIS FROM FIDUCIAL POINT IF SET IT TRUE 
     Logical,parameter   :: testing_Gaussian_likelihood = .false. ! TEST GAUSSIAN LIKELIHOOD IF SET IT TRUE
     Logical,parameter   :: using_hyperparameters = .true.        ! USE HYPER-PARAMETERS IF SET IT TRUE
     Logical,parameter   :: using_jeffreys_prior = .false.        ! USE JEFFREYS PRIOR IF SET IT TRUE, OTHERWISE USE UNIFORM PRIOR [0,1] 
