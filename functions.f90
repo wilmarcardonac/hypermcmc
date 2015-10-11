@@ -49,6 +49,50 @@ subroutine read_table2_R11(path_to_datafile)
 
 end subroutine read_table2_R11
 
+subroutine read_table3_R11(path_to_datafile)
+
+    use arrays
+    Implicit none
+    Integer*4 :: arrays_dimension,p
+    Integer :: stat
+    character(len=*) :: path_to_datafile
+
+    open(11,file=path_to_datafile)
+
+    arrays_dimension = 0
+
+    Do 
+
+        read(11,*,iostat=stat)
+
+        If (stat .ne. 0) then
+
+            exit
+
+        Else
+
+            arrays_dimension = arrays_dimension + 1 
+
+        End If
+
+    End Do
+
+    close(11)
+
+    allocate (Fieldmvi(1:arrays_dimension),mvi5av(1:arrays_dimension),Sigma_mvi5av(1:arrays_dimension),stat=status1)
+
+    open(11,file=path_to_datafile)
+
+    Do p=1,arrays_dimension
+
+        read(11,*) Fieldmvi(p),mvi5av(p),Sigma_mvi5av(p)
+
+    End Do
+
+    close(11)
+
+end subroutine read_table3_R11
+
 subroutine read_data_Efstathiou(path_to_datafile)
     use arrays
     Implicit none
@@ -262,21 +306,22 @@ function P_L_relation_passband_H(zpH_j,zpH_ref,bH,P_ij) ! EQUATION (2) IN R09
 
 end function P_L_relation_passband_H
 
-function P_L_relation_passband_W(mu0i_mu0_ref,zpW_ref,bW,P,Zw,OH) ! EQUATION (7) IN R09
+function P_L_relation_passband_W(mu0i,mu0_ref,zpW_ref,bW,Zw,OH_ij,P_ij) ! EQUATION (7) IN R09
 
     Implicit none
-    Real*8 :: P_L_relation_passband_W,mu0i_mu0_ref,zpW_ref,bW,P,Zw,OH
+    Real*8 :: P_L_relation_passband_W,mu0i,mu0_ref,zpW_ref,bW,P_ij,Zw,OH_ij
 
-    P_L_relation_passband_W = mu0i_mu0_ref + zpW_ref + bW*log10(P) + Zw*OH
+    P_L_relation_passband_W = (mu0i - mu0_ref) + zpW_ref + bW*log10(P_ij) + Zw*OH_ij
 
 end function P_L_relation_passband_W
 
-function reddening_free_magnitude_SNIa(mu0i_mu0_ref,m0v_ref) ! EQUATION (17) IN R09
+function reddening_free_magnitude_SNIa(mu0i,mu0_ref,m0v_ref) ! EQUATION (17) IN R09 WITH a_v ADDED
 
+    use fiducial
     Implicit none
-    Real*8 :: reddening_free_magnitude_SNIa,mu0i_mu0_ref,m0v_ref
+    Real*8 :: reddening_free_magnitude_SNIa,mu0i,mu0_ref,m0v_ref
 
-    reddening_free_magnitude_SNIa = mu0i_mu0_ref + m0v_ref
+    reddening_free_magnitude_SNIa = (mu0i - mu0_ref) + m0v_ref + 5.d0*a_v
 
 end function reddening_free_magnitude_SNIa
 
@@ -433,6 +478,161 @@ function N_tilde_R11_H(sigma_int,m)    !    It computes equation (3) in publishe
     N_tilde_R11_H = 1.d0/sqrt( eF160WR11(m)**2 + sigma_int**2 ) 
 
 end function N_tilde_R11_H
+
+function log_R11_likelihood_W(mu0j,zpw_ref,bw,m0v_ref,Zw,sigma_int)    !    EQUATION (4) IN R09
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: log_R11_likelihood_W,zpw_ref,bw,m0v_ref,Zw,sigma_int
+    Real*8,dimension(number_of_hosts_galaxies) :: mu0j 
+    Integer*4 :: m,index_host
+
+    If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+        print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+        print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+        print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+        print *,'MW+LMC NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+        print *,'MW NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+        print *,'LMC NOT IMPLEMENTED YET'
+
+        stop
+
+    Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+        log_R11_likelihood_W = 0.d0
+
+        Do m=1,size(Field)
+
+            Do index_host=1,number_of_hosts_galaxies
+ 
+                If (host(index_host) .eq. Field(m)) then
+    
+                    If (using_jeffreys_prior) then
+
+                        print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+                        stop
+
+                    Else
+                       
+                        log_R11_likelihood_W = log(new_chi2(chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,sigma_int,m))) + &
+                        log(N_tilde_R11_W(sigma_int,m)) + log_R11_likelihood_W
+
+                    End If
+
+                End If 
+
+            End Do
+
+        End Do
+
+        Do index_host=1,number_of_hosts_galaxies-1
+
+           log_R11_likelihood_W = log(new_chi2(chi2R11_SNIa(mu0j(index_host),mu0j(9),m0v_ref,index_host))) + &
+                log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W
+              
+        End Do
+
+        If ( abs(log_R11_likelihood_W) .ge. 0.d0 ) then
+
+            continue
+
+        Else 
+
+            log_R11_likelihood_W = -1.d10
+
+        End If
+
+    Else
+
+        print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+        stop
+
+    End If
+
+end function log_R11_likelihood_W
+
+function chi2R11_W(mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,chi2R11_W
+    Integer*4 :: m
+
+    chi2R11_W = ( F160WR11(m) - P_L_relation_passband_W(mu0_j,mu0_ref,zpw_ref,bw,Zw,OHR11(m),PeriodR11(m)) )**2/&
+    ( eF160WR11(m)**2 + sigma_int**2 ) 
+
+end function chi2R11_W
+
+function chi2R11_SNIa(mu0_j,mu0_ref,m0v_ref,snia)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: mu0_j,mu0_ref,m0v_ref,chi2R11_SNIa
+    Integer*4 :: snia
+
+    chi2R11_SNIa = ( mvi5av(snia) - reddening_free_magnitude_SNIa(mu0_j,mu0_ref,m0v_ref) )**2/Sigma_mvi5av(snia)**2
+
+end function chi2R11_SNIa
+
+function N_tilde_R11_W(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: sigma_int,N_tilde_R11_W
+    Integer*4 :: m
+
+    N_tilde_R11_W = 1.d0/sqrt( eF160WR11(m)**2 + sigma_int**2 ) 
+
+end function N_tilde_R11_W
+
+function N_tilde_R11_SNIa(snia)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: N_tilde_R11_SNIa
+    Integer*4 :: snia
+
+    N_tilde_R11_SNIa = 1.d0/Sigma_mvi5av(snia) 
+
+end function N_tilde_R11_SNIa
 
 function log_likelihood_hyperparameters_as_mcmc(A,bw,sigma_int,oldpoint)    !    It computes equation (3) in published version of 1311.3461
     use arrays

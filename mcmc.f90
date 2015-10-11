@@ -130,9 +130,51 @@ Program mcmc
 
                If (use_metallicity) then 
 
-                  print *,'METALLICITY NOT IMPLEMENTED'
+                  If (use_H_band) then
+                     
+                     print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                     stop
+                     
+                  Else
 
-                  stop
+                     If (number_model_parameters .eq. 13) then
+
+                        Covguess(1,1) = sigma_mu1**2 
+
+                        Covguess(2,2) = sigma_mu2**2 
+
+                        Covguess(3,3) = sigma_mu3**2 
+
+                        Covguess(4,4) = sigma_mu4**2 
+
+                        Covguess(5,5) = sigma_mu5**2 
+
+                        Covguess(6,6) = sigma_mu6**2 
+
+                        Covguess(7,7) = sigma_mu7**2 
+
+                        Covguess(8,8) = sigma_mu8**2 
+
+                        Covguess(9,9) = sigma_mu9**2 
+
+                        Covguess(10,10) = sigma_zpw**2
+
+                        Covguess(11,11) = sigma_bw**2 
+
+                        Covguess(12,12) = sigma_m0v_ref**2 
+
+                        Covguess(13,13) = sigma_Zw**2 
+
+                     Else
+                        
+                        print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE AND COMPARE WITH EQUATION (18) IN R09'
+
+                        stop
+
+                     End If
+
+                  End If
 
                Else
 
@@ -237,6 +279,8 @@ Program mcmc
             If (include_table2_R11) then
 
                 call read_table2_R11(path_to_table2_R11)
+
+                call read_table3_R11(path_to_table3_R11)
 
             End If
             
@@ -402,9 +446,41 @@ Program mcmc
 
                   If (use_metallicity) then 
 
-                     print *,'METALLICITY NOT IMPLEMENTED'
+                     If (use_H_band) then
+                     
+                        print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                        stop
 
-                     stop
+                     Else
+
+                        old_point(1) = prior_mu1
+
+                        old_point(2) = prior_mu2
+
+                        old_point(3) = prior_mu3 
+
+                        old_point(4) = prior_mu4
+
+                        old_point(5) = prior_mu5
+
+                        old_point(6) = prior_mu6
+
+                        old_point(7) = prior_mu7
+
+                        old_point(8) = prior_mu8
+
+                        old_point(9) = prior_mu9
+
+                        old_point(10) = prior_zpw
+
+                        old_point(11) = prior_bw
+
+                        old_point(12) = prior_m0v_ref
+
+                        old_point(13) = prior_Zw
+                        
+                     End If
 
                   Else
 
@@ -532,9 +608,41 @@ Program mcmc
 
                   If (use_metallicity) then 
 
-                     print *,'METALLICITY NOT IMPLEMENTED'
+                     If (use_H_band) then
 
-                     stop
+                        print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                        stop
+
+                     Else
+                     
+                        x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
+
+                        x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
+
+                        x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
+
+                        x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
+
+                        x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
+
+                        x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
+
+                        x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
+
+                        x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
+
+                        x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
+
+                        x_old(10) = genunf(real(prior_zpw - sigma_zpw),real(prior_zpw + sigma_zpw))
+
+                        x_old(11) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
+
+                        x_old(12) = genunf(real(prior_m0v_ref - sigma_m0v_ref),real(prior_m0v_ref + sigma_m0v_ref))
+
+                        x_old(13) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+
+                     End If
 
                   Else
 
@@ -638,9 +746,19 @@ Program mcmc
             
            ! COMPUTE INITIAL LIKELIHOOD
            If (doing_R11_analysis) then
+              
+              If (use_H_band) then
 
-              old_loglikelihood = log_R11_likelihood_H(old_point(1:number_model_parameters-1),&
-                   old_point(number_model_parameters),prior_sigma_int)
+                 old_loglikelihood = log_R11_likelihood_H(old_point(1:number_model_parameters-1),&
+                      old_point(number_model_parameters),prior_sigma_int)
+
+              Else
+
+                 old_loglikelihood = log_R11_likelihood_W(old_point(1:number_model_parameters-4),&
+                      old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
+                      old_point(number_model_parameters-1),old_point(number_model_parameters),prior_sigma_int)
+
+              End If
 
            Else
 
@@ -711,9 +829,41 @@ Program mcmc
 
               If (use_metallicity) then 
 
-                 print *,'METALLICITY NOT IMPLEMENTED'
+                 If (use_H_band) then
 
-                 stop
+                    print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                    stop
+
+                 Else
+
+                    write(16,*) 'mu01    \mu_{0,1}'
+
+                    write(16,*) 'mu02    \mu_{0,2}'
+
+                    write(16,*) 'mu03    \mu_{0,3}'
+
+                    write(16,*) 'mu04    \mu_{0,4}'
+
+                    write(16,*) 'mu05    \mu_{0,5}'
+
+                    write(16,*) 'mu06    \mu_{0,6}'
+
+                    write(16,*) 'mu07    \mu_{0,7}'
+
+                    write(16,*) 'mu08    \mu_{0,8}'
+
+                    write(16,*) 'mu04258    \mu_{0,4258}'
+
+                    write(16,*) 'zpw4258    zp_{w,4258}'
+
+                    write(16,*) 'bw    b_w'
+
+                    write(16,*) 'm0v4258    m^0_{v,4258}'
+
+                    write(16,*) 'Zw    Z_w'
+
+                 End If
 
               Else
 
@@ -766,7 +916,6 @@ Program mcmc
            !write(16,*) 'sigma_int    \sigma_{int}'
 
         End If
-
 
         If (hyperparameters_as_mcmc) then
                 ! WRITING PARAMNAMES FOR HYPER-PARAMETERS
@@ -826,9 +975,41 @@ Program mcmc
 
               If (use_metallicity) then 
 
-                 print *,'METALLICITY NOT IMPLEMENTED'
+                 If (use_H_band) then
 
-                 stop
+                    print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                    stop
+                    
+                 Else
+
+                    write(17,*) 'mu01    0.    50.'
+
+                    write(17,*) 'mu02    0.    50.'
+
+                    write(17,*) 'mu03    0.    50.'
+
+                    write(17,*) 'mu04    0.    50.'
+
+                    write(17,*) 'mu05    0.    50.'
+
+                    write(17,*) 'mu06    0.    50.'
+
+                    write(17,*) 'mu07    0.    50.'
+
+                    write(17,*) 'mu08    0.    50.'
+
+                    write(17,*) 'mu04258    0.    50.'
+
+                    write(17,*) 'zpw4258    0.    50.'
+
+                    write(17,*) 'bw    -20.    0.'
+
+                    write(17,*) 'm0v4258    0.    14.'
+
+                    write(17,*) 'Zw    -2.    2.'
+
+                 End If
 
               Else
 
@@ -969,9 +1150,18 @@ Program mcmc
 
              If (use_metallicity) then 
 
-                print *,'METALLICITY NOT IMPLEMENTED'
+                If (use_H_band) then
 
-                stop
+                   print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                   stop
+                   
+                Else
+
+                   write(13,*) '# WEIGHT   -ln(L/L_{max})    mu01    mu02    mu03'//trim(&
+                   '    mu04    mu05    mu06    mu07    mu08    mu04258    zpw4258    bw    m0v4258    Zw')//'' 
+
+                End If
 
              Else
 
@@ -1073,9 +1263,41 @@ Program mcmc
 
                   If (use_metallicity) then 
 
-                     print *,'METALLICITY NOT IMPLEMENTED'
+                     If (use_H_band) then
 
-                     stop
+                        print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                        stop
+
+                     Else
+
+                        plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
+
+                        plausibility(2) = (x_new(2) .le. real(0.d0)) .or. (x_new(2) .ge. real(5.d1))
+
+                        plausibility(3) = (x_new(3) .le. real(0.d0)) .or. (x_new(3) .ge. real(5.d1))
+
+                        plausibility(4) = (x_new(4) .le. real(0.d0)) .or. (x_new(4) .ge. real(5.d1))
+
+                        plausibility(5) = (x_new(5) .le. real(0.d0)) .or. (x_new(5) .ge. real(5.d1))
+
+                        plausibility(6) = (x_new(6) .le. real(0.d0)) .or. (x_new(6) .ge. real(5.d1))
+
+                        plausibility(7) = (x_new(7) .le. real(0.d0)) .or. (x_new(7) .ge. real(5.d1))
+
+                        plausibility(8) = (x_new(8) .le. real(0.d0)) .or. (x_new(8) .ge. real(5.d1))
+
+                        plausibility(9) = (x_new(9) .le. real(0.d0)) .or. (x_new(9) .ge. real(50.d0))
+
+                        plausibility(10) =  (x_new(10) .le. real(0.d0)) .or. (x_new(10) .ge. real(50.d0)) 
+
+                        plausibility(11) =  (x_new(11) .le. real(-20.d0)) .or. (x_new(11) .ge. real(0.d0)) 
+
+                        plausibility(12) =  (x_new(12) .le. real(0.d0)) .or. (x_new(12) .ge. real(14.d0)) 
+
+                        plausibility(13) =  (x_new(13) .le. real(-2.d0)) .or. (x_new(13) .ge. real(2.d0)) 
+
+                     End If
 
                   Else
 
@@ -1217,8 +1439,18 @@ Program mcmc
 
                If (doing_R11_analysis) then
 
-                  current_loglikelihood = log_R11_likelihood_H(current_point(1:number_model_parameters-1),&
-                       current_point(number_model_parameters),prior_sigma_int)
+                  If (use_H_band) then
+
+                     current_loglikelihood = log_R11_likelihood_H(current_point(1:number_model_parameters-1),&
+                          current_point(number_model_parameters),prior_sigma_int)
+
+                  Else
+
+                     current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-4),&
+                          current_point(number_model_parameters-3),current_point(number_model_parameters-2),&
+                          current_point(number_model_parameters-1),current_point(number_model_parameters),prior_sigma_int)
+
+                  End If
 
                Else
 
@@ -1540,7 +1772,15 @@ Program mcmc
                
                If (doing_R11_analysis) then  !MUST IMPLEMENT OTHER OPTIONS LATER!!!!!!!!!!!!!!!!!
 
-                  call system('cd analyzer; python analyze_HP_R11_H.py')
+                  If (use_H_band) then
+
+                     call system('cd analyzer; python analyze_HP_R11_H.py')
+
+                  Else
+
+                     call system('cd analyzer; python analyze_HP_R11_W.py')
+
+                  End If
 
                Else
 
@@ -1604,9 +1844,43 @@ Program mcmc
 
           If (use_metallicity) then 
 
-             print *,'METALLICITY NOT IMPLEMENTED'
+             If (use_H_band) then
 
-             stop
+                print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                stop
+
+             Else
+
+                write(15,*) 'BESTFIT IS : '
+
+                write(15,*) 'mu01 = ', bestfit(1)
+
+                write(15,*) 'mu02 = ', bestfit(2)
+
+                write(15,*) 'mu03 = ', bestfit(3)
+
+                write(15,*) 'mu04 = ', bestfit(4)
+
+                write(15,*) 'mu05 = ', bestfit(5)
+
+                write(15,*) 'mu06 = ', bestfit(6)
+
+                write(15,*) 'mu07 = ', bestfit(7)
+
+                write(15,*) 'mu08 = ', bestfit(8)
+
+                write(15,*) 'mu04258 = ', bestfit(9)
+
+                write(15,*) 'zpw4258 = ', bestfit(10)
+
+                write(15,*) 'bw = ', bestfit(11)
+
+                write(15,*) 'm0v4258 = ', bestfit(12)
+
+                write(15,*) 'Zw = ', bestfit(13)
+
+             End If
 
           Else
 
@@ -1701,9 +1975,43 @@ Program mcmc
 
           If (use_metallicity) then 
 
-             print *,'METALLICITY NOT IMPLEMENTED'
+             If (use_H_band) then
 
-             stop
+                print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                stop
+                
+             Else
+
+                write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+
+                write(15,*) 'mu01 = ', means(1)
+
+                write(15,*) 'mu02 = ', means(2)
+
+                write(15,*) 'mu03 = ', means(3)
+
+                write(15,*) 'mu04 = ', means(4)
+
+                write(15,*) 'mu05 = ', means(5)
+
+                write(15,*) 'mu06 = ', means(6)
+
+                write(15,*) 'mu07 = ', means(7)
+
+                write(15,*) 'mu08 = ', means(8)
+
+                write(15,*) 'mu04258 = ', means(9)
+
+                write(15,*) 'zpw4258 = ', means(10)
+
+                write(15,*) 'bw = ', means(11)
+
+                write(15,*) 'm0v4258 = ', means(12)
+
+                write(15,*) 'Zw = ', means(13)
+
+             End If
 
           Else
 

@@ -20,6 +20,18 @@ Module fiducial
     Real*8,parameter    :: mu_0_LMC = 5.d0*log10(LMC_distance) + 25.d0 
     Real*8,parameter    :: prior_zpH = 28.d0
     Real*8,parameter    :: prior_bH = -2.7d0
+    Real*8,parameter    :: prior_mu1 = 30.91d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu2 = 31.67d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu3 = 32.13d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu4 = 31.70d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu5 = 32.27d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu6 = 32.59d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu7 = 31.72d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu8 = 31.66d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu9 = mu_0_NGC4258
+    Real*8,parameter    :: prior_zpw = 26.d0
+    Real*8,parameter    :: prior_Zw = 0.d0
+    Real*8,parameter    :: prior_m0v_ref = 10.15d0
 
     !################################################
     ! 1-SIGMA VALUES FOR PARAMETERS IN FIDUCIAL MODEL
@@ -36,6 +48,18 @@ Module fiducial
     Real*8,parameter    :: sigma_mu_0_LMC = 5.d0/log(10.d0)/LMC_distance*sigma_LMC_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_zpH = 0.2d0
     Real*8,parameter    :: sigma_bH = 0.1d0
+    Real*8,parameter    :: sigma_mu1 = 0.07d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: sigma_mu2 = 0.08d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: sigma_mu3 = 0.07d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: sigma_mu4 = 0.08d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: sigma_mu5 = 0.08d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: sigma_mu6 = 0.09d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: sigma_mu7 = 0.07d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: sigma_mu8 = 0.08d0 ! FROM TABLE 3 IN R11 
+    Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_zpw = 0.2d0
+    Real*8,parameter    :: sigma_Zw = 0.25d0
+    Real*8,parameter    :: sigma_m0v_ref = 0.05d0
 
     !#####################
     ! OTHER SPECIFICATIONS
@@ -48,8 +72,8 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 10 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
-                                                        ! 11 FOR R11 DATA WITH METALLICITY, 12 FOR R11 DATA WITH METALLICITY AND REDDENING-FREE MAGNITUDE 
+    Integer*4,parameter :: number_model_parameters = 13 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+                                                        ! 13 FOR R11 DATA INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE 
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
     Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
     Integer*4,parameter :: jumping_factor_update = 100           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)
@@ -74,9 +98,9 @@ Module fiducial
     Logical,parameter   :: use_NGC4258_as_anchor = .true.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_LMC_as_anchor = .false.           ! USE LMC AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_MW_as_anchor = .false.            ! USE MW AS ANCHOR IF SET IT TRUE
-    Logical,parameter   :: use_metallicity = .false.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
-    Logical,parameter   :: use_H_band = .true.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
-    Logical,parameter   :: determining_m_0_v_4258 = .false.      ! DETERMINE m^0_v,4258 IF SET IT TRUE
+    Logical,parameter   :: use_metallicity = .true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
+    Logical,parameter   :: use_H_band = .false.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
+    Logical,parameter   :: determining_m_0_v_4258 = .true.      ! DETERMINE m^0_v,4258 IF SET IT TRUE
     Logical,parameter   :: doing_R11_analysis = .true.           ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
@@ -86,6 +110,7 @@ Module fiducial
     Character(len=*),parameter :: path_to_datafileABC = './data/dataABC.txt'    ! PATH TO JOINT DATA SET ABC
     Character*16,parameter     :: phrase = 'randomizer'    ! PHRASE NEEDED BY RANDOM NUMBER GENERATOR 
     character(len=*),parameter :: path_to_table2_R11 = './data/table2_R11.txt' ! PATH TO DATA OF TABLE 2 IN R11
+    character(len=*),parameter :: path_to_table3_R11 = './data/table3_R11.txt' ! PATH TO DATA OF TABLE 2 IN R11
     Character(len=5),dimension(number_of_hosts_galaxies), parameter :: host = ['n4536','n4639','n3982','n3370','n3021','n1309',&
     'n4038','n5584','n4258'] ! HOST GALAXIES IN SAME ORDER LISTED IN TABLE 2 OF R11
 
