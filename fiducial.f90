@@ -9,8 +9,8 @@ Module fiducial
     !#############################
 
     Real*8,parameter    :: prior_A = 12.5d0
-    Real*8,parameter    :: prior_bw = -3.d0
-    Real*8,parameter    :: prior_sigma_int = 0.d0!0.30d0
+    Real*8,parameter    :: prior_bw = -3.23d0
+    Real*8,parameter    :: prior_sigma_int = 0.30d0
     Real*8,parameter    :: prior_alpha_j = 5.d-1
     Real*8,parameter    :: R = 0.410d0                  ! TAKEN FROM PAGE 7 IN R11
     Real*8,parameter    :: a_v = 0.697d0                ! TAKEN FROM PAGE 9 IN R11
@@ -38,28 +38,28 @@ Module fiducial
     !################################################
 
     Real*8,parameter    :: sigma_A = 1.8d-2
-    Real*8,parameter    :: sigma_bw = 6.d-2
+    Real*8,parameter    :: sigma_bw = 1.d-1
     Real*8,parameter    :: sigma_sigma_int = 1.d-2
     Real*8,parameter    :: sigma_alpha_j = 1.d-3
-    Real*8,parameter    :: sigma_a_v = 0.00201d0        ! TAKEN FROM PAGE 9 IN R11
+    Real*8,parameter    :: sigma_a_v = 5.d-2!0.00201d0        ! TAKEN FROM PAGE 9 IN R11
     Real*8,parameter    :: sigma_NGC4258_quadrature = 0.23d0    ! TAKEN FROM PAGE 1 IN H13. UNITS : MPC
     Real*8,parameter    :: sigma_mu_0_NGC4258 = 5.d0/log(10.d0)/NGC4258_distance*sigma_NGC4258_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_LMC_quadrature = 1.13d0 ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : KPC
     Real*8,parameter    :: sigma_mu_0_LMC = 5.d0/log(10.d0)/LMC_distance*sigma_LMC_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_zpH = 0.2d0
     Real*8,parameter    :: sigma_bH = 0.1d0
-    Real*8,parameter    :: sigma_mu1 = 0.07d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: sigma_mu2 = 0.08d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: sigma_mu3 = 0.07d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: sigma_mu4 = 0.08d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: sigma_mu5 = 0.08d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: sigma_mu6 = 0.09d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: sigma_mu7 = 0.07d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: sigma_mu8 = 0.08d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu1 = sigma_mu_0_NGC4258/2.d0
+    Real*8,parameter    :: sigma_mu2 = sigma_mu_0_NGC4258/2.d0
+    Real*8,parameter    :: sigma_mu3 = sigma_mu_0_NGC4258/2.d0
+    Real*8,parameter    :: sigma_mu4 = sigma_mu_0_NGC4258/2.d0
+    Real*8,parameter    :: sigma_mu5 = sigma_mu_0_NGC4258/2.d0
+    Real*8,parameter    :: sigma_mu6 = sigma_mu_0_NGC4258/2.d0
+    Real*8,parameter    :: sigma_mu7 = sigma_mu_0_NGC4258/2.d0
+    Real*8,parameter    :: sigma_mu8 = sigma_mu_0_NGC4258/2.d0
+    Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258/2.d0
     Real*8,parameter    :: sigma_zpw = 0.2d0
     Real*8,parameter    :: sigma_Zw = 0.25d0
-    Real*8,parameter    :: sigma_H0 = 3.0d0
+    Real*8,parameter    :: sigma_H0 = 1.0d-1
 
     !#####################
     ! OTHER SPECIFICATIONS

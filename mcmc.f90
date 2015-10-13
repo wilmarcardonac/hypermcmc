@@ -166,7 +166,7 @@ Program mcmc
 
                         Covguess(13,13) = sigma_a_v**2
 
-                        Covguess(13,13) = sigma_Zw**2 
+                        Covguess(14,14) = sigma_Zw**2 
 
                      Else
                         
@@ -992,33 +992,33 @@ Program mcmc
                     
                  Else
 
-                    write(17,*) 'mu01    0.    50.'
+                    write(17,*) 'mu01    20.    40.'
 
-                    write(17,*) 'mu02    0.    50.'
+                    write(17,*) 'mu02    20.    40.'
 
-                    write(17,*) 'mu03    0.    50.'
+                    write(17,*) 'mu03    20.    40.'
 
-                    write(17,*) 'mu04    0.    50.'
+                    write(17,*) 'mu04    20.    40.'
 
-                    write(17,*) 'mu05    0.    50.'
+                    write(17,*) 'mu05    20.    40.'
 
-                    write(17,*) 'mu06    0.    50.'
+                    write(17,*) 'mu06    20.    40.'
 
-                    write(17,*) 'mu07    0.    50.'
+                    write(17,*) 'mu07    20.    40.'
 
-                    write(17,*) 'mu08    0.    50.'
+                    write(17,*) 'mu08    20.    40.'
 
-                    write(17,*) 'mu04258    0.    50.'
+                    write(17,*) 'mu04258    15.    25.'
 
-                    write(17,*) 'zpw4258    0.    50.'
+                    write(17,*) 'zpw4258    25.    34.'
 
-                    write(17,*) 'bw    -20.    0.'
+                    write(17,*) 'bw    -3.2    -2.5'
 
-                    write(17,*) 'H0    0.    100.'
+                    write(17,*) 'H0    55.    85.'
 
                     write(17,*) 'av    0.    1.'
 
-                    write(17,*) 'Zw    -2.    2.'
+                    write(17,*) 'Zw    -1.    1.'
 
                  End If
 
@@ -1282,33 +1282,33 @@ Program mcmc
 
                      Else
 
-                        plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
+                        plausibility(1) = (x_new(1) .le. real(20.d0)) .or. (x_new(1) .ge. real(4.d1))
 
-                        plausibility(2) = (x_new(2) .le. real(0.d0)) .or. (x_new(2) .ge. real(5.d1))
+                        plausibility(2) = (x_new(2) .le. real(20.d0)) .or. (x_new(2) .ge. real(4.d1))
 
-                        plausibility(3) = (x_new(3) .le. real(0.d0)) .or. (x_new(3) .ge. real(5.d1))
+                        plausibility(3) = (x_new(3) .le. real(20.d0)) .or. (x_new(3) .ge. real(4.d1))
 
-                        plausibility(4) = (x_new(4) .le. real(0.d0)) .or. (x_new(4) .ge. real(5.d1))
+                        plausibility(4) = (x_new(4) .le. real(20.d0)) .or. (x_new(4) .ge. real(4.d1))
 
-                        plausibility(5) = (x_new(5) .le. real(0.d0)) .or. (x_new(5) .ge. real(5.d1))
+                        plausibility(5) = (x_new(5) .le. real(20.d0)) .or. (x_new(5) .ge. real(4.d1))
 
-                        plausibility(6) = (x_new(6) .le. real(0.d0)) .or. (x_new(6) .ge. real(5.d1))
+                        plausibility(6) = (x_new(6) .le. real(20.d0)) .or. (x_new(6) .ge. real(4.d1))
 
-                        plausibility(7) = (x_new(7) .le. real(0.d0)) .or. (x_new(7) .ge. real(5.d1))
+                        plausibility(7) = (x_new(7) .le. real(20.d0)) .or. (x_new(7) .ge. real(4.d1))
 
-                        plausibility(8) = (x_new(8) .le. real(0.d0)) .or. (x_new(8) .ge. real(5.d1))
+                        plausibility(8) = (x_new(8) .le. real(20.d0)) .or. (x_new(8) .ge. real(4.d1))
 
-                        plausibility(9) = (x_new(9) .le. real(0.d0)) .or. (x_new(9) .ge. real(50.d0))
+                        plausibility(9) = (x_new(9) .le. real(15.d0)) .or. (x_new(9) .ge. real(25.d0))
 
-                        plausibility(10) =  (x_new(10) .le. real(0.d0)) .or. (x_new(10) .ge. real(50.d0)) 
+                        plausibility(10) =  (x_new(10) .le. real(25.d0)) .or. (x_new(10) .ge. real(34.d0)) 
 
-                        plausibility(11) =  (x_new(11) .le. real(-20.d0)) .or. (x_new(11) .ge. real(0.d0)) 
+                        plausibility(11) =  (x_new(11) .le. real(-3.2d0)) .or. (x_new(11) .ge. real(-2.5d0)) 
 
-                        plausibility(12) =  (x_new(12) .le. real(0.d0)) .or. (x_new(12) .ge. real(100.d0)) 
+                        plausibility(12) =  (x_new(12) .le. real(55.d0)) .or. (x_new(12) .ge. real(85.d0)) 
 
                         plausibility(13) =  (x_new(13) .le. real(0.d0)) .or. (x_new(13) .ge. real(1.d0)) 
 
-                        plausibility(14) =  (x_new(14) .le. real(-2.d0)) .or. (x_new(14) .ge. real(2.d0)) 
+                        plausibility(14) =  (x_new(14) .le. real(-1.d0)) .or. (x_new(14) .ge. real(1.d0)) 
 
                      End If
 

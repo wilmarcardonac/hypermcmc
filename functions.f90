@@ -572,7 +572,7 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,av,Zw,sigma_int)    !    EQUATI
         End Do
 
         log_R11_likelihood_W = ( mu0j(9) - mu_0_NGC4258)**2/sigma_mu_0_NGC4258**2 + log_R11_likelihood_W
-
+        
         If ( abs(log_R11_likelihood_W) .ge. 0.d0 ) then
 
             continue
