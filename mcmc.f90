@@ -35,6 +35,7 @@ Program mcmc
 
     Character(len=10) :: string ! STORES STRINGS FOR INTEGERS
     Character(len=12),dimension(number_hyperparameters) :: alpha_string
+    Character(len=12),dimension(number_of_parameters) :: paramnames,latexname
 
 !##########################################################
 ! ASSIGNMENTS AND INITIALIZATION OF RANDOM NUMBER GENERATOR
@@ -844,33 +845,53 @@ Program mcmc
 
                  Else
 
-                    write(16,*) 'mu01    \mu_{0,1}'
+                    paramnames(1) = 'mu01'
+                    latexname(1) = '\mu_{0,1}'
 
-                    write(16,*) 'mu02    \mu_{0,2}'
+                    paramnames(2) = 'mu02'
+                    latexname(2) = '\mu_{0,2}'
 
-                    write(16,*) 'mu03    \mu_{0,3}'
+                    paramnames(3) = 'mu03'
+                    latexname(3) = '\mu_{0,3}'
 
-                    write(16,*) 'mu04    \mu_{0,4}'
+                    paramnames(4) = 'mu04'
+                    latexname(4) = '\mu_{0,4}'
 
-                    write(16,*) 'mu05    \mu_{0,5}'
+                    paramnames(5) = 'mu05'
+                    latexname(5) = '\mu_{0,5}'
 
-                    write(16,*) 'mu06    \mu_{0,6}'
+                    paramnames(6) = 'mu06'
+                    latexname(6) = '\mu_{0,6}'
 
-                    write(16,*) 'mu07    \mu_{0,7}'
+                    paramnames(7) = 'mu07'
+                    latexname(7) = '\mu_{0,7}'
 
-                    write(16,*) 'mu08    \mu_{0,8}'
+                    paramnames(8) = 'mu08'
+                    latexname(8) = '\mu_{0,8}'
 
-                    write(16,*) 'mu04258    \mu_{0,4258}'
+                    paramnames(9) = 'mu04258'
+                    latexname(9) = '\mu_{0,4258}'
 
-                    write(16,*) 'zpw4258    zp_{w,4258}'
+                    paramnames(10) = 'zpw4258'
+                    latexname(10) = 'zp_{w,4258}'
 
-                    write(16,*) 'bw    b_w'
+                    paramnames(11) = 'bw'
+                    latexname(11) = 'b_w'
 
-                    write(16,*) 'H0    H_0'
+                    paramnames(12) = 'H0'
+                    latexname(12) = 'H_0'
 
-                    write(16,*) 'av    a_v'
+                    paramnames(13) = 'av'
+                    latexname(13) = 'a_v'
 
-                    write(16,*) 'Zw    Z_w'
+                    paramnames(14) = 'Zw'
+                    latexname(14) = 'Z_w'
+
+                    Do m=1,number_model_parameters
+
+                       write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+
+                    End Do
 
                  End If
 
@@ -992,33 +1013,33 @@ Program mcmc
                     
                  Else
 
-                    write(17,*) 'mu01    20.    40.'
+                    write(17,*) ''//trim(paramnames(1))//'    20.    40.'
 
-                    write(17,*) 'mu02    20.    40.'
+                    write(17,*) ''//trim(paramnames(2))//'    20.    40.'
 
-                    write(17,*) 'mu03    20.    40.'
+                    write(17,*) ''//trim(paramnames(3))//'    20.    40.'
 
-                    write(17,*) 'mu04    20.    40.'
+                    write(17,*) ''//trim(paramnames(4))//'    20.    40.'
 
-                    write(17,*) 'mu05    20.    40.'
+                    write(17,*) ''//trim(paramnames(5))//'    20.    40.'
 
-                    write(17,*) 'mu06    20.    40.'
+                    write(17,*) ''//trim(paramnames(6))//'    20.    40.'
 
-                    write(17,*) 'mu07    20.    40.'
+                    write(17,*) ''//trim(paramnames(7))//'    20.    40.'
 
-                    write(17,*) 'mu08    20.    40.'
+                    write(17,*) ''//trim(paramnames(8))//'    20.    40.'
 
-                    write(17,*) 'mu04258    15.    25.'
+                    write(17,*) ''//trim(paramnames(9))//'    15.    25.'
 
-                    write(17,*) 'zpw4258    25.    34.'
+                    write(17,*) ''//trim(paramnames(10))//'    25.    34.'
 
-                    write(17,*) 'bw    -3.2    -2.5'
+                    write(17,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
 
-                    write(17,*) 'H0    55.    85.'
+                    write(17,*) ''//trim(paramnames(12))//'    55.    85.'
 
-                    write(17,*) 'av    0.    1.'
+                    write(17,*) ''//trim(paramnames(13))//'    0.    1.'
 
-                    write(17,*) 'Zw    -1.    1.'
+                    write(17,*) ''//trim(paramnames(14))//'    -1.    1.'
 
                  End If
 
@@ -1105,9 +1126,9 @@ Program mcmc
 
     write(13,*) '# NUMBER OF ITERATIONS IN MCMC : ', number_iterations - steps_taken_before_definite_run
 
-    If (start_from_fiducial .and. (.not.testing_Gaussian_likelihood .and. .not.doing_R11_analysis)) then
+    If (start_from_fiducial .and. .not.testing_Gaussian_likelihood) then
 
-        write(15,*) '# FIDUCIAL MODEL IS (PARAMETERS ARE ORDERED AS IN CHAINS FILES) :', prior_A, prior_bw, prior_sigma_int
+        write(15,*) '# FIDUCIAL MODEL IS (PARAMETERS ARE ORDERED AS IN CHAINS FILES) :', old_point
 
         write(15,'(a37,es18.10)') '# ln(L/L_max) AT THE FIDUCIAL MODEL :', old_loglikelihood
 
@@ -1169,8 +1190,7 @@ Program mcmc
                    
                 Else
 
-                   write(13,*) '# WEIGHT   -ln(L/L_{max})    mu01    mu02    mu03'//trim(&
-                   '    mu04    mu05    mu06    mu07    mu08    mu04258    zpw4258    bw    H0    av    Zw')//'' 
+                   write(13,*) '# WEIGHT   -ln(L/L_{max})    ', paramnames(1:number_model_parameters) 
 
                 End If
 
@@ -1225,7 +1245,7 @@ Program mcmc
                 exit
 
             Else
-
+          
                 call setgmn(x_old,real(Covguess),number_of_parameters,parm) 
 
                 call genmn(parm,x_new,work)
@@ -1662,7 +1682,7 @@ Program mcmc
             average_acceptance_probability = sum(acceptance_probability(m-jumping_factor_update+1:m))&
             /real(jumping_factor_update)
 
-!            write(15,*) 'CURRENT AVERAGE ACCEPTANCE PROBABILITY = ',average_acceptance_probability
+            write(15,*) 'CURRENT AVERAGE ACCEPTANCE PROBABILITY = ',average_acceptance_probability
             
             ! UPDATE JUMPING FACTOR IF NEEDED        
             If (average_acceptance_probability .lt. 0.1) then 
@@ -1868,33 +1888,11 @@ Program mcmc
 
                 write(15,*) 'BESTFIT IS : '
 
-                write(15,*) 'mu01 = ', bestfit(1)
+                Do m=1,number_model_parameters
 
-                write(15,*) 'mu02 = ', bestfit(2)
+                   write(15,*) ''//trim(paramnames(m))//' = ', bestfit(m)
 
-                write(15,*) 'mu03 = ', bestfit(3)
-
-                write(15,*) 'mu04 = ', bestfit(4)
-
-                write(15,*) 'mu05 = ', bestfit(5)
-
-                write(15,*) 'mu06 = ', bestfit(6)
-
-                write(15,*) 'mu07 = ', bestfit(7)
-
-                write(15,*) 'mu08 = ', bestfit(8)
-
-                write(15,*) 'mu04258 = ', bestfit(9)
-
-                write(15,*) 'zpw4258 = ', bestfit(10)
-
-                write(15,*) 'bw = ', bestfit(11)
-
-                write(15,*) 'H0 = ', bestfit(12)
-
-                write(15,*) 'av = ', bestfit(13)
-
-                write(15,*) 'Zw = ', bestfit(14)
+                End Do
 
              End If
 
@@ -2001,33 +1999,11 @@ Program mcmc
 
                 write(15,*) 'MEANS FOR THE SAMPLES ARE : '
 
-                write(15,*) 'mu01 = ', means(1)
+                Do m=1,number_model_parameters
 
-                write(15,*) 'mu02 = ', means(2)
+                   write(15,*) ''//trim(paramnames(m))//' = ', means(m)
 
-                write(15,*) 'mu03 = ', means(3)
-
-                write(15,*) 'mu04 = ', means(4)
-
-                write(15,*) 'mu05 = ', means(5)
-
-                write(15,*) 'mu06 = ', means(6)
-
-                write(15,*) 'mu07 = ', means(7)
-
-                write(15,*) 'mu08 = ', means(8)
-
-                write(15,*) 'mu04258 = ', means(9)
-
-                write(15,*) 'zpw4258 = ', means(10)
-
-                write(15,*) 'bw = ', means(11)
-
-                write(15,*) 'H0 = ', means(12)
-
-                write(15,*) 'av = ', means(13)
-
-                write(15,*) 'Zw = ', means(14)
+                End Do
 
              End If
 
