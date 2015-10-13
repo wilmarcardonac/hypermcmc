@@ -28,7 +28,7 @@ Module fiducial
     Real*8,parameter    :: prior_mu6 = 32.59d0 ! FROM TABLE 3 IN R11 
     Real*8,parameter    :: prior_mu7 = 31.72d0 ! FROM TABLE 3 IN R11 
     Real*8,parameter    :: prior_mu8 = 31.66d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu9 = mu_0_NGC4258
+    Real*8,parameter    :: prior_mu9 = mu_0_NGC4258*0.8d0
     Real*8,parameter    :: prior_zpw = 26.d0
     Real*8,parameter    :: prior_Zw = 0.d0
     Real*8,parameter    :: prior_H0 = 70.0d0
@@ -73,7 +73,7 @@ Module fiducial
 
     Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
     Integer*4,parameter :: number_model_parameters = 14 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
-                                                        ! 13 FOR R11 DATA INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE 
+                                                        ! 14 FOR R11 DATA INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE 
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
     Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
     Integer*4,parameter :: jumping_factor_update = 100           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)

@@ -571,7 +571,8 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,av,Zw,sigma_int)    !    EQUATI
               
         End Do
 
-        log_R11_likelihood_W = ( mu0j(9) - mu_0_NGC4258)**2/sigma_mu_0_NGC4258**2 + log_R11_likelihood_W
+        log_R11_likelihood_W =  log(new_chi2(chi2R11_anchor_NGC4258(mu0j(9)))) + &
+                log(1.d0/sigma_mu_0_NGC4258) + log_R11_likelihood_W
         
         If ( abs(log_R11_likelihood_W) .ge. 0.d0 ) then
 
@@ -620,6 +621,18 @@ function chi2R11_SNIa(mu0_j,H0,av,snia)    !    It computes equation (3) in publ
          (Sigma_mvi5av(snia)**2 + (5.d0*sigma_a_v)**2 )
 
 end function chi2R11_SNIa
+
+function chi2R11_anchor_NGC4258(mu09)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: mu09,chi2R11_anchor_NGC4258
+
+    chi2R11_anchor_NGC4258 = ( mu09 - mu_0_NGC4258)**2/sigma_mu_0_NGC4258**2
+
+end function chi2R11_anchor_NGC4258
 
 function N_tilde_R11_W(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
 
