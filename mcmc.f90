@@ -1029,13 +1029,13 @@ Program mcmc
 
                     write(17,*) ''//trim(paramnames(8))//'    20.    40.'
 
-                    write(17,*) ''//trim(paramnames(9))//'    15.    25.'
+                    write(17,*) ''//trim(paramnames(9))//'    20.    30.'
 
                     write(17,*) ''//trim(paramnames(10))//'    25.    34.'
 
                     write(17,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
 
-                    write(17,*) ''//trim(paramnames(12))//'    55.    85.'
+                    write(17,*) ''//trim(paramnames(12))//'    55.    95.'
 
                     write(17,*) ''//trim(paramnames(13))//'    0.    1.'
 
@@ -1318,13 +1318,13 @@ Program mcmc
 
                         plausibility(8) = (x_new(8) .le. real(20.d0)) .or. (x_new(8) .ge. real(4.d1))
 
-                        plausibility(9) = (x_new(9) .le. real(15.d0)) .or. (x_new(9) .ge. real(25.d0))
+                        plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(30.d0))
 
                         plausibility(10) =  (x_new(10) .le. real(25.d0)) .or. (x_new(10) .ge. real(34.d0)) 
 
                         plausibility(11) =  (x_new(11) .le. real(-3.2d0)) .or. (x_new(11) .ge. real(-2.5d0)) 
 
-                        plausibility(12) =  (x_new(12) .le. real(55.d0)) .or. (x_new(12) .ge. real(85.d0)) 
+                        plausibility(12) =  (x_new(12) .le. real(55.d0)) .or. (x_new(12) .ge. real(95.d0)) 
 
                         plausibility(13) =  (x_new(13) .le. real(0.d0)) .or. (x_new(13) .ge. real(1.d0)) 
 
@@ -1682,7 +1682,7 @@ Program mcmc
             average_acceptance_probability = sum(acceptance_probability(m-jumping_factor_update+1:m))&
             /real(jumping_factor_update)
 
-            write(15,*) 'CURRENT AVERAGE ACCEPTANCE PROBABILITY = ',average_acceptance_probability
+!            write(15,*) 'CURRENT AVERAGE ACCEPTANCE PROBABILITY = ',average_acceptance_probability
             
             ! UPDATE JUMPING FACTOR IF NEEDED        
             If (average_acceptance_probability .lt. 0.1) then 

@@ -28,7 +28,7 @@ Module fiducial
     Real*8,parameter    :: prior_mu6 = 32.59d0 ! FROM TABLE 3 IN R11 
     Real*8,parameter    :: prior_mu7 = 31.72d0 ! FROM TABLE 3 IN R11 
     Real*8,parameter    :: prior_mu8 = 31.66d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu9 = mu_0_NGC4258*0.8d0
+    Real*8,parameter    :: prior_mu9 = 24.8d0
     Real*8,parameter    :: prior_zpw = 26.d0
     Real*8,parameter    :: prior_Zw = 0.d0
     Real*8,parameter    :: prior_H0 = 70.0d0
@@ -41,7 +41,7 @@ Module fiducial
     Real*8,parameter    :: sigma_bw = 1.d-1
     Real*8,parameter    :: sigma_sigma_int = 1.d-2
     Real*8,parameter    :: sigma_alpha_j = 1.d-3
-    Real*8,parameter    :: sigma_a_v = 5.d-2!0.00201d0        ! TAKEN FROM PAGE 9 IN R11
+    Real*8,parameter    :: sigma_a_v = 1.d-4 !0.00201d0        ! TAKEN FROM PAGE 9 IN R11
     Real*8,parameter    :: sigma_NGC4258_quadrature = 0.23d0    ! TAKEN FROM PAGE 1 IN H13. UNITS : MPC
     Real*8,parameter    :: sigma_mu_0_NGC4258 = 5.d0/log(10.d0)/NGC4258_distance*sigma_NGC4258_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_LMC_quadrature = 1.13d0 ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : KPC
