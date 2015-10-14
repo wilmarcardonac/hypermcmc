@@ -139,7 +139,7 @@ Program mcmc
                      
                   Else
 
-                     If (number_model_parameters .eq. 14) then
+                     If (number_model_parameters .eq. 13) then
 
                         Covguess(1,1) = sigma_mu1**2 
 
@@ -165,9 +165,7 @@ Program mcmc
 
                         Covguess(12,12) = sigma_H0**2 
 
-                        Covguess(13,13) = sigma_a_v**2
-
-                        Covguess(14,14) = sigma_Zw**2 
+                        Covguess(13,13) = sigma_Zw**2 
 
                      Else
                         
@@ -481,9 +479,7 @@ Program mcmc
 
                         old_point(12) = prior_H0
 
-                        old_point(13) = a_v
-
-                        old_point(14) = prior_Zw
+                        old_point(13) = prior_Zw
                         
                      End If
 
@@ -645,9 +641,7 @@ Program mcmc
 
                         x_old(12) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
 
-                        x_old(13) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
-
-                        x_old(14) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+                        x_old(13) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
 
                      End If
 
@@ -761,10 +755,9 @@ Program mcmc
 
               Else
 
-                 old_loglikelihood = log_R11_likelihood_W(old_point(1:number_model_parameters-5),&
-                      old_point(number_model_parameters-4),old_point(number_model_parameters-3),&
-                      old_point(number_model_parameters-2),old_point(number_model_parameters-1),&
-                      old_point(number_model_parameters),prior_sigma_int)
+                 old_loglikelihood = log_R11_likelihood_W(old_point(number_model_parameters-4),&
+                      old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
+                      old_point(number_model_parameters-1),old_point(number_model_parameters),prior_sigma_int)
 
               End If
 
@@ -881,11 +874,8 @@ Program mcmc
                     paramnames(12) = 'H0'
                     latexname(12) = 'H_0'
 
-                    paramnames(13) = 'av'
-                    latexname(13) = 'a_v'
-
-                    paramnames(14) = 'Zw'
-                    latexname(14) = 'Z_w'
+                    paramnames(13) = 'Zw'
+                    latexname(13) = 'Z_w'
 
                     Do m=1,number_model_parameters
 
@@ -1037,9 +1027,7 @@ Program mcmc
 
                     write(17,*) ''//trim(paramnames(12))//'    55.    95.'
 
-                    write(17,*) ''//trim(paramnames(13))//'    0.    1.'
-
-                    write(17,*) ''//trim(paramnames(14))//'    -1.    1.'
+                    write(17,*) ''//trim(paramnames(13))//'    -1.    1.'
 
                  End If
 
@@ -1326,9 +1314,7 @@ Program mcmc
 
                         plausibility(12) =  (x_new(12) .le. real(55.d0)) .or. (x_new(12) .ge. real(95.d0)) 
 
-                        plausibility(13) =  (x_new(13) .le. real(0.d0)) .or. (x_new(13) .ge. real(1.d0)) 
-
-                        plausibility(14) =  (x_new(14) .le. real(-1.d0)) .or. (x_new(14) .ge. real(1.d0)) 
+                        plausibility(13) =  (x_new(13) .le. real(-1.d0)) .or. (x_new(13) .ge. real(1.d0)) 
 
                      End If
 
@@ -1479,10 +1465,9 @@ Program mcmc
 
                   Else
 
-                     current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-5),&
-                          current_point(number_model_parameters-4),current_point(number_model_parameters-3),&
-                          current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
-                          current_point(number_model_parameters),prior_sigma_int)
+                     current_loglikelihood = log_R11_likelihood_W(current_point(number_model_parameters-4),&
+                          current_point(number_model_parameters-3),current_point(number_model_parameters-2),&
+                          current_point(number_model_parameters-1),current_point(number_model_parameters),prior_sigma_int)
 
                   End If
 
