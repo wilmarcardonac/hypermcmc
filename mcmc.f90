@@ -755,7 +755,7 @@ Program mcmc
 
               Else
 
-                 old_loglikelihood = log_R11_likelihood_W(old_point(number_model_parameters-4),&
+                 old_loglikelihood = log_R11_likelihood_W(old_point(1:number_model_parameters-4),&
                       old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
                       old_point(number_model_parameters-1),old_point(number_model_parameters),prior_sigma_int)
 
@@ -1465,7 +1465,7 @@ Program mcmc
 
                   Else
 
-                     current_loglikelihood = log_R11_likelihood_W(current_point(number_model_parameters-4),&
+                     current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-4),&
                           current_point(number_model_parameters-3),current_point(number_model_parameters-2),&
                           current_point(number_model_parameters-1),current_point(number_model_parameters),prior_sigma_int)
 

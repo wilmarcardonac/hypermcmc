@@ -567,7 +567,7 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,sigma_int)    !    EQUATION 
         Do index_host=1,number_of_hosts_galaxies-1
 
            log_R11_likelihood_W = log(new_chi2(chi2R11_SNIa(mu0j(index_host),H0,index_host))) + &
-                log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W
+                log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W  ! ADD NON-DIAGONAL TERMS
               
         End Do
 
@@ -618,7 +618,7 @@ function chi2R11_SNIa(mu0_j,H0,snia)    !    It computes equation (3) in publish
     Integer*4 :: snia
 
     chi2R11_SNIa = ( mvi5av(snia) - reddening_free_magnitude_SNIa(mu0_j,H0) )**2/&
-         (Sigma_mvi5av(snia)**2 )!+ (5.d0*sigma_a_v)**2 )
+         (Sigma_mvi5av(snia)**2 + (5.d0*sigma_a_v)**2 )
 
 end function chi2R11_SNIa
 
@@ -656,7 +656,7 @@ function N_tilde_R11_SNIa(snia)    !    It computes equation (3) in published ve
     Real*8 :: N_tilde_R11_SNIa
     Integer*4 :: snia
 
-    N_tilde_R11_SNIa = 1.d0/sqrt( Sigma_mvi5av(snia)**2 )!+ (5.d0*sigma_a_v)**2 )
+    N_tilde_R11_SNIa = 1.d0/sqrt( Sigma_mvi5av(snia)**2 + (5.d0*sigma_a_v)**2 )
 
 end function N_tilde_R11_SNIa
 
