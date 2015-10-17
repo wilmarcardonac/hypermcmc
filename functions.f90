@@ -326,6 +326,15 @@ function P_L_relation_passband_W(mu0i,mu0_ref,zpW_ref,bW,Zw,OH_ij,P_ij) ! EQUATI
 
 end function P_L_relation_passband_W
 
+function P_L_relation_passband_W_2(zpW,bW,Zw,OH_ij,P_ij) ! EQUATION (7) IN R09
+
+    Implicit none
+    Real*8 :: P_L_relation_passband_W_2,zpW,bW,P_ij,Zw,OH_ij
+
+    P_L_relation_passband_W_2 = zpW + bW*log10(P_ij) + Zw*OH_ij
+
+end function P_L_relation_passband_W_2
+
 function reddening_free_magnitude_SNIa(mu0i,H0) ! EQUATION (16) IN R09 WITH 5*av ON THE LEFT HAND SIDE
 
     Implicit none
@@ -594,6 +603,106 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,sigma_int)    !    EQUATION 
 
 end function log_R11_likelihood_W
 
+function log_R11_likelihood_W_cepheids(mu0j,zpw_ref,bw,Zw,sigma_int)    !    EQUATION (4) IN R09
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: log_R11_likelihood_W_cepheids,zpw_ref,bw,Zw,sigma_int
+    Real*8,dimension(number_of_hosts_galaxies) :: mu0j 
+    Integer*4 :: m,index_host
+
+
+    log_R11_likelihood_W_cepheids = 0.d0
+
+    Do m=1,size(Field)
+
+       Do index_host=1,number_of_hosts_galaxies
+ 
+          If (host(index_host) .eq. Field(m)) then
+    
+             If (using_jeffreys_prior) then
+
+                print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+                stop
+
+             Else
+                       
+                log_R11_likelihood_W_cepheids = log(new_chi2(chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,&
+                     Zw,sigma_int,m))) + log(N_tilde_R11_W(sigma_int,m)) + log_R11_likelihood_W_cepheids
+
+             End If
+
+          End If
+
+       End Do
+
+    End Do
+        
+    If ( abs(log_R11_likelihood_W_cepheids) .ge. 0.d0 ) then
+
+       continue
+
+    Else 
+
+       log_R11_likelihood_W_cepheids = -1.d10
+
+    End If
+
+end function log_R11_likelihood_W_cepheids
+
+function log_likelihood_only_cepheids(galaxy,zpw,bw,Zw,sigma_int)    !    EQUATION (4) IN R09
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Character(len=5) :: galaxy
+    Real*8 :: log_likelihood_only_cepheids,zpw,bw,Zw,sigma_int
+    Integer*4 :: m,index_host
+
+
+    log_likelihood_only_cepheids = 0.d0
+
+    Do m=1,size(Field)
+
+       Do index_host=1,number_of_hosts_galaxies
+ 
+          If (host(index_host) .eq. Field(m)) then
+    
+             If (using_jeffreys_prior) then
+
+                print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+                stop
+
+             Else
+                       
+                log_likelihood_only_cepheids = log(new_chi2(chi2R11_W_2(zpw,bw,Zw,sigma_int,m))) + &
+                     log(N_tilde_R11_W(sigma_int,m)) + log_likelihood_only_cepheids
+
+             End If
+
+          End If
+
+       End Do
+
+    End Do
+
+    If ( abs(log_likelihood_only_cepheids) .ge. 0.d0 ) then
+
+       continue
+
+    Else 
+
+       log_likelihood_only_cepheids = -1.d10
+
+    End If
+
+end function log_likelihood_only_cepheids
+
 function chi2R11_W(mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
 
     use arrays
@@ -607,6 +716,20 @@ function chi2R11_W(mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,m)    !    It computes 
          P_L_relation_passband_W(mu0_j,mu0_ref,zpw_ref,bw,Zw,OHR11(m),PeriodR11(m)) )**2/( eF160WR11(m)**2 + sigma_int**2 ) 
 
 end function chi2R11_W
+
+function chi2R11_W_2(zpw,bw,Zw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: zpw,bw,Zw,sigma_int,chi2R11_W_2
+    Integer*4 :: m
+
+    chi2R11_W_2 = ( observed_m_W(F160WR11(m),VIR11(m)) - &
+         P_L_relation_passband_W_2(zpw,bw,Zw,OHR11(m),PeriodR11(m)) )**2/( eF160WR11(m)**2 + sigma_int**2 ) 
+
+end function chi2R11_W_2
 
 function chi2R11_SNIa(mu0_j,H0,snia)    !    It computes equation (3) in published version of 1311.3461
 
@@ -1324,7 +1447,6 @@ subroutine read_means_mcmc(vector)
     close(12)
 
 end subroutine read_means_mcmc
-
 
 !subroutine inverting_matrix()
 !    use fiducial
