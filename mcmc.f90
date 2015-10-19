@@ -993,6 +993,12 @@ Program mcmc
                  paramnames(12) = 'Zw'
                  latexname(12) = 'Z_w'
 
+                 Do m=1,number_model_parameters
+
+                    write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+
+                 End Do
+
               Else
 
                  paramnames(1) = 'zpw'
@@ -1003,6 +1009,12 @@ Program mcmc
               
                  paramnames(3) = 'Zw'
                  latexname(3) = 'Z_w'
+
+                 Do m=1,number_model_parameters
+
+                    write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+
+                 End Do
 
               End If
 
