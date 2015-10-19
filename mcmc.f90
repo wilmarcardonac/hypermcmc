@@ -36,10 +36,13 @@ Program mcmc
     Character(len=10) :: string ! STORES STRINGS FOR INTEGERS
     Character(len=12),dimension(number_hyperparameters) :: alpha_string
     Character(len=12),dimension(number_of_parameters) :: paramnames,latexname
+    Character(len=5) :: galaxy
 
 !##########################################################
 ! ASSIGNMENTS AND INITIALIZATION OF RANDOM NUMBER GENERATOR
 !##########################################################
+    
+    galaxy = host(1)
 
     weight = 1
 
@@ -902,7 +905,7 @@ Program mcmc
 
                  Else
 
-                    old_loglikelihood = log_likelihood_only_cepheids('galax',old_point(1),old_point(2),&
+                    old_loglikelihood = log_likelihood_only_cepheids(galaxy,old_point(1),old_point(2),&
                       old_point(3),prior_sigma_int)
 
                  End If
@@ -1792,7 +1795,7 @@ Program mcmc
 
                      Else
 
-                        current_loglikelihood = log_likelihood_only_cepheids('galax',current_point(1),&
+                        current_loglikelihood = log_likelihood_only_cepheids(galaxy,current_point(1),&
                           current_point(2),current_point(3),prior_sigma_int)
 
                      End If

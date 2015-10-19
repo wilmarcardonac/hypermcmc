@@ -668,26 +668,30 @@ function log_likelihood_only_cepheids(galaxy,zpw,bw,Zw,sigma_int)    !    EQUATI
 
     Do m=1,size(Field)
 
-       Do index_host=1,number_of_hosts_galaxies
+       If (galaxy .eq. Field(m)) then
+
+          Do index_host=1,number_of_hosts_galaxies
  
-          If (host(index_host) .eq. Field(m)) then
+             If (host(index_host) .eq. Field(m)) then
     
-             If (using_jeffreys_prior) then
+                If (using_jeffreys_prior) then
 
-                print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+                   print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
 
-                stop
+                   stop
 
-             Else
+                Else
                        
-                log_likelihood_only_cepheids = log(new_chi2(chi2R11_W_2(zpw,bw,Zw,sigma_int,m))) + &
+                   log_likelihood_only_cepheids = log(new_chi2(chi2R11_W_2(zpw,bw,Zw,sigma_int,m))) + &
                      log(N_tilde_R11_W(sigma_int,m)) + log_likelihood_only_cepheids
+
+                End If
 
              End If
 
-          End If
-
-       End Do
+          End Do
+          
+       End If
 
     End Do
 
