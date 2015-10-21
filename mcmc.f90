@@ -151,6 +151,7 @@ Program mcmc
                  End If
 
               End If
+
            Else
 
               If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
@@ -201,7 +202,7 @@ Program mcmc
                      
                     Else
 
-                       If (number_model_parameters .eq. 13) then
+                       If (number_model_parameters .eq. 14) then
                           
                           Covguess(1,1) = sigma_mu1**2 
 
@@ -228,6 +229,8 @@ Program mcmc
                           Covguess(12,12) = sigma_H0**2 
 
                           Covguess(13,13) = sigma_Zw**2 
+                          
+                          Covguess(14,14) = sigma_a_v**2
 
                        Else
                         
@@ -583,6 +586,8 @@ Program mcmc
                            old_point(12) = prior_H0
 
                            old_point(13) = prior_Zw
+
+                           old_point(14) = a_v
                         
                         End If
 
@@ -788,6 +793,8 @@ Program mcmc
 
                            x_old(13) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
 
+                           x_old(14) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
+
                         End If
 
                      Else
@@ -919,9 +926,10 @@ Program mcmc
 
                  Else
 
-                    old_loglikelihood = log_R11_likelihood_W(old_point(1:number_model_parameters-4),&
-                      old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
-                      old_point(number_model_parameters-1),old_point(number_model_parameters),prior_sigma_int)
+                    old_loglikelihood = log_R11_likelihood_W(old_point(1:number_model_parameters-5),&
+                      old_point(number_model_parameters-4),old_point(number_model_parameters-3),&
+                      old_point(number_model_parameters-2),old_point(number_model_parameters-1),&
+                      old_point(number_model_parameters),prior_sigma_int)
 
                  End If
 
@@ -1109,6 +1117,9 @@ Program mcmc
 
                        paramnames(13) = 'Zw'
                        latexname(13) = 'Z_w'
+
+                       paramnames(14) = 'av'
+                       latexname(14) = 'a_v'
 
                        Do m=1,number_model_parameters
 
@@ -1303,6 +1314,8 @@ Program mcmc
                        write(17,*) ''//trim(paramnames(12))//'    55.    95.'
 
                        write(17,*) ''//trim(paramnames(13))//'    -1.    1.'
+
+                       write(17,*) ''//trim(paramnames(14))//'    0.    1.'
 
                     End If
 
@@ -1641,6 +1654,8 @@ Program mcmc
 
                            plausibility(13) =  (x_new(13) .le. real(-1.d0)) .or. (x_new(13) .ge. real(1.d0)) 
 
+                           plausibility(14) =  (x_new(14) .le. real(0.d0)) .or. (x_new(14) .ge. real(1.d0)) 
+
                         End If
 
                      Else
@@ -1809,9 +1824,10 @@ Program mcmc
 
                      Else
 
-                        current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-4),&
-                          current_point(number_model_parameters-3),current_point(number_model_parameters-2),&
-                          current_point(number_model_parameters-1),current_point(number_model_parameters),prior_sigma_int)
+                        current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-5),&
+                          current_point(number_model_parameters-4),current_point(number_model_parameters-3),&
+                          current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
+                          current_point(number_model_parameters),prior_sigma_int)
 
                      End If
 
@@ -2117,6 +2133,7 @@ Program mcmc
                      End If
 
                   End If
+
                Else
 
                   call system('cd analyzer; python analyze_HP.py')
@@ -2388,11 +2405,123 @@ Program mcmc
 
     If (using_hyperparameters .and. .not.hyperparameters_as_mcmc) then
 
-        write(15,*) 'Hyperparameters are :'
+        write(15,*) 'COMPUTING EFFECTIVE HYPER-PARAMETERS'
 
         If (doing_R11_analysis) then
 
-           print *,'MUST IMPLEMENT EFFECTIVE HYPERPARAMETERS FOR R11 ANALYSIS'
+           If (include_only_cepheids) then
+
+              print *, 'MUST IMPLEMENT EFFECTIVE HYPER-PARAMETERS WHEN INCLUDING ONLY CEPHEIDS'
+
+           Else
+
+              If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+                 print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+
+                 stop
+
+              Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                 print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+                 stop
+
+              Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                 print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+                 stop
+          
+              Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                 print *,'MW+LMC NOT IMPLEMENTED YET'
+
+                 stop
+
+              Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                 print *,'MW NOT IMPLEMENTED YET'
+
+                 stop
+
+              Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                 print *,'LMC NOT IMPLEMENTED YET'
+
+                 stop
+                 
+              Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                 If (use_metallicity) then 
+
+                    If (use_H_band) then
+
+                       print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                       stop
+                
+                    Else
+
+                       open(20,file='./output/effective_hyperparameters.txt')
+
+                       Do m=1,size(Field)
+
+                          Do n=1,number_of_hosts_galaxies
+ 
+                             If (host(n) .eq. Field(m)) then
+
+                                If ( chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m)&
+                                     .le. 1.d0 ) then
+
+                                   write(20,*) PeriodR11(m), 1.d0
+
+                                Else
+
+                                   write(20,*) PeriodR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),&
+                                        bestfit(13),prior_sigma_int,m)
+
+                                End If
+    
+                             End If
+
+                          End Do
+
+                       End Do
+
+                       close(20)
+
+                       call system('cd analyzer; python plot_HP.py')
+
+                    End If
+
+                 Else
+
+                    If (use_H_band) then
+
+                       print *, 'EFFECTIVE HYPER-PARAMETERS FOR  H BAND NOT IMPLEMENTED'
+
+                       stop
+
+                    Else
+
+                       print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                       stop
+                        
+                    End If
+
+                 End If
+
+              Else
+
+                 print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+                 stop
+
+              End If
+
+           End If
 
         Else
 

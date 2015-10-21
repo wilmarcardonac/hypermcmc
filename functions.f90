@@ -340,7 +340,7 @@ function reddening_free_magnitude_SNIa(mu0i,H0) ! EQUATION (16) IN R09 WITH 5*av
     Implicit none
     Real*8 :: reddening_free_magnitude_SNIa,mu0i,H0
 
-    reddening_free_magnitude_SNIa = mu0i + 5.d0*log10(H0) - 25.d0
+    reddening_free_magnitude_SNIa = mu0i + 5.d0*log10(H0) - 25.d0 
 
 end function reddening_free_magnitude_SNIa
 
@@ -498,13 +498,13 @@ function N_tilde_R11_H(sigma_int,m)    !    It computes equation (3) in publishe
 
 end function N_tilde_R11_H
 
-function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,sigma_int)    !    EQUATION (4) IN R09
+function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATION (4) IN R09
 
     use arrays
     use fiducial
     Implicit none
 
-    Real*8 :: log_R11_likelihood_W,zpw_ref,bw,H0,Zw,sigma_int
+    Real*8 :: log_R11_likelihood_W,zpw_ref,bw,H0,Zw,av,sigma_int
     Real*8,dimension(number_of_hosts_galaxies) :: mu0j 
     Integer*4 :: m,index_host
 
@@ -576,12 +576,14 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,sigma_int)    !    EQUATION 
         Do index_host=1,number_of_hosts_galaxies-1
 
            log_R11_likelihood_W = log(new_chi2(chi2R11_SNIa(mu0j(index_host),H0,index_host))) + &
-                log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W  ! ADD NON-DIAGONAL TERMS
+                log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W  
               
         End Do
 
-        log_R11_likelihood_W =  log(new_chi2(chi2R11_anchor_NGC4258(mu0j(9)))) + &
-                log(1.d0/sigma_mu_0_NGC4258) + log_R11_likelihood_W
+        log_R11_likelihood_W = -((a_v - av)**2/sigma_a_v**2 + log(2.d0*Pi*sigma_a_v**2) )/2.d0  + log_R11_likelihood_W
+
+        log_R11_likelihood_W =  -(chi2R11_anchor_NGC4258(mu0j(9)) + log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 + &
+             log_R11_likelihood_W
         
         If ( abs(log_R11_likelihood_W) .ge. 0.d0 ) then
 
@@ -744,8 +746,7 @@ function chi2R11_SNIa(mu0_j,H0,snia)    !    It computes equation (3) in publish
     Real*8 :: mu0_j,H0,chi2R11_SNIa
     Integer*4 :: snia
 
-    chi2R11_SNIa = ( mvi5av(snia) - reddening_free_magnitude_SNIa(mu0_j,H0) )**2/&
-         (Sigma_mvi5av(snia)**2 + (5.d0*sigma_a_v)**2 )
+    chi2R11_SNIa = ( mvi5av(snia) - reddening_free_magnitude_SNIa(mu0_j,H0) )**2/Sigma_mvi5av(snia)**2
 
 end function chi2R11_SNIa
 
@@ -783,7 +784,7 @@ function N_tilde_R11_SNIa(snia)    !    It computes equation (3) in published ve
     Real*8 :: N_tilde_R11_SNIa
     Integer*4 :: snia
 
-    N_tilde_R11_SNIa = 1.d0/sqrt( Sigma_mvi5av(snia)**2 + (5.d0*sigma_a_v)**2 )
+    N_tilde_R11_SNIa = 1.d0/Sigma_mvi5av(snia) 
 
 end function N_tilde_R11_SNIa
 
