@@ -100,7 +100,9 @@ Module fiducial
     Logical,parameter   :: use_MW_as_anchor = .false.            ! USE MW AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_metallicity = .true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
     Logical,parameter   :: use_H_band = .false.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
-    Logical,parameter   :: determining_m_0_v_4258 = .true.      ! DETERMINE m^0_v,4258 IF SET IT TRUE
+    Logical,parameter   :: use_HP_in_SNIa = .false.               ! USE HPs WHEN COMPUTING SNIa CHI2
+    Logical,parameter   :: use_HP_in_av = .false.                ! USE HPs WHEN COMPUTINNG av CHI2
+    Logical,parameter   :: use_HP_in_anchor = .false.            ! USE HPs WHEN COMPUTING ANCHOR CHI2
     Logical,parameter   :: doing_R11_analysis = .true.           ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE

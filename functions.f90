@@ -562,8 +562,8 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
 
                     Else
                        
-                        log_R11_likelihood_W = log(new_chi2(chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,sigma_int,m))) + &
-                        log(N_tilde_R11_W(sigma_int,m)) + log_R11_likelihood_W
+                       log_R11_likelihood_W = log(new_chi2(chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,sigma_int,m))) + &
+                               log(N_tilde_R11_W(sigma_int,m)) + log_R11_likelihood_W
 
                     End If
 
@@ -575,15 +575,41 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
 
         Do index_host=1,number_of_hosts_galaxies-1
 
-           log_R11_likelihood_W = log(new_chi2(chi2R11_SNIa(mu0j(index_host),H0,av,index_host))) + &
-                log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W  
+           If (use_HP_in_SNIa) then
+
+              log_R11_likelihood_W = log(new_chi2(chi2R11_SNIa(mu0j(index_host),H0,av,index_host))) + &
+                   log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W  
+
+           Else
+
+              log_R11_likelihood_W = -chi2R11_SNIa(mu0j(index_host),H0,av,index_host)/2.d0 + &
+                   log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W  
+
+           End If
               
         End Do
+        
+        If (use_HP_in_av) then
 
-        log_R11_likelihood_W = -((a_v - av)**2/sigma_a_v**2 + log(2.d0*Pi*sigma_a_v**2) )/2.d0  + log_R11_likelihood_W
+           log_R11_likelihood_W = log(new_chi2((a_v - av)**2/sigma_a_v**2)) - log(2.d0*Pi*sigma_a_v**2)/2.d0  + log_R11_likelihood_W
 
-        log_R11_likelihood_W =  -(chi2R11_anchor_NGC4258(mu0j(9)) + log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 + &
+        Else
+
+           log_R11_likelihood_W = -((a_v - av)**2/sigma_a_v**2 + log(2.d0*Pi*sigma_a_v**2) )/2.d0  + log_R11_likelihood_W
+
+        End If
+        
+        If (use_HP_in_anchor) then
+
+           log_R11_likelihood_W =  log(new_chi2(chi2R11_anchor_NGC4258(mu0j(9)))) - log(2.d0*Pi*sigma_mu_0_NGC4258**2)/2.d0 + &
              log_R11_likelihood_W
+
+        Else
+
+           log_R11_likelihood_W =  -(chi2R11_anchor_NGC4258(mu0j(9)) + log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 + &
+             log_R11_likelihood_W
+
+        End If
         
         If ( abs(log_R11_likelihood_W) .ge. 0.d0 ) then
 
