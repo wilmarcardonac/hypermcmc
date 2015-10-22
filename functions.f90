@@ -746,7 +746,7 @@ function chi2R11_SNIa(mu0_j,H0,av,snia)    !    It computes equation (3) in publ
     Real*8 :: mu0_j,H0,av,chi2R11_SNIa
     Integer*4 :: snia
 
-    chi2R11_SNIa = ( mvi5av(snia) - reddening_free_magnitude_SNIa(mu0_j,H0,av) )**2/&
+    chi2R11_SNIa = ( mvi5av(snia) - 5.d0*a_v - reddening_free_magnitude_SNIa(mu0_j,H0,av) )**2/&
          (Sigma_mvi5av(snia)**2 + (5.d0*sigma_a_v)**2)
 
 end function chi2R11_SNIa
