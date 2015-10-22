@@ -2474,12 +2474,12 @@ Program mcmc
                                 If ( chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m)&
                                      .le. 1.d0 ) then
 
-                                   write(20,*) PeriodR11(m), 1.d0
+                                   write(20,*) PeriodR11(m), 1.d0, Field(m)
 
                                 Else
 
                                    write(20,*) PeriodR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),&
-                                        bestfit(13),prior_sigma_int,m)
+                                        bestfit(13),prior_sigma_int,m), Field(m)
 
                                 End If
     
