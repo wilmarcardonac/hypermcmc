@@ -1,0 +1,10 @@
+output/*.txt
+output/*.paramnames
+output/*.ranges
+*.mod
+*.o
+*.zip
+*.tgz
+*.out
+analyzer/*~
+data/*~
