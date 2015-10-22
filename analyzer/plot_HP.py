@@ -1,5 +1,7 @@
+import matplotlib as mpl
+mpl.use('Agg')
 import numpy as np
-import pylab as py
+import matplotlib.pyplot as py
 
 P,HP = np.loadtxt('../output/effective_hyperparameters.txt',unpack=True,usecols=[0,1])
 
