@@ -2463,35 +2463,54 @@ Program mcmc
                 
                     Else
 
-                       open(20,file='./output/effective_hyperparameters.txt')
+                       If (use_HP_per_host) then
 
-                       Do m=1,size(Field)
+                          open(20,file='./output/effective_hyperparameters_hosts.txt')
 
                           Do n=1,number_of_hosts_galaxies
  
-                             If (host(n) .eq. Field(m)) then
-
-                                If ( chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m)&
-                                     .le. 1.d0 ) then
-
-                                   write(20,*) PeriodR11(m), 1.d0, Field(m)
-
-                                Else
-
-                                   write(20,*) PeriodR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),&
-                                        bestfit(13),prior_sigma_int,m), Field(m)
-
-                                End If
-    
-                             End If
+                             write(20,*) n, 1.d0/chi2R11_W_host(bestfit(n),bestfit(9),bestfit(10),bestfit(11),&
+                                        bestfit(13),prior_sigma_int,n), host(n)
 
                           End Do
 
-                       End Do
+                          close(20)
 
-                       close(20)
+                          call system('cd analyzer; python plot_HP_hosts.py')
+ 
+                       Else
 
-                       call system('cd analyzer; python plot_HP.py')
+                          open(20,file='./output/effective_hyperparameters_cepheids.txt')
+
+                          Do m=1,size(Field)
+
+                             Do n=1,number_of_hosts_galaxies
+ 
+                                If (host(n) .eq. Field(m)) then
+
+                                   If ( chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m)&
+                                        .le. 1.d0 ) then
+
+                                      write(20,*) PeriodR11(m), 1.d0, Field(m)
+
+                                   Else
+
+                                      write(20,*) PeriodR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),&
+                                        bestfit(13),prior_sigma_int,m), Field(m)
+
+                                   End If
+    
+                                End If
+
+                             End Do
+
+                          End Do
+
+                          close(20)
+
+                          call system('cd analyzer; python plot_HP.py')
+
+                       End If
 
                     End If
 

@@ -504,9 +504,9 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
     use fiducial
     Implicit none
 
-    Real*8 :: log_R11_likelihood_W,zpw_ref,bw,H0,Zw,av,sigma_int
+    Real*8 :: log_R11_likelihood_W,zpw_ref,bw,H0,Zw,av,sigma_int,normalizationA
     Real*8,dimension(number_of_hosts_galaxies) :: mu0j 
-    Integer*4 :: m,index_host
+    Integer*4 :: m,index_host,number_cepheid
 
     If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
     
@@ -548,17 +548,54 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
 
         log_R11_likelihood_W = 0.d0
 
-        Do m=1,size(Field)
-
-            Do index_host=1,number_of_hosts_galaxies
+        If (use_HP_per_host) then
  
-                If (host(index_host) .eq. Field(m)) then
+           If (using_jeffreys_prior) then
+
+              Do index_host=1,number_of_hosts_galaxies
+
+                 normalizationA = 0.d0
+
+                 number_cepheid = 0
+
+                 Do m=1, size(Field)
+
+                    If (host(index_host) .eq. Field(m)) then
+                       
+                       number_cepheid = number_cepheid + 1
+
+                       normalizationA = log( eF160WR11(m)**2 + sigma_int**2 ) + normalizationA
+
+                    End If
+
+                 End Do
+
+                 log_R11_likelihood_W = - dble(number_cepheid)*log(chi2R11_W_host(mu0j(index_host),mu0j(9),&
+                      zpw_ref,bw,Zw,sigma_int,index_host))/2.d0 - normalizationA/2.d0 + log_R11_likelihood_W
+
+              End Do
+
+           Else
+
+              print *, 'UNIFORM PRIOR NOT IMPLEMENTED YET. NEED TO CODE EXPRESSION WITH GAMMA FUNCTIONS'
+
+              stop
+
+           End If
+
+        Else
+
+           Do m=1,size(Field)
+
+              Do index_host=1,number_of_hosts_galaxies
+ 
+                 If (host(index_host) .eq. Field(m)) then
     
                     If (using_jeffreys_prior) then
 
-                        print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+                       print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
 
-                        stop
+                       stop
 
                     Else
                        
@@ -567,11 +604,13 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
 
                     End If
 
-                End If 
+                 End If
 
-            End Do
+              End Do
 
-        End Do
+           End Do
+
+        End If
 
         Do index_host=1,number_of_hosts_galaxies-1
 
@@ -748,6 +787,31 @@ function chi2R11_W(mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,m)    !    It computes 
          P_L_relation_passband_W(mu0_j,mu0_ref,zpw_ref,bw,Zw,OHR11(m),PeriodR11(m)) )**2/( eF160WR11(m)**2 + sigma_int**2 ) 
 
 end function chi2R11_W
+
+function chi2R11_W_host(mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,chi2R11_W_host
+    Integer*4 :: m,n
+
+    chi2R11_W_host = 0.d0
+
+    Do n=1, size(Field)
+
+       If (host(m) .eq. Field(n)) then
+
+          chi2R11_W_host = ( observed_m_W(F160WR11(n),VIR11(n)) - &
+            P_L_relation_passband_W(mu0_j,mu0_ref,zpw_ref,bw,Zw,OHR11(n),PeriodR11(n)) )**2/( eF160WR11(n)**2 + sigma_int**2 ) + &
+            chi2R11_W_host
+
+       End If
+
+    End Do
+
+end function chi2R11_W_host
 
 function chi2R11_W_2(zpw,bw,Zw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
 

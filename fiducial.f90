@@ -16,7 +16,7 @@ Module fiducial
     Real*8,parameter    :: a_v = 0.697d0                ! TAKEN FROM PAGE 9 IN R11
     Real*8,parameter    :: NGC4258_distance = 7.60d0    ! TAKEN FROM PAGE 1 IN H13. UNITS : MPC
     Real*8,parameter    :: mu_0_NGC4258 = 5.d0*log10(NGC4258_distance) + 25.d0 ! DEFINITION OF DISTANCE MODULUS
-    Real*8,parameter    :: LMC_distance = 49.97d0       ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : KPC
+    Real*8,parameter    :: LMC_distance = 49.97d-3       ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : MPC
     Real*8,parameter    :: mu_0_LMC = 5.d0*log10(LMC_distance) + 25.d0 
     Real*8,parameter    :: prior_zpH = 28.d0
     Real*8,parameter    :: prior_bH = -2.7d0
@@ -93,7 +93,7 @@ Module fiducial
     Logical,parameter   :: start_from_fiducial = .true.          ! START MCMC ANALYSIS FROM FIDUCIAL POINT IF SET IT TRUE 
     Logical,parameter   :: testing_Gaussian_likelihood = .false. ! TEST GAUSSIAN LIKELIHOOD IF SET IT TRUE
     Logical,parameter   :: using_hyperparameters = .true.        ! USE HYPER-PARAMETERS IF SET IT TRUE
-    Logical,parameter   :: using_jeffreys_prior = .false.        ! USE JEFFREYS PRIOR IF SET IT TRUE, OTHERWISE USE UNIFORM PRIOR [0,1] 
+    Logical,parameter   :: using_jeffreys_prior = .true.        ! USE JEFFREYS PRIOR IF SET IT TRUE, OTHERWISE USE UNIFORM PRIOR [0,1] 
     Logical,parameter   :: hyperparameters_as_mcmc = .false.      ! SET HYPER-PARAMETERS AS MCMC PARAMETERS IF SET IT TRUE
     Logical,parameter   :: use_NGC4258_as_anchor = .true.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_LMC_as_anchor = .false.           ! USE LMC AS ANCHOR IF SET IT TRUE
@@ -103,6 +103,7 @@ Module fiducial
     Logical,parameter   :: use_HP_in_SNIa = .false.               ! USE HPs WHEN COMPUTING SNIa CHI2
     Logical,parameter   :: use_HP_in_av = .false.                ! USE HPs WHEN COMPUTINNG av CHI2
     Logical,parameter   :: use_HP_in_anchor = .false.            ! USE HPs WHEN COMPUTING ANCHOR CHI2
+    Logical,parameter   :: use_HP_per_host = .true.              ! USE HPs FOR EACH HOST IN R11 IF SET IT TRUE
     Logical,parameter   :: doing_R11_analysis = .true.           ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE

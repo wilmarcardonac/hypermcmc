@@ -9,7 +9,7 @@ marker = ['bo','gv','r^','k<','y>','mD','b+','gx','r*']
 
 alpha_eff = np.dtype([('Period',np.float32),('alpha',np.float32),('name',np.str_,5)])
 
-P,HP,galaxy = np.loadtxt('../output/effective_hyperparameters.txt',unpack=True,usecols=[0,1,2],dtype=alpha_eff)
+P,HP,galaxy = np.loadtxt('../output/effective_hyperparameters_cepheids.txt',unpack=True,usecols=[0,1,2],dtype=alpha_eff)
 
 indexs = 0
 
@@ -117,7 +117,7 @@ py.ylabel(r'$\alpha_{eff}$')
 
 py.legend(loc=0,numpoints=1,ncol=4)
 
-py.savefig('effective_HP.pdf')
+py.savefig('effective_HP_cepheids.pdf')
 
 exit()
 
