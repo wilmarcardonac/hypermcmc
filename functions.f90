@@ -599,8 +599,12 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
 
                     Else
                        
-                       log_R11_likelihood_W = log(new_chi2(chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,sigma_int,m))) + &
+                       If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                          log_R11_likelihood_W = log(new_chi2(chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,sigma_int,m))) + &
                                log(N_tilde_R11_W(sigma_int,m)) + log_R11_likelihood_W
+
+                       End If
 
                     End If
 

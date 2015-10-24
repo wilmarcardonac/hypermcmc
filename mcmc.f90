@@ -2487,16 +2487,20 @@ Program mcmc
                              Do n=1,number_of_hosts_galaxies
  
                                 If (host(n) .eq. Field(m)) then
+                                   
+                                   If (PeriodR11(m) .lt. cepheid_Period_limit) then
 
-                                   If ( chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m)&
+                                      If ( chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m)&
                                         .le. 1.d0 ) then
 
-                                      write(20,*) PeriodR11(m), 1.d0, Field(m)
+                                         write(20,*) PeriodR11(m), 1.d0, Field(m)
 
-                                   Else
+                                      Else
 
-                                      write(20,*) PeriodR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),&
-                                        bestfit(13),prior_sigma_int,m), Field(m)
+                                         write(20,*) PeriodR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),&
+                                              bestfit(13),prior_sigma_int,m), Field(m)
+
+                                      End If
 
                                    End If
     
