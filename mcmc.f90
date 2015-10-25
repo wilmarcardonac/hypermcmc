@@ -2493,12 +2493,16 @@ Program mcmc
                                       If ( chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m)&
                                         .le. 1.d0 ) then
 
-                                         write(20,*) PeriodR11(m), 1.d0, Field(m)
+                                         write(20,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
+                                              P_L_relation_passband_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),&
+                                              OHR11(m),PeriodR11(m)),eF160WR11(m), 1.d0, Field(m)
 
                                       Else
 
-                                         write(20,*) PeriodR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),&
-                                              bestfit(13),prior_sigma_int,m), Field(m)
+                                         write(20,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
+                                              P_L_relation_passband_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),&
+                                              OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(9),&
+                                              bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m), Field(m)
 
                                       End If
 
