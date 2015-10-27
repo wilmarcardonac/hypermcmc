@@ -1175,9 +1175,17 @@ Program mcmc
     
         Else
 
-           write(16,*) 'A    A'
+           paramnames(1) = 'A'
+           latexname(1) = 'A'
 
-           write(16,*) 'bw    b_{w}'
+           paramnames(2) = 'bw'
+           latexname(2) = 'b_w'
+
+           Do m=1,number_model_parameters
+
+              write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+
+           End Do
 
            !write(16,*) 'sigma_int    \sigma_{int}'
 
@@ -1365,9 +1373,9 @@ Program mcmc
     
         Else
 
-           write(17,*) 'A    0.    50. '
+           write(17,*) ''//trim(paramnames(1))//'    0.    50.'
 
-           write(17,*) 'bw    -20.    0. '
+           write(17,*) ''//trim(paramnames(2))//'    -20.    0.'
 
            !    write(17,*) 'sigma_int    1.e-10    1 '
 
@@ -1508,7 +1516,7 @@ Program mcmc
        Else
 
           !write(13,*) '# Weight   -ln(L/L_{max})    A    bw    sigma_int ' 
-          write(13,*) '# WEIGHT   -ln(L/L_{max})    A    bw ' 
+          write(13,*) '# WEIGHT   -ln(L/L_{max})   ', paramnames(1:number_model_parameters) 
 
        End If
 
@@ -2258,14 +2266,15 @@ Program mcmc
 
        write(15,*) 'BESTFIT IS : '
 
-       write(15,*) 'A = ', bestfit(1)
+       Do m=1,number_model_parameters
 
-       write(15,*) 'bw = ', bestfit(2)
+          write(15,*) ''//trim(paramnames(m))//' = ', bestfit(m)
+
+       End Do
 
        !write(15,*) 'sigma_int = ', bestfit(3)
 
     End If
-
 
     If (hyperparameters_as_mcmc .and. using_hyperparameters) then
     ! WRITING BESTFIT FOR HYPER-PARAMETERS
@@ -2383,9 +2392,11 @@ Program mcmc
 
        write(15,*) 'MEANS FOR THE SAMPLES ARE : '
 
-       write(15,*) 'A = ', means(1)
+       Do m=1,number_model_parameters
 
-       write(15,*) 'bw = ', means(2)
+          write(15,*) ''//trim(paramnames(m))//' = ', means(m)
+
+       End Do
 
        !write(15,*) 'sigma_int = ', means(3)
 
