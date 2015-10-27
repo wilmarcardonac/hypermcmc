@@ -25,23 +25,24 @@ for index in range(indexs,indexf+1):
 
     if HP[index] == 1.:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[0],mfc='k',fmt='',ls='None',label=host[0])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[0],mfc='k',fmt='',ls='None',label=host[0])
 
     elif HP[index] < 1. and HP[index] >= .5:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[0],mfc='b',fmt='',ls='None',label=host[0])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[0],mfc='b',fmt='',ls='None',label=host[0])
 
     elif HP[index] < .5 and HP[index] >= .3:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[0],mfc='g',fmt='',ls='None',label=host[0])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[0],mfc='g',fmt='',ls='None',label=host[0])
 
     elif HP[index] < .3 and HP[index] >= .1:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[0],mfc='r',fmt='',ls='None',label=host[0])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[0],mfc='r',fmt='',ls='None',label=host[0])
 
     elif HP[index] < .1 :
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[0],mfc='y',fmt='',ls='None',label=host[0])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',mfc='y',marker=marker[0],fmt='',ls='None',label=host[0])
+
 
 indexs = indexf
 
@@ -55,23 +56,23 @@ for index in range(indexs,indexf+1):
 
     if HP[index] == 1.:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[1],mfc='k',fmt='',ls='None',label=host[1])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[1],mfc='k',fmt='',ls='None',label=host[1])
 
     elif HP[index] < 1. and HP[index] >= .5:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[1],mfc='b',fmt='',ls='None',label=host[1])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[1],mfc='b',fmt='',ls='None',label=host[1])
 
     elif HP[index] < .5 and HP[index] >= .3:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[1],mfc='g',fmt='',ls='None',label=host[1])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[1],mfc='g',fmt='',ls='None',label=host[1])
 
     elif HP[index] < .3 and HP[index] >= .1:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[1],mfc='r',fmt='',ls='None',label=host[1])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[1],mfc='r',fmt='',ls='None',label=host[1])
 
     elif HP[index] < .1 :
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[1],mfc='y',fmt='',ls='None',label=host[1])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[1],mfc='y',fmt='',ls='None',label=host[1])
 
 indexs = indexf
 
@@ -85,23 +86,23 @@ for index in range(indexs,indexf+1):
 
     if HP[index] == 1.:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[2],mfc='k',fmt='',ls='None',label=host[2])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[2],mfc='k',fmt='',ls='None',label=host[2])
 
     elif HP[index] < 1. and HP[index] >= .5:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[2],mfc='b',fmt='',ls='None',label=host[2])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[2],mfc='b',fmt='',ls='None',label=host[2])
 
     elif HP[index] < .5 and HP[index] >= .3:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[2],mfc='g',fmt='',ls='None',label=host[2])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[2],mfc='g',fmt='',ls='None',label=host[2])
 
     elif HP[index] < .3 and HP[index] >= .1:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[2],mfc='r',fmt='',ls='None',label=host[2])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[2],mfc='r',fmt='',ls='None',label=host[2])
 
     elif HP[index] < .1 :
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[2],mfc='y',fmt='',ls='None',label=host[2])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[2],mfc='y',fmt='',ls='None',label=host[2])
 
 indexs = indexf
 
@@ -115,23 +116,23 @@ for index in range(indexs,indexf+1):
 
     if HP[index] == 1.:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[3],mfc='k',fmt='',ls='None',label=host[3])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[3],mfc='k',fmt='',ls='None',label=host[3])
 
     elif HP[index] < 1. and HP[index] >= .5:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[3],mfc='b',fmt='',ls='None',label=host[3])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[3],mfc='b',fmt='',ls='None',label=host[3])
 
     elif HP[index] < .5 and HP[index] >= .3:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[3],mfc='g',fmt='',ls='None',label=host[3])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[3],mfc='g',fmt='',ls='None',label=host[3])
 
     elif HP[index] < .3 and HP[index] >= .1:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[3],mfc='r',fmt='',ls='None',label=host[3])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[3],mfc='r',fmt='',ls='None',label=host[3])
 
     elif HP[index] < .1 :
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[3],mfc='y',fmt='',ls='None',label=host[3])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[3],mfc='y',fmt='',ls='None',label=host[3])
 
 indexs = indexf
 
@@ -145,23 +146,23 @@ for index in range(indexs,indexf+1):
 
     if HP[index] == 1.:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[4],mfc='k',fmt='',ls='None',label=host[4])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[4],mfc='k',fmt='',ls='None',label=host[4])
 
     elif HP[index] < 1. and HP[index] >= .5:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[4],mfc='b',fmt='',ls='None',label=host[4])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[4],mfc='b',fmt='',ls='None',label=host[4])
 
     elif HP[index] < .5 and HP[index] >= .3:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[4],mfc='g',fmt='',ls='None',label=host[4])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[4],mfc='g',fmt='',ls='None',label=host[4])
 
     elif HP[index] < .3 and HP[index] >= .1:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[4],mfc='r',fmt='',ls='None',label=host[4])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[4],mfc='r',fmt='',ls='None',label=host[4])
 
     elif HP[index] < .1 :
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[4],mfc='y',fmt='',ls='None',label=host[4])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[4],mfc='y',fmt='',ls='None',label=host[4])
 
 indexs = indexf
 
@@ -175,23 +176,23 @@ for index in range(indexs,indexf+1):
 
     if HP[index] == 1.:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[5],mfc='k',fmt='',ls='None',label=host[5])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[5],mfc='k',fmt='',ls='None',label=host[5])
 
     elif HP[index] < 1. and HP[index] >= .5:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[5],mfc='b',fmt='',ls='None',label=host[5])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[5],mfc='b',fmt='',ls='None',label=host[5])
 
     elif HP[index] < .5 and HP[index] >= .3:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[5],mfc='g',fmt='',ls='None',label=host[5])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[5],mfc='g',fmt='',ls='None',label=host[5])
 
     elif HP[index] < .3 and HP[index] >= .1:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[5],mfc='r',fmt='',ls='None',label=host[5])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[5],mfc='r',fmt='',ls='None',label=host[5])
 
     elif HP[index] < .1 :
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[5],mfc='y',fmt='',ls='None',label=host[5])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[5],mfc='y',fmt='',ls='None',label=host[5])
 
 indexs = indexf
 
@@ -205,23 +206,23 @@ for index in range(indexs,indexf+1):
 
     if HP[index] == 1.:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[6],mfc='k',fmt='',ls='None',label=host[6])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[6],mfc='k',fmt='',ls='None',label=host[6])
 
     elif HP[index] < 1. and HP[index] >= .5:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[6],mfc='b',fmt='',ls='None',label=host[6])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[6],mfc='b',fmt='',ls='None',label=host[6])
 
     elif HP[index] < .5 and HP[index] >= .3:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[6],mfc='g',fmt='',ls='None',label=host[6])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[6],mfc='g',fmt='',ls='None',label=host[6])
 
     elif HP[index] < .3 and HP[index] >= .1:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[6],mfc='r',fmt='',ls='None',label=host[6])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[6],mfc='r',fmt='',ls='None',label=host[6])
 
     elif HP[index] < .1 :
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[6],mfc='y',fmt='',ls='None',label=host[6])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[6],mfc='y',fmt='',ls='None',label=host[6])
 
 indexs = indexf
 
@@ -235,23 +236,23 @@ for index in range(indexs,indexf+1):
 
     if HP[index] == 1.:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[7],mfc='k',fmt='',ls='None',label=host[7])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[7],mfc='k',fmt='',ls='None',label=host[7])
 
     elif HP[index] < 1. and HP[index] >= .5:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[7],mfc='b',fmt='',ls='None',label=host[7])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[7],mfc='b',fmt='',ls='None',label=host[7])
 
     elif HP[index] < .5 and HP[index] >= .3:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[7],mfc='g',fmt='',ls='None',label=host[7])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[7],mfc='g',fmt='',ls='None',label=host[7])
 
     elif HP[index] < .3 and HP[index] >= .1:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[7],mfc='r',fmt='',ls='None',label=host[7])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[7],mfc='r',fmt='',ls='None',label=host[7])
 
     elif HP[index] < .1 :
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[7],mfc='y',fmt='',ls='None',label=host[7])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[7],mfc='y',fmt='',ls='None',label=host[7])
 
 indexs = indexf
 
@@ -265,23 +266,23 @@ for index in range(indexs,indexf+1):
 
     if HP[index] == 1.:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[8],mfc='k',fmt='',ls='None',label=host[8])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[8],mfc='k',fmt='',ls='None',label=host[8])
 
     elif HP[index] < 1. and HP[index] >= .5:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[8],mfc='b',fmt='',ls='None',label=host[8])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[8],mfc='b',fmt='',ls='None',label=host[8])
 
     elif HP[index] < .5 and HP[index] >= .3:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[8],mfc='g',fmt='',ls='None',label=host[8])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[8],mfc='g',fmt='',ls='None',label=host[8])
 
     elif HP[index] < .3 and HP[index] >= .1:
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[8],mfc='r',fmt='',ls='None',label=host[8])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[8],mfc='r',fmt='',ls='None',label=host[8])
 
     elif HP[index] < .1 :
 
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,marker[8],mfc='y',fmt='',ls='None',label=host[8])
+        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[8],mfc='y',fmt='',ls='None',label=host[8])
 
 py.xscale('log')
 
@@ -295,7 +296,7 @@ py.xlabel('Period [days]')
 
 py.ylabel('W [mag]')
 
-py.legend(loc=0,numpoints=1,ncol=4)
+#py.legend(loc=0,numpoints=1,ncol=4)
 
 py.savefig('effective_HP_cepheids.pdf')
 
