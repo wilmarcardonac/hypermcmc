@@ -585,34 +585,59 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
 
         Else
 
-           Do m=1,size(Field)
+           If (use_HP_per_cepheid) then
 
-              Do index_host=1,number_of_hosts_galaxies
+              Do m=1,size(Field)
+
+                 Do index_host=1,number_of_hosts_galaxies
  
-                 If (host(index_host) .eq. Field(m)) then
+                    If (host(index_host) .eq. Field(m)) then
     
-                    If (using_jeffreys_prior) then
+                       If (using_jeffreys_prior) then
 
-                       print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+                          print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
 
-                       stop
+                          stop
 
-                    Else
+                       Else
                        
+                          If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                             log_R11_likelihood_W = log(new_chi2(chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,sigma_int,m))) + &
+                               log(N_tilde_R11_W(sigma_int,m)) + log_R11_likelihood_W
+
+                          End If
+
+                       End If
+
+                    End If
+
+                 End Do
+
+              End Do
+
+           Else
+
+              Do m=1,size(Field)
+
+                 Do index_host=1,number_of_hosts_galaxies
+ 
+                    If (host(index_host) .eq. Field(m)) then
+    
                        If (PeriodR11(m) .lt. cepheid_Period_limit) then
 
-                          log_R11_likelihood_W = log(new_chi2(chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,sigma_int,m))) + &
+                          log_R11_likelihood_W = -chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,sigma_int,m)/2.d0 + &
                                log(N_tilde_R11_W(sigma_int,m)) + log_R11_likelihood_W
 
                        End If
 
                     End If
 
-                 End If
+                 End Do
 
               End Do
 
-           End Do
+           End If
 
         End If
 
