@@ -2489,7 +2489,7 @@ Program mcmc
 
                           call system('cd analyzer; python plot_HP_hosts.py')
  
-                       Else
+                       Else If (use_HP_per_cepheid) then
 
                           open(20,file='./output/effective_hyperparameters_cepheids.txt')
 
