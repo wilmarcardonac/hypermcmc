@@ -959,9 +959,9 @@ function new_chi2(chi2)
     Implicit none
     Real*8 :: chi2,new_chi2
 
-    If (chi2 .eq. 0.d0) then
+    If ((chi2 .ge. 0.d0) .and. (chi2 .lt. 1.d-3)) then
   
-        new_chi2 = sqrt(2.d0/Pi/9.d0)
+        new_chi2 = sqrt(2.d0/Pi/9.d0) + 1/sqrt(2.d0*Pi)*(-chi2/5.d0 + chi2**2/28.d0 - chi2**3/216.d0)
   
     Else 
 
@@ -1105,7 +1105,7 @@ function chi2B_i(A,bw,sigma_int,m)    !    It computes equation (3) in published
 
     chi2B_i = ( observed_wesenheit_magnitude(HB(m),VB(m),IIB(m)) - wesenheit_magnitude(A,bw,PeriodB(m)) )**2/&
     ( Sigma_mB(m)**2 + sigma_int**2 ) 
-
+    
 end function chi2B_i
 
 function N_tilde_B_i(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
@@ -1161,14 +1161,14 @@ function log_Efstathiou_likelihoodB(A,bw,sigma_int)    !    It computes equation
                 + log_Efstathiou_likelihoodB
 
             Else
-
-                log_Efstathiou_likelihoodB = log(new_chi2(chi2B_i(A,bw,sigma_int,m))) + log(N_tilde_B_i(sigma_int,m))&
+              
+               log_Efstathiou_likelihoodB = log(new_chi2(chi2B_i(A,bw,sigma_int,m))) + log(N_tilde_B_i(sigma_int,m))&
                 + log_Efstathiou_likelihoodB
 
             End If
 
         End Do
-
+        
         If ( abs(log_Efstathiou_likelihoodB) .ge. 0.d0 ) then
 
             continue
