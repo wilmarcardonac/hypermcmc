@@ -1,11 +1,14 @@
 output/*.txt
 output/*.paramnames
 output/*.ranges
+output/*.py_mcsamples
 *.mod
 *.o
 *.zip
 *.tgz
 *.out
 analyzer/*~
+analyzer/*.txt
+analyzer/*.pdf
 data/*~
 *~
