@@ -10,7 +10,7 @@ Module fiducial
 
     Real*8,parameter    :: prior_A = 12.5d0
     Real*8,parameter    :: prior_bw = -3.23d0
-    Real*8,parameter    :: prior_sigma_int = 0.20d0
+    Real*8,parameter    :: prior_sigma_int = 0.2d0 !0.d0 !0.1d0!0.20d0
     Real*8,parameter    :: prior_alpha_j = 5.d-1
     Real*8,parameter    :: R = 0.410d0                  ! TAKEN FROM PAGE 7 IN R11
     Real*8,parameter    :: a_v = 0.697d0                ! TAKEN FROM PAGE 9 IN R11
