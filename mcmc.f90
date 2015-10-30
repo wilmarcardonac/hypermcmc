@@ -1381,8 +1381,8 @@ Program mcmc
                        paramnames(10) = 'muLMC'
                        latexname(10) = '\mu_{0,LMC}'
 
-                       paramnames(11) = 'zpw4258'
-                       latexname(11) = 'zp_{w,4258}'
+                       paramnames(11) = 'zpwLMC'
+                       latexname(11) = 'zp_{w,LMC}'
 
                        paramnames(12) = 'bw'
                        latexname(12) = 'b_w'
@@ -1663,13 +1663,13 @@ Program mcmc
 
                        write(17,*) ''//trim(paramnames(10))//'    0.    40.'
 
-                       write(17,*) ''//trim(paramnames(11))//'    25.    34.'
+                       write(17,*) ''//trim(paramnames(11))//'    20.    30.'
 
-                       write(17,*) ''//trim(paramnames(12))//'    -3.2    -2.5'
+                       write(17,*) ''//trim(paramnames(12))//'    -3.5    -2.5'
 
                        write(17,*) ''//trim(paramnames(13))//'    55.    95.'
 
-                       write(17,*) ''//trim(paramnames(14))//'    -1.    1.'
+                       write(17,*) ''//trim(paramnames(14))//'    -2.    1.'
 
                        write(17,*) ''//trim(paramnames(15))//'    0.    1.'
 
@@ -2076,13 +2076,13 @@ Program mcmc
 
                            plausibility(10) = (x_new(10) .le. real(0.d0)) .or. (x_new(10) .ge. real(40.d0))
 
-                           plausibility(11) =  (x_new(11) .le. real(25.d0)) .or. (x_new(11) .ge. real(34.d0)) 
+                           plausibility(11) =  (x_new(11) .le. real(20.d0)) .or. (x_new(11) .ge. real(30.d0)) 
 
-                           plausibility(12) =  (x_new(12) .le. real(-3.2d0)) .or. (x_new(12) .ge. real(-2.5d0)) 
+                           plausibility(12) =  (x_new(12) .le. real(-3.5d0)) .or. (x_new(12) .ge. real(-2.5d0)) 
 
                            plausibility(13) =  (x_new(13) .le. real(55.d0)) .or. (x_new(13) .ge. real(95.d0)) 
 
-                           plausibility(14) =  (x_new(14) .le. real(-1.d0)) .or. (x_new(14) .ge. real(1.d0)) 
+                           plausibility(14) =  (x_new(14) .le. real(-2.d0)) .or. (x_new(14) .ge. real(1.d0)) 
 
                            plausibility(15) =  (x_new(15) .le. real(0.d0)) .or. (x_new(15) .ge. real(1.d0)) 
 
