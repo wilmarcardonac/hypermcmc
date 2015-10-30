@@ -32,8 +32,9 @@ Module fiducial
     Real*8,parameter    :: prior_mu7 = 31.72d0 ! FROM TABLE 3 IN R11 
     Real*8,parameter    :: prior_mu8 = 31.66d0 ! FROM TABLE 3 IN R11 
     Real*8,parameter    :: prior_mu9 = 24.8d0
-    Real*8,parameter    :: prior_mu10 = mu_0_LMC*0.9d0
+    Real*8,parameter    :: prior_mu10 = 18.5d0
     Real*8,parameter    :: prior_zpw = 29.d0
+    Real*8,parameter    :: prior_zpwLMC = 20.98d0
     Real*8,parameter    :: prior_Zw = 0.d0
     Real*8,parameter    :: prior_H0 = 70.0d0
 
@@ -64,6 +65,7 @@ Module fiducial
     Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258/2.d0
     Real*8,parameter    :: sigma_mu10 = sigma_mu_0_LMC/2.d0
     Real*8,parameter    :: sigma_zpw = 1.d-1
+    Real*8,parameter    :: sigma_zpwLMC = 0.78d0
     Real*8,parameter    :: sigma_Zw = 0.25d0
     Real*8,parameter    :: sigma_H0 = 1.0d-1
 
