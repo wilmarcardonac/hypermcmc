@@ -1663,7 +1663,7 @@ Program mcmc
 
                        write(17,*) ''//trim(paramnames(10))//'    0.    40.'
 
-                       write(17,*) ''//trim(paramnames(11))//'    0.    25.'
+                       write(17,*) ''//trim(paramnames(11))//'    10.    25.'
 
                        write(17,*) ''//trim(paramnames(12))//'    -3.5    -2.5'
 
@@ -2076,7 +2076,7 @@ Program mcmc
 
                            plausibility(10) = (x_new(10) .le. real(0.d0)) .or. (x_new(10) .ge. real(40.d0))
 
-                           plausibility(11) =  (x_new(11) .le. real(0.d0)) .or. (x_new(11) .ge. real(25.d0)) 
+                           plausibility(11) =  (x_new(11) .le. real(10.d0)) .or. (x_new(11) .ge. real(25.d0)) 
 
                            plausibility(12) =  (x_new(12) .le. real(-3.5d0)) .or. (x_new(12) .ge. real(-2.5d0)) 
 
