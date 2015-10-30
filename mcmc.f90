@@ -154,7 +154,7 @@ Program mcmc
 
            Else
 
-              If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+              If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then !!!HERE
     
                  print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
@@ -186,9 +186,77 @@ Program mcmc
 
               Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                 print *,'LMC NOT IMPLEMENTED YET'
+                 If (use_metallicity) then 
 
-                 stop
+                    If (use_H_band) then
+                     
+                       print *,'H BAND NOT IMPLEMENTED USING LMC AS ANCHOR AND INCLUDING METALLICITY DEPENDENCE'
+                     
+                       stop
+                     
+                    Else
+
+                       If (number_model_parameters .eq. 16) then
+                          
+                          Covguess(1,1) = sigma_mu1**2 
+
+                          Covguess(2,2) = sigma_mu2**2 
+
+                          Covguess(3,3) = sigma_mu3**2 
+
+                          Covguess(4,4) = sigma_mu4**2 
+
+                          Covguess(5,5) = sigma_mu5**2 
+
+                          Covguess(6,6) = sigma_mu6**2 
+
+                          Covguess(7,7) = sigma_mu7**2 
+
+                          Covguess(8,8) = sigma_mu8**2 
+
+                          Covguess(9,9) = sigma_mu9**2 
+
+                          Covguess(10,10) = sigma_mu10**2 
+
+                          Covguess(11,11) = sigma_zpw**2
+
+                          Covguess(12,12) = sigma_bw**2 
+
+                          Covguess(13,13) = sigma_H0**2 
+
+                          Covguess(14,14) = sigma_Zw**2 
+                          
+                          Covguess(15,15) = sigma_a_v**2
+
+                          Covguess(16,16) = sigma_a_cal**2
+
+                       Else
+                        
+                          print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE'
+
+                          stop
+
+                       End If
+
+                    End If
+
+                 Else
+
+                    If (use_H_band) then
+
+                       print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                       stop
+
+                    Else
+
+                       print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                       stop
+
+                    End If
+
+                 End If
 
               Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
@@ -348,6 +416,8 @@ Program mcmc
                 call read_table2_R11(path_to_table2_R11)
 
                 call read_table3_R11(path_to_table3_R11)
+
+                call read_data_Efstathiou(path_to_datafileABC)
 
             End If
             
@@ -545,9 +615,67 @@ Program mcmc
 
                   Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                     print *,'LMC NOT IMPLEMENTED YET'
+                     If (use_metallicity) then 
 
-                     stop
+                        If (use_H_band) then
+                     
+                           print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                           stop
+
+                        Else
+
+                           old_point(1) = prior_mu1
+
+                           old_point(2) = prior_mu2
+
+                           old_point(3) = prior_mu3 
+
+                           old_point(4) = prior_mu4
+
+                           old_point(5) = prior_mu5
+
+                           old_point(6) = prior_mu6
+
+                           old_point(7) = prior_mu7
+
+                           old_point(8) = prior_mu8
+
+                           old_point(9) = prior_mu9
+
+                           old_point(10) = prior_mu10
+
+                           old_point(11) = prior_zpw
+
+                           old_point(12) = prior_bw
+
+                           old_point(13) = prior_H0
+
+                           old_point(14) = prior_Zw
+
+                           old_point(15) = a_v
+
+                           old_point(16) = a_cal
+                        
+                        End If
+
+                     Else
+
+                        If (use_H_band) then
+                     
+                           print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                           stop
+
+                        Else
+
+                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                           stop
+                        
+                        End If
+
+                     End If
 
                   Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
@@ -751,9 +879,67 @@ Program mcmc
 
                   Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                     print *,'LMC NOT IMPLEMENTED YET'
+                     If (use_metallicity) then 
 
-                     stop
+                        If (use_H_band) then
+
+                           print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                           stop
+
+                        Else
+                     
+                           x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
+
+                           x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
+
+                           x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
+
+                           x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
+
+                           x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
+
+                           x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
+
+                           x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
+
+                           x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
+
+                           x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
+
+                           x_old(10) = genunf(real(prior_mu10 - sigma_mu10),real(prior_mu10 + sigma_mu10))
+
+                           x_old(11) = genunf(real(prior_zpw - sigma_zpw),real(prior_zpw + sigma_zpw))
+
+                           x_old(12) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
+
+                           x_old(13) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
+
+                           x_old(14) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+
+                           x_old(15) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
+
+                           x_old(16) = genunf(real(a_cal - sigma_a_cal),real(a_cal + sigma_a_cal))
+
+                        End If
+
+                     Else
+
+                        If (use_H_band) then
+                     
+                           print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                           stop
+
+                        Else
+
+                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                           stop
+                        
+                        End If
+
+                     End If
 
                   Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
@@ -918,20 +1104,112 @@ Program mcmc
                  End If
 
               Else
-              
-                 If (use_H_band) then
 
-                    old_loglikelihood = log_R11_likelihood_H(old_point(1:number_model_parameters-1),&
-                      old_point(number_model_parameters),prior_sigma_int)
+                 If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then !!!HERE
+    
+                    print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
-                 Else
+                    stop
 
-                    old_loglikelihood = log_R11_likelihood_W(old_point(1:number_model_parameters-5),&
-                      old_point(number_model_parameters-4),old_point(number_model_parameters-3),&
-                      old_point(number_model_parameters-2),old_point(number_model_parameters-1),&
-                      old_point(number_model_parameters),prior_sigma_int)
+                 Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                 End If
+                    print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+                    stop
+
+                 Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                    print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+                    stop
+
+                 Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                    print *,'MW+LMC NOT IMPLEMENTED YET'
+
+                    stop
+
+                 Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                    print *,'MW NOT IMPLEMENTED YET'
+
+                    stop
+
+                 Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                    If (use_metallicity) then 
+
+                       If (use_H_band) then
+                     
+                          print *,'H BAND NOT IMPLEMENTED USING LMC AS ANCHOR AND INCLUDING METALLICITY DEPENDENCE'
+                     
+                          stop
+                     
+                       Else
+                          
+                          old_loglikelihood = log_R11_likelihood_W_LMC(old_point(1:number_model_parameters-6),&
+                               old_point(number_model_parameters-5),old_point(number_model_parameters-4),&
+                               old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
+                               old_point(number_model_parameters-1),old_point(number_model_parameters),&
+                               prior_sigma_int,prior_sigma_int_LMC)
+
+                       End If
+
+                    Else
+
+                       If (use_H_band) then
+
+                          print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                          stop
+
+                       Else
+
+                          print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                          stop
+
+                       End If
+
+                    End If
+
+                 Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                    If (use_metallicity) then 
+
+                       If (use_H_band) then
+                     
+                          print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                          stop
+                     
+                       Else
+
+                          old_loglikelihood = log_R11_likelihood_W(old_point(1:number_model_parameters-5),&
+                               old_point(number_model_parameters-4),old_point(number_model_parameters-3),&
+                               old_point(number_model_parameters-2),old_point(number_model_parameters-1),&
+                               old_point(number_model_parameters),prior_sigma_int)
+
+                       End If
+
+                    Else
+
+                       If (use_H_band) then
+                     
+                          old_loglikelihood = log_R11_likelihood_H(old_point(1:number_model_parameters-1),&
+                               old_point(number_model_parameters),prior_sigma_int)
+
+                       Else
+
+                          print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                          stop
+
+                       End If
+
+                    End If
+
+                 End If ! OF ANCHORS 
 
               End If
 
@@ -960,7 +1238,7 @@ Program mcmc
 
             open(17,file='./output/mcmc_final_output.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST 
 
-        End If
+         End If
 
         If (doing_R11_analysis) then
 
@@ -1063,9 +1341,89 @@ Program mcmc
 
               Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                 print *,'LMC NOT IMPLEMENTED YET'
+                 If (use_metallicity) then 
 
-                 stop
+                    If (use_H_band) then
+
+                       print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                       stop
+
+                    Else
+
+                       paramnames(1) = 'mu01'
+                       latexname(1) = '\mu_{0,1}'
+
+                       paramnames(2) = 'mu02'
+                       latexname(2) = '\mu_{0,2}'
+
+                       paramnames(3) = 'mu03'
+                       latexname(3) = '\mu_{0,3}'
+
+                       paramnames(4) = 'mu04'
+                       latexname(4) = '\mu_{0,4}'
+
+                       paramnames(5) = 'mu05'
+                       latexname(5) = '\mu_{0,5}'
+
+                       paramnames(6) = 'mu06'
+                       latexname(6) = '\mu_{0,6}'
+
+                       paramnames(7) = 'mu07'
+                       latexname(7) = '\mu_{0,7}'
+
+                       paramnames(8) = 'mu08'
+                       latexname(8) = '\mu_{0,8}'
+
+                       paramnames(9) = 'mu04258'
+                       latexname(9) = '\mu_{0,4258}'
+
+                       paramnames(10) = 'muLMC'
+                       latexname(10) = '\mu_{0,LMC}'
+
+                       paramnames(11) = 'zpw4258'
+                       latexname(11) = 'zp_{w,4258}'
+
+                       paramnames(12) = 'bw'
+                       latexname(12) = 'b_w'
+
+                       paramnames(13) = 'H0'
+                       latexname(13) = 'H_0'
+
+                       paramnames(14) = 'Zw'
+                       latexname(14) = 'Z_w'
+
+                       paramnames(15) = 'av'
+                       latexname(15) = 'a_v'
+
+                       paramnames(16) = 'acal'
+                       latexname(16) = 'a_{cal}'
+
+                       Do m=1,number_model_parameters
+
+                          write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+
+                       End Do
+
+                    End If
+
+                 Else
+
+                    If (use_H_band) then
+
+                       print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                       stop
+
+                    Else
+
+                       print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                       stop
+                        
+                    End If
+
+                 End If
 
               Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
@@ -1162,12 +1520,6 @@ Program mcmc
                     End If
 
                  End If
-
-              Else
-
-                 print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
-
-                 stop
 
               End If ! OF ANCHOR
 
@@ -1281,9 +1633,67 @@ Program mcmc
 
               Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                 print *,'LMC NOT IMPLEMENTED YET'
+                 If (use_metallicity) then 
 
-                 stop
+                    If (use_H_band) then
+
+                       print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                       stop
+                    
+                    Else
+
+                       write(17,*) ''//trim(paramnames(1))//'    20.    40.'
+
+                       write(17,*) ''//trim(paramnames(2))//'    20.    40.'
+
+                       write(17,*) ''//trim(paramnames(3))//'    20.    40.'
+
+                       write(17,*) ''//trim(paramnames(4))//'    20.    40.'
+
+                       write(17,*) ''//trim(paramnames(5))//'    20.    40.'
+
+                       write(17,*) ''//trim(paramnames(6))//'    20.    40.'
+
+                       write(17,*) ''//trim(paramnames(7))//'    20.    40.'
+
+                       write(17,*) ''//trim(paramnames(8))//'    20.    40.'
+
+                       write(17,*) ''//trim(paramnames(9))//'    20.    30.'
+
+                       write(17,*) ''//trim(paramnames(10))//'    0.    40.'
+
+                       write(17,*) ''//trim(paramnames(11))//'    25.    34.'
+
+                       write(17,*) ''//trim(paramnames(12))//'    -3.2    -2.5'
+
+                       write(17,*) ''//trim(paramnames(13))//'    55.    95.'
+
+                       write(17,*) ''//trim(paramnames(14))//'    -1.    1.'
+
+                       write(17,*) ''//trim(paramnames(15))//'    0.    1.'
+
+                       write(17,*) ''//trim(paramnames(16))//'    -1.    1.'
+
+                    End If
+
+                 Else
+
+                    If (use_H_band) then
+
+                       print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                       stop
+ 
+                    Else
+
+                       print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                       stop
+                        
+                    End If
+
+                 End If
 
               Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
@@ -1360,12 +1770,6 @@ Program mcmc
                     End If
 
                  End If
-
-              Else
-
-                 print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
-
-                 stop
 
               End If ! OF ANCHORS
 
@@ -1466,9 +1870,37 @@ Program mcmc
 
              Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                print *,'LMC NOT IMPLEMENTED YET'
+                If (use_metallicity) then 
 
-                stop
+                   If (use_H_band) then
+
+                      print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                      stop
+                   
+                   Else
+
+                      write(13,*) '# WEIGHT   -ln(L/L_{max})    ', paramnames(1:number_model_parameters) 
+
+                   End If
+
+                Else
+
+                   If (use_H_band) then
+
+                      print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                      stop
+
+                   Else
+
+                      print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                      stop
+                        
+                   End If
+
+                End If
 
              Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
@@ -1502,12 +1934,6 @@ Program mcmc
                    End If
 
                 End If
-
-             Else
-
-                print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
-
-                stop
 
              End If ! OF ANCHORS
 
@@ -1620,9 +2046,67 @@ Program mcmc
 
                   Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                     print *,'LMC NOT IMPLEMENTED YET'
+                     If (use_metallicity) then 
 
-                     stop
+                        If (use_H_band) then
+
+                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                           stop
+
+                        Else
+
+                           plausibility(1) = (x_new(1) .le. real(20.d0)) .or. (x_new(1) .ge. real(4.d1))
+
+                           plausibility(2) = (x_new(2) .le. real(20.d0)) .or. (x_new(2) .ge. real(4.d1))
+
+                           plausibility(3) = (x_new(3) .le. real(20.d0)) .or. (x_new(3) .ge. real(4.d1))
+
+                           plausibility(4) = (x_new(4) .le. real(20.d0)) .or. (x_new(4) .ge. real(4.d1))
+
+                           plausibility(5) = (x_new(5) .le. real(20.d0)) .or. (x_new(5) .ge. real(4.d1))
+
+                           plausibility(6) = (x_new(6) .le. real(20.d0)) .or. (x_new(6) .ge. real(4.d1))
+
+                           plausibility(7) = (x_new(7) .le. real(20.d0)) .or. (x_new(7) .ge. real(4.d1))
+
+                           plausibility(8) = (x_new(8) .le. real(20.d0)) .or. (x_new(8) .ge. real(4.d1))
+
+                           plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(30.d0))
+
+                           plausibility(10) = (x_new(10) .le. real(0.d0)) .or. (x_new(10) .ge. real(40.d0))
+
+                           plausibility(11) =  (x_new(11) .le. real(25.d0)) .or. (x_new(11) .ge. real(34.d0)) 
+
+                           plausibility(12) =  (x_new(12) .le. real(-3.2d0)) .or. (x_new(12) .ge. real(-2.5d0)) 
+
+                           plausibility(13) =  (x_new(13) .le. real(55.d0)) .or. (x_new(13) .ge. real(95.d0)) 
+
+                           plausibility(14) =  (x_new(14) .le. real(-1.d0)) .or. (x_new(14) .ge. real(1.d0)) 
+
+                           plausibility(15) =  (x_new(15) .le. real(0.d0)) .or. (x_new(15) .ge. real(1.d0)) 
+
+                           plausibility(16) =  (x_new(16) .le. real(-1.d0)) .or. (x_new(16) .ge. real(1.d0)) 
+
+                        End If
+
+                     Else
+
+                        If (use_H_band) then
+
+                           print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                           stop
+
+                        Else
+
+                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                           stop
+                        
+                        End If
+
+                     End If
 
                   Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
@@ -1804,55 +2288,147 @@ Program mcmc
 
         Else
 
-            If (using_hyperparameters) then    
+           If (using_hyperparameters) then    
 
-               If (doing_R11_analysis) then
+              If (doing_R11_analysis) then
 
-                  If (include_only_cepheids) then
+                 If (include_only_cepheids) then
 
-                     If (all_R11_hosts) then
+                    If (all_R11_hosts) then
                         
-                        current_loglikelihood = log_R11_likelihood_W_cepheids(current_point(1:number_model_parameters-3),&
-                         current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
-                         current_point(number_model_parameters),prior_sigma_int)
+                       current_loglikelihood = log_R11_likelihood_W_cepheids(current_point(1:number_model_parameters-3),&
+                            current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
+                            current_point(number_model_parameters),prior_sigma_int)
 
-                     Else
+                    Else
 
-                        current_loglikelihood = log_likelihood_only_cepheids(galaxy,current_point(1),&
-                          current_point(2),current_point(3),prior_sigma_int)
+                       current_loglikelihood = log_likelihood_only_cepheids(galaxy,current_point(1),&
+                            current_point(2),current_point(3),prior_sigma_int)
 
-                     End If
+                    End If
 
-                  Else
+                 Else
 
-                     If (use_H_band) then
+                    If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then !!!HERE
+    
+                       print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
-                        current_loglikelihood = log_R11_likelihood_H(current_point(1:number_model_parameters-1),&
-                          current_point(number_model_parameters),prior_sigma_int)
+                       stop
 
-                     Else
+                    Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                        current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-5),&
-                          current_point(number_model_parameters-4),current_point(number_model_parameters-3),&
-                          current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
-                          current_point(number_model_parameters),prior_sigma_int)
+                       print *,'NGC4258+LMC NOT IMPLEMENTED YET'
 
-                     End If
+                       stop
 
-                  End If
+                    Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
 
-               Else
+                       print *,'NGC4258+MW NOT IMPLEMENTED YET'
 
-                  current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),&
-                       current_point(2),prior_sigma_int)
+                       stop
 
-               End If
+                    Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
 
-            Else
+                       print *,'MW+LMC NOT IMPLEMENTED YET'
 
-                current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int)
+                       stop
 
-            End If
+                    Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                       print *,'MW NOT IMPLEMENTED YET'
+
+                       stop
+
+                    Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                       If (use_metallicity) then 
+
+                          If (use_H_band) then
+                     
+                             print *,'H BAND NOT IMPLEMENTED USING LMC AS ANCHOR AND INCLUDING METALLICITY DEPENDENCE'
+                     
+                             stop
+                     
+                          Else
+                          
+                             current_loglikelihood = log_R11_likelihood_W_LMC(current_point(1:number_model_parameters-6),&
+                                  current_point(number_model_parameters-5),current_point(number_model_parameters-4),&
+                                  current_point(number_model_parameters-3),current_point(number_model_parameters-2),&
+                                  current_point(number_model_parameters-1),current_point(number_model_parameters),&
+                                  prior_sigma_int,prior_sigma_int_LMC)
+
+                          End If
+
+                       Else
+
+                          If (use_H_band) then
+
+                             print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                             stop
+
+                          Else
+
+                             print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                             stop
+
+                          End If
+
+                       End If
+
+                    Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                       If (use_metallicity) then 
+
+                          If (use_H_band) then
+                     
+                             print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                             stop
+                     
+                          Else
+
+                             current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-5),&
+                                  current_point(number_model_parameters-4),current_point(number_model_parameters-3),&
+                                  current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
+                                  current_point(number_model_parameters),prior_sigma_int)
+
+                          End If
+
+                       Else
+
+                          If (use_H_band) then
+
+                             current_loglikelihood = log_R11_likelihood_H(current_point(1:number_model_parameters-1),&
+                                  current_point(number_model_parameters),prior_sigma_int)
+
+                          Else
+
+                             print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                             stop
+
+                          End If
+
+                       End If
+
+                    End If ! OF ANCHORS 
+
+                 End If
+
+              Else
+
+                 current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),&
+                   current_point(2),prior_sigma_int)
+              
+              End If
+
+           Else
+
+              current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int)
+
+           End If
 
         End If
         ! LOG_LIKELIHOOD FOR CURRENT POINT COMPUTED
@@ -2334,9 +2910,43 @@ Program mcmc
 
           Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-             print *,'LMC NOT IMPLEMENTED YET'
+             If (use_metallicity) then 
 
-             stop
+                If (use_H_band) then
+
+                   print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                   stop
+                
+                Else
+
+                   write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+
+                   Do m=1,number_model_parameters
+
+                      write(15,*) ''//trim(paramnames(m))//' = ', means(m)
+
+                   End Do
+
+                End If
+
+             Else
+
+                If (use_H_band) then
+
+                   print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                   stop
+
+                Else
+
+                   print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                   stop
+                        
+                End If
+
+             End If
 
           Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 

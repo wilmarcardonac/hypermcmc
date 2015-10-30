@@ -10,14 +10,17 @@ Module fiducial
 
     Real*8,parameter    :: prior_A = 12.5d0
     Real*8,parameter    :: prior_bw = -3.23d0
-    Real*8,parameter    :: prior_sigma_int = 0.2d0 !0.d0 !0.1d0!0.20d0
+    Real*8,parameter    :: prior_sigma_int = 0.2d0 !0.d0 !0.1d0!0.20d0 SN Ia hosts
+    Real*8,parameter    :: prior_sigma_int_LMC = 0.113d0 ! SAME VALUE AS IN EQUATION (4a) OF EFSTATHIOU'S PAPER
     Real*8,parameter    :: prior_alpha_j = 5.d-1
     Real*8,parameter    :: R = 0.410d0                  ! TAKEN FROM PAGE 7 IN R11
     Real*8,parameter    :: a_v = 0.697d0                ! TAKEN FROM PAGE 9 IN R11
+    Real*8,parameter    :: a_cal = 0.d0                 ! AUXILIAR PARAMETER TO HAVE DIAGNONAL COVARIANCE MATRIX FOR LMC CEPHEID VARIABLES
     Real*8,parameter    :: NGC4258_distance = 7.60d0    ! TAKEN FROM PAGE 1 IN H13. UNITS : MPC
     Real*8,parameter    :: mu_0_NGC4258 = 5.d0*log10(NGC4258_distance) + 25.d0 ! DEFINITION OF DISTANCE MODULUS
     Real*8,parameter    :: LMC_distance = 49.97d-3       ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : MPC
     Real*8,parameter    :: mu_0_LMC = 5.d0*log10(LMC_distance) + 25.d0 
+    Real*8,parameter    :: meanOH_LMC = 8.5d0           ! MEAN METALLICITY FOR LMC CEPHEID VARIABLES ASSUMED BY EFSTATHIOU
     Real*8,parameter    :: prior_zpH = 28.d0
     Real*8,parameter    :: prior_bH = -2.7d0
     Real*8,parameter    :: prior_mu1 = 30.91d0 ! FROM TABLE 3 IN R11 
@@ -29,6 +32,7 @@ Module fiducial
     Real*8,parameter    :: prior_mu7 = 31.72d0 ! FROM TABLE 3 IN R11 
     Real*8,parameter    :: prior_mu8 = 31.66d0 ! FROM TABLE 3 IN R11 
     Real*8,parameter    :: prior_mu9 = 24.8d0
+    Real*8,parameter    :: prior_mu10 = mu_0_LMC*0.9d0
     Real*8,parameter    :: prior_zpw = 29.d0
     Real*8,parameter    :: prior_Zw = 0.d0
     Real*8,parameter    :: prior_H0 = 70.0d0
@@ -42,9 +46,10 @@ Module fiducial
     Real*8,parameter    :: sigma_sigma_int = 1.d-2
     Real*8,parameter    :: sigma_alpha_j = 1.d-3
     Real*8,parameter    :: sigma_a_v = 0.00201d0        ! TAKEN FROM PAGE 9 IN R11
+    Real*8,parameter    :: sigma_a_cal = 0.04d0         ! TAKEN FROM PAGE 10 IN EFSTATHIOU'S PAPER
     Real*8,parameter    :: sigma_NGC4258_quadrature = 0.23d0    ! TAKEN FROM PAGE 1 IN H13. UNITS : MPC
     Real*8,parameter    :: sigma_mu_0_NGC4258 = 5.d0/log(10.d0)/NGC4258_distance*sigma_NGC4258_quadrature ! ERROR ON DISTANCE MODULUS
-    Real*8,parameter    :: sigma_LMC_quadrature = 1.13d0 ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : KPC
+    Real*8,parameter    :: sigma_LMC_quadrature = 1.13d-3 ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : MPC
     Real*8,parameter    :: sigma_mu_0_LMC = 5.d0/log(10.d0)/LMC_distance*sigma_LMC_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_zpH = 0.2d0
     Real*8,parameter    :: sigma_bH = 0.1d0
@@ -57,6 +62,7 @@ Module fiducial
     Real*8,parameter    :: sigma_mu7 = sigma_mu_0_NGC4258/2.d0
     Real*8,parameter    :: sigma_mu8 = sigma_mu_0_NGC4258/2.d0
     Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258/2.d0
+    Real*8,parameter    :: sigma_mu10 = sigma_mu_0_LMC/2.d0
     Real*8,parameter    :: sigma_zpw = 1.d-1
     Real*8,parameter    :: sigma_Zw = 0.25d0
     Real*8,parameter    :: sigma_H0 = 1.0d-1
@@ -72,8 +78,9 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 14 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
-    ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE 
+    Integer*4,parameter :: number_model_parameters = 16 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
+    ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
     Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
     Integer*4,parameter :: jumping_factor_update = 100           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)
@@ -96,8 +103,8 @@ Module fiducial
     Logical,parameter   :: using_hyperparameters = .true.        ! USE HYPER-PARAMETERS IF SET IT TRUE
     Logical,parameter   :: using_jeffreys_prior = .false.        ! USE JEFFREYS PRIOR IF SET IT TRUE, OTHERWISE USE UNIFORM PRIOR [0,1] 
     Logical,parameter   :: hyperparameters_as_mcmc = .false.      ! SET HYPER-PARAMETERS AS MCMC PARAMETERS IF SET IT TRUE
-    Logical,parameter   :: use_NGC4258_as_anchor = .true.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
-    Logical,parameter   :: use_LMC_as_anchor = .false.           ! USE LMC AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_NGC4258_as_anchor = .false.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_LMC_as_anchor = .true.           ! USE LMC AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_MW_as_anchor = .false.            ! USE MW AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_metallicity = .true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
     Logical,parameter   :: use_H_band = .false.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
@@ -105,8 +112,8 @@ Module fiducial
     Logical,parameter   :: use_HP_in_av = .false.                ! USE HPs WHEN COMPUTINNG av CHI2
     Logical,parameter   :: use_HP_in_anchor = .false.            ! USE HPs WHEN COMPUTING ANCHOR CHI2
     Logical,parameter   :: use_HP_per_host = .false.              ! USE HPs FOR EACH HOST IN R11 IF SET IT TRUE
-    Logical,parameter   :: use_HP_per_cepheid = .false.           ! USE HPs FOR EACH CEPHEID IN R11 IF SET IT TRUE
-    Logical,parameter   :: doing_R11_analysis = .false.           ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU
+    Logical,parameter   :: use_HP_per_cepheid = .true.           ! USE HPs FOR EACH CEPHEID IN R11 IF SET IT TRUE
+    Logical,parameter   :: doing_R11_analysis = .true.           ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
 
