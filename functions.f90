@@ -835,6 +835,17 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
             log_R11_likelihood_W
 
     End If
+
+    If (use_prior_on_zpw4258) then
+
+       log_R11_likelihood_W = -((zpw_ref - prior_zpw4258)**2/sigma_zpw4258**2 + log(2.d0*Pi*sigma_zpw4258**2) )/2.d0  +&
+            log_R11_likelihood_W
+
+    Else 
+
+       continue
+
+    End If
         
     If ( abs(log_R11_likelihood_W) .ge. 0.d0 ) then
 

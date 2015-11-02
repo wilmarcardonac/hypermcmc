@@ -34,6 +34,7 @@ Module fiducial
     Real*8,parameter    :: prior_mu9 = 24.8d0
     Real*8,parameter    :: prior_mu10 = 18.5d0
     Real*8,parameter    :: prior_zpw = 29.d0
+    Real*8,parameter    :: prior_zpw4258 = 30.5d0  ! CENTRAL VALUE OF PRIOR ON zp_{w,4258} 
     Real*8,parameter    :: prior_zpwLMC = 20.98d0
     Real*8,parameter    :: prior_Zw = 0.d0
     Real*8,parameter    :: prior_H0 = 70.0d0
@@ -65,6 +66,7 @@ Module fiducial
     Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258/2.d0
     Real*8,parameter    :: sigma_mu10 = sigma_mu_0_LMC/2.d0
     Real*8,parameter    :: sigma_zpw = 1.d-1
+    Real*8,parameter    :: sigma_zpw4258 = 0.1d0 
     Real*8,parameter    :: sigma_zpwLMC = 0.78d0
     Real*8,parameter    :: sigma_Zw = 0.25d0
     Real*8,parameter    :: sigma_H0 = 1.0d-1
@@ -105,8 +107,8 @@ Module fiducial
     Logical,parameter   :: using_hyperparameters = .true.        ! USE HYPER-PARAMETERS IF SET IT TRUE
     Logical,parameter   :: using_jeffreys_prior = .false.        ! USE JEFFREYS PRIOR IF SET IT TRUE, OTHERWISE USE UNIFORM PRIOR [0,1] 
     Logical,parameter   :: hyperparameters_as_mcmc = .false.      ! SET HYPER-PARAMETERS AS MCMC PARAMETERS IF SET IT TRUE
-    Logical,parameter   :: use_NGC4258_as_anchor = .false.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
-    Logical,parameter   :: use_LMC_as_anchor = .true.           ! USE LMC AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_NGC4258_as_anchor = .true.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_LMC_as_anchor = .false.           ! USE LMC AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_MW_as_anchor = .false.            ! USE MW AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_metallicity = .true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
     Logical,parameter   :: use_H_band = .false.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
@@ -118,6 +120,7 @@ Module fiducial
     Logical,parameter   :: doing_R11_analysis = .true.           ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
+    Logical,parameter   :: use_prior_on_zpw4258 = .true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 
