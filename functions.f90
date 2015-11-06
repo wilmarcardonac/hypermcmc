@@ -317,6 +317,15 @@ function P_L_relation_passband_H(zpH_j,zpH_ref,bH,P_ij) ! EQUATION (2) IN R09
 
 end function P_L_relation_passband_H
 
+function P_L_relation_passband_H_2(mu0i,mu0_ref,zpW_ref,bW,Zw,OH_ij,P_ij) ! EQUATION (7) IN R09
+
+    Implicit none
+    Real*8 :: P_L_relation_passband_H_2,mu0i,mu0_ref,zpW_ref,bW,P_ij,Zw,OH_ij
+
+    P_L_relation_passband_H_2 = (mu0i - mu0_ref) + zpW_ref + bW*log10(P_ij) + Zw*OH_ij
+
+end function P_L_relation_passband_H_2
+
 function P_L_relation_passband_W(mu0i,mu0_ref,zpW_ref,bW,Zw,OH_ij,P_ij) ! EQUATION (7) IN R09
 
     Implicit none
@@ -376,6 +385,178 @@ function log_Efstathiou_likelihood(A,bw,sigma_int)    !    It computes equation 
 
 end function log_Efstathiou_likelihood
 
+function log_R11_likelihood_H_NGC4258(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATION (4) IN R09
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: log_R11_likelihood_H_NGC4258,zpw_ref,bw,H0,Zw,av,sigma_int!,normalizationA
+    Real*8,dimension(number_of_hosts_galaxies) :: mu0j 
+    Integer*4 :: m,index_host!,number_cepheid
+
+    log_R11_likelihood_H_NGC4258 = 0.d0
+
+    If (use_HP_per_host) then
+ 
+       print *, 'NEED TO IMPLEMENT HP PER HOST IN LOG_R11_LIKELIHOOD_H_NGC4258'
+
+       stop
+
+!       If (using_jeffreys_prior) then
+
+!          Do index_host=1,number_of_hosts_galaxies
+
+!             normalizationA = 0.d0
+
+!             number_cepheid = 0
+
+!             Do m=1, size(Field)
+
+!                If (host(index_host) .eq. Field(m)) then
+                       
+!                   number_cepheid = number_cepheid + 1
+
+!                   normalizationA = log( eF160WR11(m)**2 + sigma_int**2 ) + normalizationA
+
+!                End If
+
+!             End Do
+
+!             log_R11_likelihood_H_NGC4258 = - dble(number_cepheid)*log(chi2R11_W_host(mu0j(index_host),mu0j(9),&
+!                  zpw_ref,bw,Zw,sigma_int,index_host))/2.d0 - normalizationA/2.d0 + log_R11_likelihood_H_NGC4258
+
+!          End Do
+
+!       Else
+
+!          print *, 'UNIFORM PRIOR NOT IMPLEMENTED YET. NEED TO CODE EXPRESSION WITH GAMMA FUNCTIONS'
+
+!          stop
+
+!       End If
+
+    Else
+
+       If (use_HP_per_cepheid) then
+
+          Do m=1,size(Field)
+
+             Do index_host=1,number_of_hosts_galaxies
+ 
+                If (host(index_host) .eq. Field(m)) then
+    
+                   If (using_jeffreys_prior) then
+
+                      print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+                      stop
+
+                   Else
+                       
+                      If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                         log_R11_likelihood_H_NGC4258 = log(new_chi2(chi2R11_H_2(mu0j(index_host),mu0j(9),zpw_ref,&
+                              bw,Zw,sigma_int,m))) + log(N_tilde_R11_H(sigma_int,m)) + log_R11_likelihood_H_NGC4258
+
+                      End If
+
+                   End If
+
+                End If
+
+             End Do
+
+          End Do
+
+       Else
+
+          Do m=1,size(Field)
+
+             Do index_host=1,number_of_hosts_galaxies
+ 
+                If (host(index_host) .eq. Field(m)) then
+    
+                   If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                      log_R11_likelihood_H_NGC4258 = -chi2R11_H_2(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,sigma_int,m)/2.d0 + &
+                           log(N_tilde_R11_H(sigma_int,m)) + log_R11_likelihood_H_NGC4258
+
+                   End If
+
+                End If
+
+             End Do
+
+          End Do
+
+       End If
+
+    End If
+
+    Do index_host=1,number_of_hosts_galaxies-1
+
+       If (use_HP_in_SNIa) then
+
+          log_R11_likelihood_H_NGC4258 = log(new_chi2(chi2R11_SNIa(mu0j(index_host),H0,av,index_host))) + &
+               log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_H_NGC4258  
+
+       Else
+
+          log_R11_likelihood_H_NGC4258 = -chi2R11_SNIa(mu0j(index_host),H0,av,index_host)/2.d0 + &
+               log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_H_NGC4258  
+
+       End If
+              
+    End Do
+        
+    If (use_HP_in_av) then
+
+       log_R11_likelihood_H_NGC4258 = log(new_chi2((a_v - av)**2/sigma_a_v**2)) - log(2.d0*Pi*sigma_a_v**2)/2.d0  +&
+            log_R11_likelihood_H_NGC4258
+
+    Else
+
+       log_R11_likelihood_H_NGC4258 = -((a_v - av)**2/sigma_a_v**2 + log(2.d0*Pi*sigma_a_v**2) )/2.d0  + &
+            log_R11_likelihood_H_NGC4258
+
+    End If
+        
+    If (use_HP_in_anchor) then
+
+       log_R11_likelihood_H_NGC4258 =  log(new_chi2(chi2R11_anchor_NGC4258(mu0j(9)))) - log(2.d0*Pi*sigma_mu_0_NGC4258**2)/2.d0 + &
+            log_R11_likelihood_H_NGC4258
+
+    Else
+
+       log_R11_likelihood_H_NGC4258 =  -(chi2R11_anchor_NGC4258(mu0j(9)) + log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 + &
+            log_R11_likelihood_H_NGC4258
+
+    End If
+
+    If (use_prior_on_zpw4258) then
+
+       log_R11_likelihood_H_NGC4258 = -((zpw_ref - prior_zpw4258)**2/sigma_zpw4258**2 + log(2.d0*Pi*sigma_zpw4258**2) )/2.d0  +&
+            log_R11_likelihood_H_NGC4258
+
+    Else 
+
+       continue
+
+    End If
+        
+    If ( abs(log_R11_likelihood_H_NGC4258) .ge. 0.d0 ) then
+
+       continue
+
+    Else 
+
+       log_R11_likelihood_H_NGC4258 = -1.d10
+
+    End If
+
+end function log_R11_likelihood_H_NGC4258
+
 function log_R11_likelihood_H(zpH,bH,sigma_int)    !    EQUATION (4) IN R09
 
     use arrays
@@ -386,86 +567,44 @@ function log_R11_likelihood_H(zpH,bH,sigma_int)    !    EQUATION (4) IN R09
     Real*8,dimension(number_of_hosts_galaxies) :: zpH 
     Integer*4 :: m,index_host
 
-    If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
-    
-        print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+    log_R11_likelihood_H = 0.d0
 
-        stop
+    Do m=1,size(Field)
 
-    Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-        print *,'NGC4258+LMC NOT IMPLEMENTED YET'
-
-        stop
-
-    Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-        print *,'NGC4258+MW NOT IMPLEMENTED YET'
-
-        stop
-
-    Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-        print *,'MW+LMC NOT IMPLEMENTED YET'
-
-        stop
-
-    Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-        print *,'MW NOT IMPLEMENTED YET'
-
-        stop
-
-    Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-        print *,'LMC NOT IMPLEMENTED YET'
-
-        stop
-
-    Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-        log_R11_likelihood_H = 0.d0
-
-        Do m=1,size(Field)
-
-            Do index_host=1,number_of_hosts_galaxies
+       Do index_host=1,number_of_hosts_galaxies
  
-                If (host(index_host) .eq. Field(m)) then
+          If (host(index_host) .eq. Field(m)) then
     
-                    If (using_jeffreys_prior) then
+             If (using_jeffreys_prior) then
 
-                        print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+                print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
 
-                        stop
+                stop
 
-                    Else
+             Else
 
-                        log_R11_likelihood_H = log(new_chi2(chi2R11_H(zpH(index_host),zpH(9),bH,sigma_int,m))) + &
+                If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                   log_R11_likelihood_H = log(new_chi2(chi2R11_H(zpH(index_host),zpH(9),bH,sigma_int,m))) + &
                         log(N_tilde_R11_H(sigma_int,m)) + log_R11_likelihood_H
-
-                    End If
 
                 End If 
 
-            End Do
+             End If
 
-        End Do
+          End If
 
-        If ( abs(log_R11_likelihood_H) .ge. 0.d0 ) then
+       End Do
 
-            continue
+    End Do
 
-        Else 
+    If ( abs(log_R11_likelihood_H) .ge. 0.d0 ) then
 
-            log_R11_likelihood_H = -1.d10
+       continue
 
-        End If
+    Else 
 
-    Else
-
-        print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
-
-        stop
+       log_R11_likelihood_H = -1.d10
 
     End If
 
@@ -484,6 +623,7 @@ function chi2R11_H(zpH_j,zpH_ref,bH,sigma_int,m)    !    It computes equation (3
     ( eF160WR11(m)**2 + sigma_int**2 ) 
 
 end function chi2R11_H
+
 
 function N_tilde_R11_H(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
 
@@ -976,6 +1116,20 @@ function chi2R11_W(mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,m)    !    It computes 
          P_L_relation_passband_W(mu0_j,mu0_ref,zpw_ref,bw,Zw,OHR11(m),PeriodR11(m)) )**2/( eF160WR11(m)**2 + sigma_int**2 ) 
 
 end function chi2R11_W
+
+function chi2R11_H_2(mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,chi2R11_H_2
+    Integer*4 :: m
+
+    chi2R11_H_2 = ( F160WR11(m) - &
+         P_L_relation_passband_H_2(mu0_j,mu0_ref,zpw_ref,bw,Zw,OHR11(m),PeriodR11(m)) )**2/( eF160WR11(m)**2 + sigma_int**2 ) 
+
+end function chi2R11_H_2
 
 function chi2R11_W_LMC(mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
 

@@ -263,10 +263,44 @@ Program mcmc
                  If (use_metallicity) then 
 
                     If (use_H_band) then
-                     
-                       print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                     
-                       stop
+
+                       If (number_model_parameters .eq. 14) then ! ASSIGN VALUES TO COVARIANCE MATRIX. SINCE VALUES OF PARAMETERS DEPENDING 
+                          
+                          Covguess(1,1) = sigma_mu1**2           ! ON H BAND ARE NOT EXPECTED TO BE TOO MUCH DIFFERENT FROM THOSE FOR W BAND 
+
+                          Covguess(2,2) = sigma_mu2**2           ! I USE SAME VALUES AS FOR W BAND BELOW
+
+                          Covguess(3,3) = sigma_mu3**2 
+
+                          Covguess(4,4) = sigma_mu4**2 
+
+                          Covguess(5,5) = sigma_mu5**2 
+
+                          Covguess(6,6) = sigma_mu6**2 
+
+                          Covguess(7,7) = sigma_mu7**2 
+
+                          Covguess(8,8) = sigma_mu8**2 
+
+                          Covguess(9,9) = sigma_mu9**2 
+
+                          Covguess(10,10) = sigma_zpw**2
+
+                          Covguess(11,11) = sigma_bw**2 
+
+                          Covguess(12,12) = sigma_H0**2 
+
+                          Covguess(13,13) = sigma_Zw**2 
+                          
+                          Covguess(14,14) = sigma_a_v**2
+
+                       Else
+                        
+                          print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE AND COMPARE WITH EQUATION (18) IN R09'
+
+                          stop
+
+                       End If
                      
                     Else
 
@@ -495,1319 +529,1436 @@ Program mcmc
 
     If (testing_Gaussian_likelihood) then
 
-        write(15,*) 'TESTING CODE WITH GAUSSIAN LIKELIHOOD'
+       write(15,*) 'TESTING CODE WITH GAUSSIAN LIKELIHOOD'
 
-        open(13,file='./output/mcmc_final_output.txt')
+       open(13,file='./output/mcmc_final_output.txt')
 
-        open(17,file='./output/mcmc_final_output.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
+       open(17,file='./output/mcmc_final_output.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
 
-        write(17,*) 'A    N    N '
+       write(17,*) 'A    N    N '
 
-        write(17,*) 'bw    N    N '
+       write(17,*) 'bw    N    N '
 
-    !    write(17,*) 'sigma_int    N    N '
+       !    write(17,*) 'sigma_int    N    N '
 
-        close(17)
+       close(17)
 
-        Do i=1,number_of_parameters
+       Do i=1,number_of_parameters
 
-            x_old(i) = genunf(-1.,1.)
+          x_old(i) = genunf(-1.,1.)
+            
+       End Do
 
-        End Do
-
-        Do m=1,number_of_parameters
+       Do m=1,number_of_parameters
     
-            If (m .eq. 4) then
+          If (m .eq. 4) then
 
-                old_point(m) = dble(x_old(m)) !exp(dble(x_old(m)))/(1.d1**1.d1)
+             old_point(m) = dble(x_old(m)) !exp(dble(x_old(m)))/(1.d1**1.d1)
 
-            else
+          else
+
+             old_point(m) = dble(x_old(m))
+
+          End If
+
+       End Do
+
+       old_loglikelihood = log_Gaussian_likelihood(old_point)
+
+    Else 
+       !###########################################
+       ! GENERATE A RANDOM POINT IN PARAMETER SPACE
+       ! RANDOM NUMBER GENERATOR WORKS WITH SINGLE PRECISION WHEREAS THIS CODES USES DOUBLE PRECISION; CHANGES ARE CORRESPONDINGLY MADE.
+       !################################################################################################################################
+
+       If (start_from_fiducial) then
+
+          write(15,*) 'STARTING FROM FIDUCIAL POINT'
+
+          If (doing_R11_analysis) then
+
+             If (include_only_cepheids) then
+
+                If (all_R11_hosts) then
+
+                   old_point(1) = prior_mu1
+
+                   old_point(2) = prior_mu2
+
+                   old_point(3) = prior_mu3 
+
+                   old_point(4) = prior_mu4
+
+                   old_point(5) = prior_mu5
+
+                   old_point(6) = prior_mu6
+
+                   old_point(7) = prior_mu7
+
+                   old_point(8) = prior_mu8
+
+                   old_point(9) = prior_mu9
+
+                   old_point(10) = prior_zpw
+
+                   old_point(11) = prior_bw
+
+                   old_point(12) = prior_Zw
+
+                Else
+
+                   old_point(1) = prior_zpw
+
+                   old_point(2) = prior_bw
+
+                   old_point(3) = prior_Zw
+
+                End If
+
+             Else
+
+                If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+                   print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+
+                   stop
+
+                Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                   print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+                   stop
+
+                Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                   print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+                   stop
+
+                Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                   print *,'MW+LMC NOT IMPLEMENTED YET'
+
+                   stop
+
+                Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                   print *,'MW NOT IMPLEMENTED YET'
+
+                   stop
+
+                Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                   If (use_metallicity) then 
+
+                      If (use_H_band) then
+                     
+                         print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                         stop
+
+                      Else
+
+                         old_point(1) = prior_mu1
+
+                         old_point(2) = prior_mu2
+
+                         old_point(3) = prior_mu3 
+
+                         old_point(4) = prior_mu4
+
+                         old_point(5) = prior_mu5
+
+                         old_point(6) = prior_mu6
+
+                         old_point(7) = prior_mu7
+
+                         old_point(8) = prior_mu8
+
+                         old_point(9) = prior_mu9
+
+                         old_point(10) = prior_mu10
+
+                         old_point(11) = prior_zpwLMC
+
+                         old_point(12) = prior_bw
+
+                         old_point(13) = prior_H0
+
+                         old_point(14) = prior_Zw
+
+                         old_point(15) = a_v
+
+                         old_point(16) = a_cal
+                        
+                      End If
+
+                   Else
+
+                      If (use_H_band) then
+                     
+                         print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                         stop
+
+                      Else
+
+                         print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                         stop
+                        
+                      End If
+
+                   End If
+
+                Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                   If (use_metallicity) then 
+
+                      If (use_H_band) then
+                     
+                         old_point(1) = prior_mu1
+
+                         old_point(2) = prior_mu2
+
+                         old_point(3) = prior_mu3 
+
+                         old_point(4) = prior_mu4
+
+                         old_point(5) = prior_mu5
+
+                         old_point(6) = prior_mu6
+
+                         old_point(7) = prior_mu7
+
+                         old_point(8) = prior_mu8
+
+                         old_point(9) = prior_mu9
+
+                         old_point(10) = prior_zpw
+
+                         old_point(11) = prior_bw
+
+                         old_point(12) = prior_H0
+
+                         old_point(13) = prior_Zw
+
+                         old_point(14) = a_v
+
+                      Else
+
+                         old_point(1) = prior_mu1
+
+                         old_point(2) = prior_mu2
+
+                         old_point(3) = prior_mu3 
+
+                         old_point(4) = prior_mu4
+
+                         old_point(5) = prior_mu5
+
+                         old_point(6) = prior_mu6
+
+                         old_point(7) = prior_mu7
+
+                         old_point(8) = prior_mu8
+
+                         old_point(9) = prior_mu9
+
+                         old_point(10) = prior_zpw
+
+                         old_point(11) = prior_bw
+
+                         old_point(12) = prior_H0
+
+                         old_point(13) = prior_Zw
+
+                         old_point(14) = a_v
+                        
+                      End If
+
+                   Else
+
+                      If (use_H_band) then
+                     
+                         old_point(1) = prior_zpH
+
+                         old_point(2) = prior_zpH
+
+                         old_point(3) = prior_zpH 
+
+                         old_point(4) = prior_zpH
+
+                         old_point(5) = prior_zpH
+
+                         old_point(6) = prior_zpH
+
+                         old_point(7) = prior_zpH
+
+                         old_point(8) = prior_zpH
+
+                         old_point(9) = prior_zpH
+
+                         old_point(10) = prior_bH
+
+                      Else
+
+                         print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                         stop
+                        
+                      End If
+
+                   End If
+
+                Else
+
+                   print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+                   stop
+
+                End If ! OF ANCHORS
+    
+             End If ! OF CEPHEIDS
+
+          Else
+
+             old_point(1) = prior_A         ! A 
+             old_point(2) = prior_bw        ! bw 
+             !old_point(3) = prior_sigma_int ! sigma_int 
+ 
+          End If
+
+          If (hyperparameters_as_mcmc) then
+             ! SETTING INITIAL POINT FOR HYPER-PARAMETERS
+             Do m=number_model_parameters+1,number_of_parameters
+
+                old_point(m) = prior_alpha_j
+
+             End Do
+            
+          End If
+    
+          Do m=1,number_of_parameters
+
+             If (m .gt. number_model_parameters) then
+                    
+                If (using_jeffreys_prior) then
+
+                   x_old(m) = real(log10(old_point(m)))    ! CONVERT TO log10(\alpha_j)
+
+                Else
+
+                   x_old(m) = real(old_point(m))
+
+                End If
+
+             else
+
+                x_old(m) = real(old_point(m))
+
+             End If
+
+          End Do
+
+       Else
+
+          If (doing_R11_analysis) then
+
+             If (include_only_cepheids) then
+
+                If (all_R11_hosts) then
+
+                   x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
+
+                   x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
+
+                   x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
+
+                   x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
+
+                   x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
+
+                   x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
+
+                   x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
+
+                   x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
+
+                   x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
+
+                   x_old(10) = genunf(real(prior_zpw - sigma_zpw),real(prior_zpw + sigma_zpw))
+
+                   x_old(11) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
+                   
+                   x_old(12) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+                   
+                Else
+
+                   x_old(1) = genunf(real(prior_zpw - sigma_zpw),real(prior_zpw + sigma_zpw))
+
+                   x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
+
+                   x_old(3) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+
+                End If
+
+             Else
+
+                If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+                   print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+
+                   stop
+                   
+                Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                   print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+                   stop
+
+                Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                   print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+                   stop
+
+                Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                   print *,'MW+LMC NOT IMPLEMENTED YET'
+
+                   stop
+
+                Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                   print *,'MW NOT IMPLEMENTED YET'
+
+                   stop
+
+                Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                   If (use_metallicity) then 
+
+                      If (use_H_band) then
+
+                         print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                         stop
+
+                      Else
+                     
+                         x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
+
+                         x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
+
+                         x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
+
+                         x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
+
+                         x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
+
+                         x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
+
+                         x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
+
+                         x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
+
+                         x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
+
+                         x_old(10) = genunf(real(prior_mu10 - sigma_mu10),real(prior_mu10 + sigma_mu10))
+
+                         x_old(11) = genunf(real(prior_zpwLMC - sigma_zpwLMC),real(prior_zpwLMC + sigma_zpwLMC))
+
+                         x_old(12) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
+
+                         x_old(13) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
+
+                         x_old(14) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+
+                         x_old(15) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
+
+                         x_old(16) = genunf(real(a_cal - sigma_a_cal),real(a_cal + sigma_a_cal))
+
+                      End If
+
+                   Else
+
+                      If (use_H_band) then
+                     
+                         print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                         stop
+
+                      Else
+
+                         print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                         stop
+                        
+                      End If
+
+                   End If
+
+                Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                   If (use_metallicity) then 
+
+                      If (use_H_band) then
+
+                         x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
+
+                         x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
+
+                         x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
+
+                         x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
+
+                         x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
+
+                         x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
+
+                         x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
+
+                         x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
+
+                         x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
+
+                         x_old(10) = genunf(real(prior_zpw - sigma_zpw),real(prior_zpw + sigma_zpw))
+
+                         x_old(11) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
+
+                         x_old(12) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
+
+                         x_old(13) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+
+                         x_old(14) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
+
+                      Else
+                     
+                         x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
+
+                         x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
+
+                         x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
+
+                         x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
+
+                         x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
+
+                         x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
+
+                         x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
+
+                         x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
+
+                         x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
+
+                         x_old(10) = genunf(real(prior_zpw - sigma_zpw),real(prior_zpw + sigma_zpw))
+
+                         x_old(11) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
+
+                         x_old(12) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
+
+                         x_old(13) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+
+                         x_old(14) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
+
+                      End If
+
+                   Else
+
+                      If (use_H_band) then
+                     
+                         x_old(1) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                         x_old(2) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                         x_old(3) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                         x_old(4) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                         x_old(5) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                         x_old(6) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                         x_old(7) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                         x_old(8) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                         x_old(9) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
+
+                         x_old(10) = genunf(real(prior_bH - sigma_bH),real(prior_bH + sigma_bH))
+
+                      Else
+
+                         print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                         stop
+                        
+                      End If
+
+                   End If
+
+                Else
+
+                   print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+                   stop
+
+                End If ! OF ANCHORS
+
+             End If ! OF ONLY CEPHEIDS
+    
+          Else
+
+             x_old(1) = genunf(real(prior_A - sigma_A),real(prior_A + sigma_A))         ! A
+             x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
+             !x_old(3) = genunf(real(-10.d0),real(0.d0)) ! log10(sigma_int)
+
+          End If
+
+          If (hyperparameters_as_mcmc) then
+             ! SETTING INITIAL POINT FOR HYPER-PARAMETERS
+             Do m=number_model_parameters+1,number_of_parameters
+                    
+                If (using_jeffreys_prior) then
+
+                   x_old(m) = genunf(real(-1.d0),real(1.d0)) ! log10(\alpha_j)
+
+                Else
+
+                   x_old(m) = genunf(real(0.d0),real(1.d0))
+
+                End If
+
+             End Do
+            
+          End If
+
+          Do m=1,number_of_parameters
+
+             If (m .gt. number_model_parameters) then
+                  
+                If (using_jeffreys_prior) then
+
+                   old_point(m) = 10**(dble(x_old(m)))    !    CONVERT TO \alpha_j
+
+                Else
+
+                   old_point(m) = dble(x_old(m)) 
+
+                End If
+
+             else
 
                 old_point(m) = dble(x_old(m))
 
-            End If
+             End If
 
-        End Do
+          End Do
 
-        old_loglikelihood = log_Gaussian_likelihood(old_point)
+       End If
 
-    Else 
-    !###########################################
-    ! GENERATE A RANDOM POINT IN PARAMETER SPACE
-    ! RANDOM NUMBER GENERATOR WORKS WITH SINGLE PRECISION WHEREAS THIS CODES USES DOUBLE PRECISION; CHANGES ARE CORRESPONDINGLY MADE.
-    !################################################################################################################################
+       If (using_hyperparameters) then
+          ! OPEN FILE TO STORE MCMC COMPUTATION
+          open(13,file='./output/mcmc_final_output_HP.txt')
 
-        If (start_from_fiducial) then
+          write(15,*) 'WORKING WITH HYPER-PARAMETERS'
 
-            write(15,*) 'STARTING FROM FIDUCIAL POINT'
-
-            If (doing_R11_analysis) then
-
-               If (include_only_cepheids) then
-
-                  If (all_R11_hosts) then
-
-                     old_point(1) = prior_mu1
-
-                     old_point(2) = prior_mu2
-
-                     old_point(3) = prior_mu3 
-
-                     old_point(4) = prior_mu4
-
-                     old_point(5) = prior_mu5
-
-                     old_point(6) = prior_mu6
-
-                     old_point(7) = prior_mu7
-
-                     old_point(8) = prior_mu8
-
-                     old_point(9) = prior_mu9
-
-                     old_point(10) = prior_zpw
-
-                     old_point(11) = prior_bw
-
-                     old_point(12) = prior_Zw
-
-                  Else
-
-                     old_point(1) = prior_zpw
-
-                     old_point(2) = prior_bw
-
-                     old_point(3) = prior_Zw
-
-                  End If
-
-               Else
-
-                  If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
-    
-                     print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
-
-                     stop
-
-                  Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                     print *,'NGC4258+LMC NOT IMPLEMENTED YET'
-
-                     stop
-
-                  Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                     print *,'NGC4258+MW NOT IMPLEMENTED YET'
-
-                     stop
-
-                  Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                     print *,'MW+LMC NOT IMPLEMENTED YET'
-
-                     stop
-
-                  Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                     print *,'MW NOT IMPLEMENTED YET'
-
-                     stop
-
-                  Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                     If (use_metallicity) then 
-
-                        If (use_H_band) then
-                     
-                           print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                     
-                           stop
-
-                        Else
-
-                           old_point(1) = prior_mu1
-
-                           old_point(2) = prior_mu2
-
-                           old_point(3) = prior_mu3 
-
-                           old_point(4) = prior_mu4
-
-                           old_point(5) = prior_mu5
-
-                           old_point(6) = prior_mu6
-
-                           old_point(7) = prior_mu7
-
-                           old_point(8) = prior_mu8
-
-                           old_point(9) = prior_mu9
-
-                           old_point(10) = prior_mu10
-
-                           old_point(11) = prior_zpwLMC
-
-                           old_point(12) = prior_bw
-
-                           old_point(13) = prior_H0
-
-                           old_point(14) = prior_Zw
-
-                           old_point(15) = a_v
-
-                           old_point(16) = a_cal
-                        
-                        End If
-
-                     Else
-
-                        If (use_H_band) then
-                     
-                           print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
-                     
-                           stop
-
-                        Else
-
-                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
-                     
-                           stop
-                        
-                        End If
-
-                     End If
-
-                  Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                     If (use_metallicity) then 
-
-                        If (use_H_band) then
-                     
-                           print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                     
-                           stop
-
-                        Else
-
-                           old_point(1) = prior_mu1
-
-                           old_point(2) = prior_mu2
-
-                           old_point(3) = prior_mu3 
-
-                           old_point(4) = prior_mu4
-
-                           old_point(5) = prior_mu5
-
-                           old_point(6) = prior_mu6
-
-                           old_point(7) = prior_mu7
-
-                           old_point(8) = prior_mu8
-
-                           old_point(9) = prior_mu9
-
-                           old_point(10) = prior_zpw
-
-                           old_point(11) = prior_bw
-
-                           old_point(12) = prior_H0
-
-                           old_point(13) = prior_Zw
-
-                           old_point(14) = a_v
-                        
-                        End If
-
-                     Else
-
-                        If (use_H_band) then
-                     
-                           old_point(1) = prior_zpH
-
-                           old_point(2) = prior_zpH
-
-                           old_point(3) = prior_zpH 
-
-                           old_point(4) = prior_zpH
-
-                           old_point(5) = prior_zpH
-
-                           old_point(6) = prior_zpH
-
-                           old_point(7) = prior_zpH
-
-                           old_point(8) = prior_zpH
-
-                           old_point(9) = prior_zpH
-
-                           old_point(10) = prior_bH
-
-                        Else
-
-                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
-                     
-                           stop
-                        
-                        End If
-
-                     End If
-
-                  Else
-
-                     print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
-
-                     stop
-
-                  End If ! OF ANCHORS
-    
-               End If ! OF CEPHEIDS
-
-            Else
-
-               old_point(1) = prior_A         ! A 
-               old_point(2) = prior_bw        ! bw 
-               !old_point(3) = prior_sigma_int ! sigma_int 
- 
-            End If
-
-            If (hyperparameters_as_mcmc) then
-                ! SETTING INITIAL POINT FOR HYPER-PARAMETERS
-                Do m=number_model_parameters+1,number_of_parameters
-
-                    old_point(m) = prior_alpha_j
-
-                End Do
+          write(15,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
             
-            End If
-    
-            Do m=1,number_of_parameters
+          ! COMPUTE INITIAL LIKELIHOOD
+          If (doing_R11_analysis) then
 
-                If (m .gt. number_model_parameters) then
+             If (include_only_cepheids) then
+
+                If (all_R11_hosts) then
                     
-                    If (using_jeffreys_prior) then
+                   old_loglikelihood = log_R11_likelihood_W_cepheids(old_point(1:number_model_parameters-3),&
+                        old_point(number_model_parameters-2),old_point(number_model_parameters-1),&
+                        old_point(number_model_parameters),prior_sigma_int)
 
-                        x_old(m) = real(log10(old_point(m)))    ! CONVERT TO log10(\alpha_j)
+                Else
 
-                    Else
-
-                        x_old(m) = real(old_point(m))
-
-                    End If
-
-                else
-
-                    x_old(m) = real(old_point(m))
+                   old_loglikelihood = log_likelihood_only_cepheids(galaxy,old_point(1),old_point(2),&
+                        old_point(3),prior_sigma_int)
 
                 End If
 
-            End Do
+             Else
 
-        Else
-
-            If (doing_R11_analysis) then
-
-               If (include_only_cepheids) then
-
-                  If (all_R11_hosts) then
-
-                     x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
-
-                     x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
-
-                     x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
-
-                     x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
-
-                     x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
-
-                     x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
-
-                     x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
-
-                     x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
-
-                     x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
-
-                     x_old(10) = genunf(real(prior_zpw - sigma_zpw),real(prior_zpw + sigma_zpw))
-
-                     x_old(11) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
-
-                     x_old(12) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
-
-                  Else
-
-                     x_old(1) = genunf(real(prior_zpw - sigma_zpw),real(prior_zpw + sigma_zpw))
-
-                     x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
-
-                     x_old(3) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
-
-                  End If
-
-               Else
-
-                  If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+                If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then !!!HERE
     
-                     print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+                   print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
-                     stop
+                   stop
 
-                  Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+                Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                     print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+                   print *,'NGC4258+LMC NOT IMPLEMENTED YET'
 
-                     stop
+                   stop
 
-                  Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+                Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
 
-                     print *,'NGC4258+MW NOT IMPLEMENTED YET'
+                   print *,'NGC4258+MW NOT IMPLEMENTED YET'
 
-                     stop
+                   stop
 
-                  Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+                Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
 
-                     print *,'MW+LMC NOT IMPLEMENTED YET'
+                   print *,'MW+LMC NOT IMPLEMENTED YET'
 
-                     stop
+                   stop
 
-                  Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+                Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
 
-                     print *,'MW NOT IMPLEMENTED YET'
+                   print *,'MW NOT IMPLEMENTED YET'
 
-                     stop
+                   stop
 
-                  Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+                Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                     If (use_metallicity) then 
+                   If (use_metallicity) then 
 
-                        If (use_H_band) then
-
-                           print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                      If (use_H_band) then
                      
-                           stop
-
-                        Else
+                         print *,'H BAND NOT IMPLEMENTED USING LMC AS ANCHOR AND INCLUDING METALLICITY DEPENDENCE'
                      
-                           x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
-
-                           x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
-
-                           x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
-
-                           x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
-
-                           x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
-
-                           x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
-
-                           x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
-
-                           x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
-
-                           x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
-
-                           x_old(10) = genunf(real(prior_mu10 - sigma_mu10),real(prior_mu10 + sigma_mu10))
-
-                           x_old(11) = genunf(real(prior_zpwLMC - sigma_zpwLMC),real(prior_zpwLMC + sigma_zpwLMC))
-
-                           x_old(12) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
-
-                           x_old(13) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
-
-                           x_old(14) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
-
-                           x_old(15) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
-
-                           x_old(16) = genunf(real(a_cal - sigma_a_cal),real(a_cal + sigma_a_cal))
-
-                        End If
-
-                     Else
-
-                        If (use_H_band) then
+                         stop
                      
-                           print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
-                     
-                           stop
-
-                        Else
-
-                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
-                     
-                           stop
-                        
-                        End If
-
-                     End If
-
-                  Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                     If (use_metallicity) then 
-
-                        If (use_H_band) then
-
-                           print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                     
-                           stop
-
-                        Else
-                     
-                           x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
-
-                           x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
-
-                           x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
-
-                           x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
-
-                           x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
-
-                           x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
-
-                           x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
-
-                           x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
-
-                           x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
-
-                           x_old(10) = genunf(real(prior_zpw - sigma_zpw),real(prior_zpw + sigma_zpw))
-
-                           x_old(11) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
-
-                           x_old(12) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
-
-                           x_old(13) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
-
-                           x_old(14) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
-
-                        End If
-
-                     Else
-
-                        If (use_H_band) then
-                     
-                           x_old(1) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
-
-                           x_old(2) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
-
-                           x_old(3) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
-
-                           x_old(4) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
-
-                           x_old(5) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
-
-                           x_old(6) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
-
-                           x_old(7) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
-
-                           x_old(8) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
-
-                           x_old(9) = genunf(real(prior_zpH - sigma_zpH),real(prior_zpH + sigma_zpH))
-
-                           x_old(10) = genunf(real(prior_bH - sigma_bH),real(prior_bH + sigma_bH))
-
-                        Else
-
-                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
-                     
-                           stop
-                        
-                        End If
-
-                     End If
-
-                  Else
-
-                     print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
-
-                     stop
-
-                  End If ! OF ANCHORS
-
-               End If ! OF ONLY CEPHEIDS
-    
-            Else
-
-               x_old(1) = genunf(real(prior_A - sigma_A),real(prior_A + sigma_A))         ! A
-               x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
-               !x_old(3) = genunf(real(-10.d0),real(0.d0)) ! log10(sigma_int)
-
-            End If
-
-            If (hyperparameters_as_mcmc) then
-                ! SETTING INITIAL POINT FOR HYPER-PARAMETERS
-                Do m=number_model_parameters+1,number_of_parameters
-                    
-                    If (using_jeffreys_prior) then
-
-                        x_old(m) = genunf(real(-1.d0),real(1.d0)) ! log10(\alpha_j)
-
-                    Else
-
-                        x_old(m) = genunf(real(0.d0),real(1.d0))
-
-                    End If
-
-                End Do
-            
-            End If
-
-            Do m=1,number_of_parameters
-
-                If (m .gt. number_model_parameters) then
-                  
-                    If (using_jeffreys_prior) then
-
-                        old_point(m) = 10**(dble(x_old(m)))    !    CONVERT TO \alpha_j
-
-                    Else
-
-                        old_point(m) = dble(x_old(m)) 
-
-                    End If
-
-                else
-
-                    old_point(m) = dble(x_old(m))
-
-                End If
-
-            End Do
-
-        End If
-
-        If (using_hyperparameters) then
-           ! OPEN FILE TO STORE MCMC COMPUTATION
-           open(13,file='./output/mcmc_final_output_HP.txt')
-
-           write(15,*) 'WORKING WITH HYPER-PARAMETERS'
-
-           write(15,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
-            
-           ! COMPUTE INITIAL LIKELIHOOD
-           If (doing_R11_analysis) then
-
-              If (include_only_cepheids) then
-
-                 If (all_R11_hosts) then
-                    
-                    old_loglikelihood = log_R11_likelihood_W_cepheids(old_point(1:number_model_parameters-3),&
-                         old_point(number_model_parameters-2),old_point(number_model_parameters-1),&
-                         old_point(number_model_parameters),prior_sigma_int)
-
-                 Else
-
-                    old_loglikelihood = log_likelihood_only_cepheids(galaxy,old_point(1),old_point(2),&
-                      old_point(3),prior_sigma_int)
-
-                 End If
-
-              Else
-
-                 If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then !!!HERE
-    
-                    print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
-
-                    stop
-
-                 Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                    print *,'NGC4258+LMC NOT IMPLEMENTED YET'
-
-                    stop
-
-                 Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                    print *,'NGC4258+MW NOT IMPLEMENTED YET'
-
-                    stop
-
-                 Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                    print *,'MW+LMC NOT IMPLEMENTED YET'
-
-                    stop
-
-                 Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                    print *,'MW NOT IMPLEMENTED YET'
-
-                    stop
-
-                 Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                    If (use_metallicity) then 
-
-                       If (use_H_band) then
-                     
-                          print *,'H BAND NOT IMPLEMENTED USING LMC AS ANCHOR AND INCLUDING METALLICITY DEPENDENCE'
-                     
-                          stop
-                     
-                       Else
+                      Else
                           
-                          old_loglikelihood = log_R11_likelihood_W_LMC(old_point(1:number_model_parameters-6),&
-                               old_point(number_model_parameters-5),old_point(number_model_parameters-4),&
-                               old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
-                               old_point(number_model_parameters-1),old_point(number_model_parameters),&
-                               prior_sigma_int,prior_sigma_int_LMC)
+                         old_loglikelihood = log_R11_likelihood_W_LMC(old_point(1:number_model_parameters-6),&
+                              old_point(number_model_parameters-5),old_point(number_model_parameters-4),&
+                              old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
+                              old_point(number_model_parameters-1),old_point(number_model_parameters),&
+                              prior_sigma_int,prior_sigma_int_LMC)
 
-                       End If
+                      End If
 
-                    Else
+                   Else
 
-                       If (use_H_band) then
+                      If (use_H_band) then
 
-                          print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                         print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
                      
-                          stop
+                         stop
 
-                       Else
+                      Else
 
-                          print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                         print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
                      
-                          stop
+                         stop
 
-                       End If
+                      End If
 
-                    End If
+                   End If
 
-                 Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+                Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                    If (use_metallicity) then 
+                   If (use_metallicity) then 
 
-                       If (use_H_band) then
+                      If (use_H_band) then
+
+                         old_loglikelihood = log_R11_likelihood_H_NGC4258(old_point(1:number_model_parameters-5),&
+                              old_point(number_model_parameters-4),old_point(number_model_parameters-3),&
+                              old_point(number_model_parameters-2),old_point(number_model_parameters-1),&
+                              old_point(number_model_parameters),prior_sigma_int)
                      
-                          print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                      Else
+
+                         old_loglikelihood = log_R11_likelihood_W(old_point(1:number_model_parameters-5),&
+                              old_point(number_model_parameters-4),old_point(number_model_parameters-3),&
+                              old_point(number_model_parameters-2),old_point(number_model_parameters-1),&
+                              old_point(number_model_parameters),prior_sigma_int)
+
+                      End If
+
+                   Else
+
+                      If (use_H_band) then
                      
-                          stop
+                         old_loglikelihood = log_R11_likelihood_H(old_point(1:number_model_parameters-1),&
+                              old_point(number_model_parameters),prior_sigma_int)
+
+                      Else
+
+                         print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
                      
-                       Else
+                         stop
 
-                          old_loglikelihood = log_R11_likelihood_W(old_point(1:number_model_parameters-5),&
-                               old_point(number_model_parameters-4),old_point(number_model_parameters-3),&
-                               old_point(number_model_parameters-2),old_point(number_model_parameters-1),&
-                               old_point(number_model_parameters),prior_sigma_int)
+                      End If
 
-                       End If
+                   End If
 
-                    Else
+                End If ! OF ANCHORS 
 
-                       If (use_H_band) then
-                     
-                          old_loglikelihood = log_R11_likelihood_H(old_point(1:number_model_parameters-1),&
-                               old_point(number_model_parameters),prior_sigma_int)
+             End If
 
-                       Else
+          Else
 
-                          print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
-                     
-                          stop
+             old_loglikelihood = log_Efstathiou_likelihood_hyperparameters(old_point(1),old_point(2),prior_sigma_int)
 
-                       End If
+          End If
 
-                    End If
+          open(16,file='./output/mcmc_final_output_HP.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
 
-                 End If ! OF ANCHORS 
+          open(17,file='./output/mcmc_final_output_HP.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
 
-              End If
+       Else
+          ! OPEN FILE TO STORE MCMC COMPUTATION
+          open(13,file='./output/mcmc_final_output.txt')
 
-           Else
+          write(15,*) 'NOT WORKING WITH HYPER-PARAMETERS' 
 
-              old_loglikelihood = log_Efstathiou_likelihood_hyperparameters(old_point(1),old_point(2),prior_sigma_int)
+          write(15,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
 
-           End If
+          ! COMPUTE INITIAL LIKELIHOOD
+          old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),prior_sigma_int) 
 
-           open(16,file='./output/mcmc_final_output_HP.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
+          open(16,file='./output/mcmc_final_output.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
 
-           open(17,file='./output/mcmc_final_output_HP.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
+          open(17,file='./output/mcmc_final_output.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST 
 
-        Else
-            ! OPEN FILE TO STORE MCMC COMPUTATION
-            open(13,file='./output/mcmc_final_output.txt')
+       End If
 
-            write(15,*) 'NOT WORKING WITH HYPER-PARAMETERS' 
+       If (doing_R11_analysis) then
 
-            write(15,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
+          If (include_only_cepheids) then
 
-            ! COMPUTE INITIAL LIKELIHOOD
-            old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),prior_sigma_int) 
+             If (all_R11_hosts) then
 
-            open(16,file='./output/mcmc_final_output.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
+                paramnames(1) = 'mu01'
+                latexname(1) = '\mu_{0,1}'
 
-            open(17,file='./output/mcmc_final_output.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST 
+                paramnames(2) = 'mu02'
+                latexname(2) = '\mu_{0,2}'
 
-         End If
+                paramnames(3) = 'mu03'
+                latexname(3) = '\mu_{0,3}'
+                 
+                paramnames(4) = 'mu04'
+                latexname(4) = '\mu_{0,4}'
 
-        If (doing_R11_analysis) then
+                paramnames(5) = 'mu05'
+                latexname(5) = '\mu_{0,5}'
 
-           If (include_only_cepheids) then
+                paramnames(6) = 'mu06'
+                latexname(6) = '\mu_{0,6}'
 
-              If (all_R11_hosts) then
+                paramnames(7) = 'mu07'
+                latexname(7) = '\mu_{0,7}'
 
-                 paramnames(1) = 'mu01'
-                 latexname(1) = '\mu_{0,1}'
+                paramnames(8) = 'mu08'
+                latexname(8) = '\mu_{0,8}'
 
-                 paramnames(2) = 'mu02'
-                 latexname(2) = '\mu_{0,2}'
+                paramnames(9) = 'mu04258'
+                latexname(9) = '\mu_{0,4258}'
 
-                 paramnames(3) = 'mu03'
-                 latexname(3) = '\mu_{0,3}'
+                paramnames(10) = 'zpw4258'
+                latexname(10) = 'zp_{w,4258}'
 
-                 paramnames(4) = 'mu04'
-                 latexname(4) = '\mu_{0,4}'
+                paramnames(11) = 'bw'
+                latexname(11) = 'b_w'
 
-                 paramnames(5) = 'mu05'
-                 latexname(5) = '\mu_{0,5}'
+                paramnames(12) = 'Zw'
+                latexname(12) = 'Z_w'
 
-                 paramnames(6) = 'mu06'
-                 latexname(6) = '\mu_{0,6}'
+                Do m=1,number_model_parameters
 
-                 paramnames(7) = 'mu07'
-                 latexname(7) = '\mu_{0,7}'
-
-                 paramnames(8) = 'mu08'
-                 latexname(8) = '\mu_{0,8}'
-
-                 paramnames(9) = 'mu04258'
-                 latexname(9) = '\mu_{0,4258}'
-
-                 paramnames(10) = 'zpw4258'
-                 latexname(10) = 'zp_{w,4258}'
-
-                 paramnames(11) = 'bw'
-                 latexname(11) = 'b_w'
-
-                 paramnames(12) = 'Zw'
-                 latexname(12) = 'Z_w'
-
-                 Do m=1,number_model_parameters
-
-                    write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
-
-                 End Do
-
-              Else
-
-                 paramnames(1) = 'zpw'
-                 latexname(1) = 'zp_{w}'
-
-                 paramnames(2) = 'bw'
-                 latexname(2) = 'b_w'
-              
-                 paramnames(3) = 'Zw'
-                 latexname(3) = 'Z_w'
-
-                 Do m=1,number_model_parameters
-
-                    write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
-
-                 End Do
-
-              End If
-
-           Else
-
-              If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
-    
-                 print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
-
-                 stop
-
-              Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                 print *,'NGC4258+LMC NOT IMPLEMENTED YET'
-
-                 stop
-
-              Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                 print *,'NGC4258+MW NOT IMPLEMENTED YET'
-
-                 stop
-
-              Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                 print *,'MW+LMC NOT IMPLEMENTED YET'
-
-                 stop
-
-              Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                 print *,'MW NOT IMPLEMENTED YET'
-
-                 stop
-
-              Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                 If (use_metallicity) then 
-
-                    If (use_H_band) then
-
-                       print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                     
-                       stop
-
-                    Else
-
-                       paramnames(1) = 'mu01'
-                       latexname(1) = '\mu_{0,1}'
-
-                       paramnames(2) = 'mu02'
-                       latexname(2) = '\mu_{0,2}'
-
-                       paramnames(3) = 'mu03'
-                       latexname(3) = '\mu_{0,3}'
-
-                       paramnames(4) = 'mu04'
-                       latexname(4) = '\mu_{0,4}'
-
-                       paramnames(5) = 'mu05'
-                       latexname(5) = '\mu_{0,5}'
-
-                       paramnames(6) = 'mu06'
-                       latexname(6) = '\mu_{0,6}'
-
-                       paramnames(7) = 'mu07'
-                       latexname(7) = '\mu_{0,7}'
-
-                       paramnames(8) = 'mu08'
-                       latexname(8) = '\mu_{0,8}'
-
-                       paramnames(9) = 'mu04258'
-                       latexname(9) = '\mu_{0,4258}'
-
-                       paramnames(10) = 'muLMC'
-                       latexname(10) = '\mu_{0,LMC}'
-
-                       paramnames(11) = 'zpwLMC'
-                       latexname(11) = 'zp_{w,LMC}'
-
-                       paramnames(12) = 'bw'
-                       latexname(12) = 'b_w'
-
-                       paramnames(13) = 'H0'
-                       latexname(13) = 'H_0'
-
-                       paramnames(14) = 'Zw'
-                       latexname(14) = 'Z_w'
-
-                       paramnames(15) = 'av'
-                       latexname(15) = 'a_v'
-
-                       paramnames(16) = 'acal'
-                       latexname(16) = 'a_{cal}'
-
-                       Do m=1,number_model_parameters
-
-                          write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
-
-                       End Do
-
-                    End If
-
-                 Else
-
-                    If (use_H_band) then
-
-                       print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
-                     
-                       stop
-
-                    Else
-
-                       print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
-                     
-                       stop
-                        
-                    End If
-
-                 End If
-
-              Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                 If (use_metallicity) then 
-
-                    If (use_H_band) then
-
-                       print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                     
-                       stop
-
-                    Else
-
-                       paramnames(1) = 'mu01'
-                       latexname(1) = '\mu_{0,1}'
-
-                       paramnames(2) = 'mu02'
-                       latexname(2) = '\mu_{0,2}'
-
-                       paramnames(3) = 'mu03'
-                       latexname(3) = '\mu_{0,3}'
-
-                       paramnames(4) = 'mu04'
-                       latexname(4) = '\mu_{0,4}'
-
-                       paramnames(5) = 'mu05'
-                       latexname(5) = '\mu_{0,5}'
-
-                       paramnames(6) = 'mu06'
-                       latexname(6) = '\mu_{0,6}'
-
-                       paramnames(7) = 'mu07'
-                       latexname(7) = '\mu_{0,7}'
-
-                       paramnames(8) = 'mu08'
-                       latexname(8) = '\mu_{0,8}'
-
-                       paramnames(9) = 'mu04258'
-                       latexname(9) = '\mu_{0,4258}'
-
-                       paramnames(10) = 'zpw4258'
-                       latexname(10) = 'zp_{w,4258}'
-
-                       paramnames(11) = 'bw'
-                       latexname(11) = 'b_w'
-
-                       paramnames(12) = 'H0'
-                       latexname(12) = 'H_0'
-
-                       paramnames(13) = 'Zw'
-                       latexname(13) = 'Z_w'
-
-                       paramnames(14) = 'av'
-                       latexname(14) = 'a_v'
-
-                       Do m=1,number_model_parameters
-
-                          write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
-
-                       End Do
-
-                    End If
-
-                 Else
-
-                    If (use_H_band) then
-
-                       write(16,*) 'zpH1    zp_{H1}'
-
-                       write(16,*) 'zpH2    zp_{H2}'
-
-                       write(16,*) 'zpH3    zp_{H3}'
-
-                       write(16,*) 'zpH4    zp_{H4}'
-
-                       write(16,*) 'zpH5    zp_{H5}'
-
-                       write(16,*) 'zpH6    zp_{H6}'
-
-                       write(16,*) 'zpH7    zp_{H7}'
-
-                       write(16,*) 'zpH8    zp_{H8}'
-
-                       write(16,*) 'zpH4258    zp_{H4258}'
-
-                       write(16,*) 'bH    b_H'
-
-                    Else
-
-                       print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
-                     
-                       stop
-                        
-                    End If
-
-                 End If
-
-              End If ! OF ANCHOR
-
-           End If ! OF ONLY CEPHEIDS
-    
-        Else
-
-           paramnames(1) = 'A'
-           latexname(1) = 'A'
-
-           paramnames(2) = 'bw'
-           latexname(2) = 'b_w'
-
-           Do m=1,number_model_parameters
-
-              write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
-
-           End Do
-
-           !write(16,*) 'sigma_int    \sigma_{int}'
-
-        End If
-
-        If (hyperparameters_as_mcmc) then
-                ! WRITING PARAMNAMES FOR HYPER-PARAMETERS
-                Do m=number_model_parameters+1,number_of_parameters
-
-                    write(string,'(i2.2)') m-number_model_parameters
-
-                    write(16,*) 'alpha_'//trim(string)//'    \alpha_{'//trim(string)//'}'
-
-                    alpha_string(m-number_model_parameters) = 'alpha_'//trim(string)//'    '
+                   write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
 
                 End Do
-            
-        End If
 
-        close(16)
+             Else
 
-        If (doing_R11_analysis) then
+                paramnames(1) = 'zpw'
+                latexname(1) = 'zp_{w}'
 
-           If (include_only_cepheids) then
+                paramnames(2) = 'bw'
+                latexname(2) = 'b_w'
               
-              If (all_R11_hosts) then
+                paramnames(3) = 'Zw'
+                latexname(3) = 'Z_w'
 
-                 write(17,*) ''//trim(paramnames(1))//'    20.    40.'
+                Do m=1,number_model_parameters
 
-                 write(17,*) ''//trim(paramnames(2))//'    20.    40.'
+                   write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
 
-                 write(17,*) ''//trim(paramnames(3))//'    20.    40.'
+                End Do
 
-                 write(17,*) ''//trim(paramnames(4))//'    20.    40.'
+             End If
 
-                 write(17,*) ''//trim(paramnames(5))//'    20.    40.'
+          Else
 
-                 write(17,*) ''//trim(paramnames(6))//'    20.    40.'
-
-                 write(17,*) ''//trim(paramnames(7))//'    20.    40.'
-
-                 write(17,*) ''//trim(paramnames(8))//'    20.    40.'
-
-                 write(17,*) ''//trim(paramnames(9))//'    20.    30.'
-
-                 write(17,*) ''//trim(paramnames(10))//'    25.    34.'
-
-                 write(17,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
-
-                 write(17,*) ''//trim(paramnames(12))//'    -1.    1.'
-
-              Else
-
-                 write(17,*) ''//trim(paramnames(1))//'    25.    34.'
-
-                 write(17,*) ''//trim(paramnames(2))//'    -3.2    -2.5'
-
-                 write(17,*) ''//trim(paramnames(3))//'    -1.    1.'
-
-              End If
-
-           Else
-
-              If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+             If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
     
-                 print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+                print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
-                 stop
+                stop
 
-              Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+             Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                 print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+                print *,'NGC4258+LMC NOT IMPLEMENTED YET'
 
-                 stop
+                stop
 
-              Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+             Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
 
-                 print *,'NGC4258+MW NOT IMPLEMENTED YET'
+                print *,'NGC4258+MW NOT IMPLEMENTED YET'
+                
+                stop
 
-                 stop
+             Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
 
-              Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+                print *,'MW+LMC NOT IMPLEMENTED YET'
 
-                 print *,'MW+LMC NOT IMPLEMENTED YET'
+                stop
 
-                 stop
+             Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
 
-              Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+                print *,'MW NOT IMPLEMENTED YET'
 
-                 print *,'MW NOT IMPLEMENTED YET'
+                stop
 
-                 stop
+             Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-              Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+                If (use_metallicity) then 
 
-                 If (use_metallicity) then 
+                   If (use_H_band) then
 
-                    If (use_H_band) then
-
-                       print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                      print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
                      
-                       stop
+                      stop
+
+                   Else
+
+                      paramnames(1) = 'mu01'
+                      latexname(1) = '\mu_{0,1}'
+
+                      paramnames(2) = 'mu02'
+                      latexname(2) = '\mu_{0,2}'
+
+                      paramnames(3) = 'mu03'
+                      latexname(3) = '\mu_{0,3}'
+
+                      paramnames(4) = 'mu04'
+                      latexname(4) = '\mu_{0,4}'
+
+                      paramnames(5) = 'mu05'
+                      latexname(5) = '\mu_{0,5}'
+
+                      paramnames(6) = 'mu06'
+                      latexname(6) = '\mu_{0,6}'
+
+                      paramnames(7) = 'mu07'
+                      latexname(7) = '\mu_{0,7}'
+
+                      paramnames(8) = 'mu08'
+                      latexname(8) = '\mu_{0,8}'
+
+                      paramnames(9) = 'mu04258'
+                      latexname(9) = '\mu_{0,4258}'
+
+                      paramnames(10) = 'muLMC'
+                      latexname(10) = '\mu_{0,LMC}'
+
+                      paramnames(11) = 'zpwLMC'
+                      latexname(11) = 'zp_{w,LMC}'
+
+                      paramnames(12) = 'bw'
+                      latexname(12) = 'b_w'
+
+                      paramnames(13) = 'H0'
+                      latexname(13) = 'H_0'
+
+                      paramnames(14) = 'Zw'
+                      latexname(14) = 'Z_w'
+
+                      paramnames(15) = 'av'
+                      latexname(15) = 'a_v'
+
+                      paramnames(16) = 'acal'
+                      latexname(16) = 'a_{cal}'
+
+                      Do m=1,number_model_parameters
+
+                         write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+
+                      End Do
+
+                   End If
+
+                Else
+                   
+                   If (use_H_band) then
+
+                      print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                      stop
+
+                   Else
+
+                      print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                      stop
+                        
+                   End If
+
+                End If
+
+             Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                If (use_metallicity) then 
+
+                   If (use_H_band) then
+
+                      paramnames(1) = 'mu01'
+                      latexname(1) = '\mu_{0,1}'
+
+                      paramnames(2) = 'mu02'
+                      latexname(2) = '\mu_{0,2}'
+
+                      paramnames(3) = 'mu03'
+                      latexname(3) = '\mu_{0,3}'
+
+                      paramnames(4) = 'mu04'
+                      latexname(4) = '\mu_{0,4}'
+
+                      paramnames(5) = 'mu05'
+                      latexname(5) = '\mu_{0,5}'
+
+                      paramnames(6) = 'mu06'
+                      latexname(6) = '\mu_{0,6}'
+
+                      paramnames(7) = 'mu07'
+                      latexname(7) = '\mu_{0,7}'
+
+                      paramnames(8) = 'mu08'
+                      latexname(8) = '\mu_{0,8}'
+
+                      paramnames(9) = 'mu04258'
+                      latexname(9) = '\mu_{0,4258}'
+
+                      paramnames(10) = 'zpH4258'
+                      latexname(10) = 'zp_{H,4258}'
+
+                      paramnames(11) = 'bH'
+                      latexname(11) = 'b_H'
+
+                      paramnames(12) = 'H0'
+                      latexname(12) = 'H_0'
+
+                      paramnames(13) = 'ZH'
+                      latexname(13) = 'Z_H'
+
+                      paramnames(14) = 'aH'
+                      latexname(14) = 'a_H'
+
+                      Do m=1,number_model_parameters
+
+                         write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+
+                      End Do
+
+                   Else
+
+                      paramnames(1) = 'mu01'
+                      latexname(1) = '\mu_{0,1}'
+
+                      paramnames(2) = 'mu02'
+                      latexname(2) = '\mu_{0,2}'
+
+                      paramnames(3) = 'mu03'
+                      latexname(3) = '\mu_{0,3}'
+
+                      paramnames(4) = 'mu04'
+                      latexname(4) = '\mu_{0,4}'
+
+                      paramnames(5) = 'mu05'
+                      latexname(5) = '\mu_{0,5}'
+
+                      paramnames(6) = 'mu06'
+                      latexname(6) = '\mu_{0,6}'
+
+                      paramnames(7) = 'mu07'
+                      latexname(7) = '\mu_{0,7}'
+
+                      paramnames(8) = 'mu08'
+                      latexname(8) = '\mu_{0,8}'
+
+                      paramnames(9) = 'mu04258'
+                      latexname(9) = '\mu_{0,4258}'
+
+                      paramnames(10) = 'zpw4258'
+                      latexname(10) = 'zp_{w,4258}'
+
+                      paramnames(11) = 'bw'
+                      latexname(11) = 'b_w'
+
+                      paramnames(12) = 'H0'
+                      latexname(12) = 'H_0'
+
+                      paramnames(13) = 'Zw'
+                      latexname(13) = 'Z_w'
+
+                      paramnames(14) = 'av'
+                      latexname(14) = 'a_v'
+
+                      Do m=1,number_model_parameters
+
+                         write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+
+                      End Do
+
+                   End If
+
+                Else
+
+                   If (use_H_band) then
+
+                      write(16,*) 'zpH1    zp_{H1}'
+
+                      write(16,*) 'zpH2    zp_{H2}'
+
+                      write(16,*) 'zpH3    zp_{H3}'
+
+                      write(16,*) 'zpH4    zp_{H4}'
+
+                      write(16,*) 'zpH5    zp_{H5}'
+
+                      write(16,*) 'zpH6    zp_{H6}'
+
+                      write(16,*) 'zpH7    zp_{H7}'
+
+                      write(16,*) 'zpH8    zp_{H8}'
+
+                      write(16,*) 'zpH4258    zp_{H4258}'
+
+                      write(16,*) 'bH    b_H'
+
+                   Else
+
+                      print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                      stop
+                        
+                   End If
+
+                End If
+
+             End If ! OF ANCHOR
+
+          End If ! OF ONLY CEPHEIDS
+    
+       Else
+
+          paramnames(1) = 'A'
+          latexname(1) = 'A'
+
+          paramnames(2) = 'bw'
+          latexname(2) = 'b_w'
+
+          Do m=1,number_model_parameters
+
+             write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+
+          End Do
+
+          !write(16,*) 'sigma_int    \sigma_{int}'
+
+       End If
+
+       If (hyperparameters_as_mcmc) then
+          ! WRITING PARAMNAMES FOR HYPER-PARAMETERS
+          Do m=number_model_parameters+1,number_of_parameters
+
+             write(string,'(i2.2)') m-number_model_parameters
+
+             write(16,*) 'alpha_'//trim(string)//'    \alpha_{'//trim(string)//'}'
+
+             alpha_string(m-number_model_parameters) = 'alpha_'//trim(string)//'    '
+
+          End Do
+            
+       End If
+
+       close(16)
+
+       If (doing_R11_analysis) then
+
+          If (include_only_cepheids) then
+              
+             If (all_R11_hosts) then
+
+                write(17,*) ''//trim(paramnames(1))//'    20.    40.'
+
+                write(17,*) ''//trim(paramnames(2))//'    20.    40.'
+
+                write(17,*) ''//trim(paramnames(3))//'    20.    40.'
+
+                write(17,*) ''//trim(paramnames(4))//'    20.    40.'
+
+                write(17,*) ''//trim(paramnames(5))//'    20.    40.'
+
+                write(17,*) ''//trim(paramnames(6))//'    20.    40.'
+
+                write(17,*) ''//trim(paramnames(7))//'    20.    40.'
+
+                write(17,*) ''//trim(paramnames(8))//'    20.    40.'
+
+                write(17,*) ''//trim(paramnames(9))//'    20.    30.'
+
+                write(17,*) ''//trim(paramnames(10))//'    25.    34.'
+
+                write(17,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
+
+                write(17,*) ''//trim(paramnames(12))//'    -1.    1.'
+
+             Else
+
+                write(17,*) ''//trim(paramnames(1))//'    25.    34.'
+
+                write(17,*) ''//trim(paramnames(2))//'    -3.2    -2.5'
+
+                write(17,*) ''//trim(paramnames(3))//'    -1.    1.'
+
+             End If
+
+          Else
+
+             If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+    
+                print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+
+                stop
+
+             Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+                stop
+
+             Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+                stop
+
+             Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                print *,'MW+LMC NOT IMPLEMENTED YET'
+
+                stop
+
+             Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                print *,'MW NOT IMPLEMENTED YET'
+
+                stop
+
+             Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                If (use_metallicity) then 
+
+                   If (use_H_band) then
+
+                      print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                     
+                      stop
                     
-                    Else
+                   Else
 
-                       write(17,*) ''//trim(paramnames(1))//'    20.    40.'
+                      write(17,*) ''//trim(paramnames(1))//'    20.    40.'
 
-                       write(17,*) ''//trim(paramnames(2))//'    20.    40.'
+                      write(17,*) ''//trim(paramnames(2))//'    20.    40.'
+                      
+                      write(17,*) ''//trim(paramnames(3))//'    20.    40.'
 
-                       write(17,*) ''//trim(paramnames(3))//'    20.    40.'
+                      write(17,*) ''//trim(paramnames(4))//'    20.    40.'
 
-                       write(17,*) ''//trim(paramnames(4))//'    20.    40.'
+                      write(17,*) ''//trim(paramnames(5))//'    20.    40.'
 
-                       write(17,*) ''//trim(paramnames(5))//'    20.    40.'
+                      write(17,*) ''//trim(paramnames(6))//'    20.    40.'
 
-                       write(17,*) ''//trim(paramnames(6))//'    20.    40.'
+                      write(17,*) ''//trim(paramnames(7))//'    20.    40.'
 
-                       write(17,*) ''//trim(paramnames(7))//'    20.    40.'
+                      write(17,*) ''//trim(paramnames(8))//'    20.    40.'
 
-                       write(17,*) ''//trim(paramnames(8))//'    20.    40.'
+                      write(17,*) ''//trim(paramnames(9))//'    20.    30.'
 
-                       write(17,*) ''//trim(paramnames(9))//'    20.    30.'
+                      write(17,*) ''//trim(paramnames(10))//'    0.    40.'
 
-                       write(17,*) ''//trim(paramnames(10))//'    0.    40.'
+                      write(17,*) ''//trim(paramnames(11))//'    15.    25.'
 
-                       write(17,*) ''//trim(paramnames(11))//'    15.    25.'
+                      write(17,*) ''//trim(paramnames(12))//'    -3.5    -2.5'
 
-                       write(17,*) ''//trim(paramnames(12))//'    -3.5    -2.5'
+                      write(17,*) ''//trim(paramnames(13))//'    55.    95.'
 
-                       write(17,*) ''//trim(paramnames(13))//'    55.    95.'
+                      write(17,*) ''//trim(paramnames(14))//'    -2.    1.'
 
-                       write(17,*) ''//trim(paramnames(14))//'    -2.    1.'
+                      write(17,*) ''//trim(paramnames(15))//'    0.    1.'
 
-                       write(17,*) ''//trim(paramnames(15))//'    0.    1.'
+                      write(17,*) ''//trim(paramnames(16))//'    -1.    1.'
 
-                       write(17,*) ''//trim(paramnames(16))//'    -1.    1.'
+                   End If
 
-                    End If
+                Else
 
-                 Else
+                   If (use_H_band) then
 
-                    If (use_H_band) then
-
-                       print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                      print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
                      
-                       stop
+                      stop
  
-                    Else
+                   Else
 
-                       print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                      print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
                      
-                       stop
+                      stop
                         
-                    End If
+                   End If
 
-                 End If
+                End If
 
-              Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+             Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                 If (use_metallicity) then 
+                If (use_metallicity) then 
 
-                    If (use_H_band) then
+                   If (use_H_band) then
 
-                       print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                      write(17,*) ''//trim(paramnames(1))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(2))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(3))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(4))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(5))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(6))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(7))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(8))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(9))//'    20.    30.'
+
+                      write(17,*) ''//trim(paramnames(10))//'    25.    34.'
+
+                      write(17,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
+
+                      write(17,*) ''//trim(paramnames(12))//'    55.    95.'
+
+                      write(17,*) ''//trim(paramnames(13))//'    -1.    1.'
+
+                      write(17,*) ''//trim(paramnames(14))//'    0.    1.'
+
+                   Else
+
+                      write(17,*) ''//trim(paramnames(1))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(2))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(3))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(4))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(5))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(6))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(7))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(8))//'    20.    40.'
+
+                      write(17,*) ''//trim(paramnames(9))//'    20.    30.'
+
+                      write(17,*) ''//trim(paramnames(10))//'    25.    34.'
+
+                      write(17,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
+
+                      write(17,*) ''//trim(paramnames(12))//'    55.    95.'
+
+                      write(17,*) ''//trim(paramnames(13))//'    -1.    1.'
+
+                      write(17,*) ''//trim(paramnames(14))//'    0.    1.'
+
+                   End If
+
+                Else
+
+                   If (use_H_band) then
+
+                      write(17,*) 'zpH1    0.    50.'
+
+                      write(17,*) 'zpH2    0.    50.'
+
+                      write(17,*) 'zpH3    0.    50.'
+
+                      write(17,*) 'zpH4    0.    50.'
+
+                      write(17,*) 'zpH5    0.    50.'
+
+                      write(17,*) 'zpH6    0.    50.'
+
+                      write(17,*) 'zpH7    0.    50.'
+
+                      write(17,*) 'zpH8    0.    50.'
+
+                      write(17,*) 'zpH4258    0.    50.'
+
+                      write(17,*) 'bH    -20.    0.'
+
+                   Else
+
+                      print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
                      
-                       stop
-                    
-                    Else
-
-                       write(17,*) ''//trim(paramnames(1))//'    20.    40.'
-
-                       write(17,*) ''//trim(paramnames(2))//'    20.    40.'
-
-                       write(17,*) ''//trim(paramnames(3))//'    20.    40.'
-
-                       write(17,*) ''//trim(paramnames(4))//'    20.    40.'
-
-                       write(17,*) ''//trim(paramnames(5))//'    20.    40.'
-
-                       write(17,*) ''//trim(paramnames(6))//'    20.    40.'
-
-                       write(17,*) ''//trim(paramnames(7))//'    20.    40.'
-
-                       write(17,*) ''//trim(paramnames(8))//'    20.    40.'
-
-                       write(17,*) ''//trim(paramnames(9))//'    20.    30.'
-
-                       write(17,*) ''//trim(paramnames(10))//'    25.    34.'
-
-                       write(17,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
-
-                       write(17,*) ''//trim(paramnames(12))//'    55.    95.'
-
-                       write(17,*) ''//trim(paramnames(13))//'    -1.    1.'
-
-                       write(17,*) ''//trim(paramnames(14))//'    0.    1.'
-
-                    End If
-
-                 Else
-
-                    If (use_H_band) then
-
-                       write(17,*) 'zpH1    0.    50.'
-
-                       write(17,*) 'zpH2    0.    50.'
-
-                       write(17,*) 'zpH3    0.    50.'
-
-                       write(17,*) 'zpH4    0.    50.'
-
-                       write(17,*) 'zpH5    0.    50.'
-
-                       write(17,*) 'zpH6    0.    50.'
-
-                       write(17,*) 'zpH7    0.    50.'
-
-                       write(17,*) 'zpH8    0.    50.'
-
-                       write(17,*) 'zpH4258    0.    50.'
-
-                       write(17,*) 'bH    -20.    0.'
-
-                    Else
-
-                       print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
-                     
-                       stop
+                      stop
                         
-                    End If
+                   End If
 
-                 End If
+                End If
 
-              End If ! OF ANCHORS
+             End If ! OF ANCHORS
 
-           End If ! OF ONLY CEPHEIDS
+          End If ! OF ONLY CEPHEIDS
     
-        Else
+       Else
 
-           write(17,*) ''//trim(paramnames(1))//'    0.    50.'
+          write(17,*) ''//trim(paramnames(1))//'    0.    50.'
 
-           write(17,*) ''//trim(paramnames(2))//'    -20.    0.'
+          write(17,*) ''//trim(paramnames(2))//'    -20.    0.'
 
-           !    write(17,*) 'sigma_int    1.e-10    1 '
+          !    write(17,*) 'sigma_int    1.e-10    1 '
 
-        End If
+       End If
 
-        If (hyperparameters_as_mcmc) then
-                ! WRITING HARD BOUNDS FOR HYPER-PARAMETERS
-                Do m=number_model_parameters+1,number_of_parameters
+       If (hyperparameters_as_mcmc) then
+          ! WRITING HARD BOUNDS FOR HYPER-PARAMETERS
+          Do m=number_model_parameters+1,number_of_parameters
 
-                    write(string,'(i2.2)') m-number_model_parameters
+             write(string,'(i2.2)') m-number_model_parameters
                     
-                    If (using_jeffreys_prior) then
+             If (using_jeffreys_prior) then
 
-                        print *,'MODIFY THIS PART ACCORDING TO PRIOR'
+                print *,'MODIFY THIS PART ACCORDING TO PRIOR'
 
-                        stop
+                stop
 
-                    Else
+             Else
 
-                       write(17,*) 'alpha_'//trim(string)//'    0.    1.'
+                write(17,*) 'alpha_'//trim(string)//'    0.    1.'
 
-                    End If
+             End If
 
-                End Do
+          End Do
             
-        End If
+       End If
 
-        close(17)
+       close(17)
 
     End If
 
@@ -1908,9 +2059,7 @@ Program mcmc
 
                    If (use_H_band) then
 
-                      print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                     
-                      stop
+                      write(13,*) '# WEIGHT   -ln(L/L_{max})    ', paramnames(1:number_model_parameters) 
                    
                    Else
 
@@ -2110,9 +2259,33 @@ Program mcmc
 
                    If (use_H_band) then
 
-                      print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
-                     
-                      stop
+                      plausibility(1) = (x_new(1) .le. real(20.d0)) .or. (x_new(1) .ge. real(4.d1))
+
+                      plausibility(2) = (x_new(2) .le. real(20.d0)) .or. (x_new(2) .ge. real(4.d1))
+
+                      plausibility(3) = (x_new(3) .le. real(20.d0)) .or. (x_new(3) .ge. real(4.d1))
+                           
+                      plausibility(4) = (x_new(4) .le. real(20.d0)) .or. (x_new(4) .ge. real(4.d1))
+
+                      plausibility(5) = (x_new(5) .le. real(20.d0)) .or. (x_new(5) .ge. real(4.d1))
+
+                      plausibility(6) = (x_new(6) .le. real(20.d0)) .or. (x_new(6) .ge. real(4.d1))
+
+                      plausibility(7) = (x_new(7) .le. real(20.d0)) .or. (x_new(7) .ge. real(4.d1))
+
+                      plausibility(8) = (x_new(8) .le. real(20.d0)) .or. (x_new(8) .ge. real(4.d1))
+
+                      plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(30.d0))
+
+                      plausibility(10) =  (x_new(10) .le. real(25.d0)) .or. (x_new(10) .ge. real(34.d0)) 
+
+                      plausibility(11) =  (x_new(11) .le. real(-3.2d0)) .or. (x_new(11) .ge. real(-2.5d0)) 
+
+                      plausibility(12) =  (x_new(12) .le. real(55.d0)) .or. (x_new(12) .ge. real(95.d0)) 
+
+                      plausibility(13) =  (x_new(13) .le. real(-1.d0)) .or. (x_new(13) .ge. real(1.d0)) 
+
+                      plausibility(14) =  (x_new(14) .le. real(0.d0)) .or. (x_new(14) .ge. real(1.d0)) 
 
                    Else
 
@@ -2356,10 +2529,11 @@ Program mcmc
 
                             If (use_H_band) then
                      
-                               print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                            
-                               stop
-                     
+                               current_loglikelihood = log_R11_likelihood_H_NGC4258(current_point(1:number_model_parameters-5),&
+                                    current_point(number_model_parameters-4),current_point(number_model_parameters-3),&
+                                    current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
+                                    current_point(number_model_parameters),prior_sigma_int)
+
                             Else
 
                                current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-5),&
@@ -2406,244 +2580,244 @@ Program mcmc
           End If
 
        End If
-        ! LOG_LIKELIHOOD FOR CURRENT POINT COMPUTED
+       ! LOG_LIKELIHOOD FOR CURRENT POINT COMPUTED
 
-        !MAKE DECISION ABOUT CURRENT POINT : ACCEPT OR REJECT IT
-        If (current_loglikelihood .ge. old_loglikelihood) then ! ACCEPT CURRENT POINT
+       !MAKE DECISION ABOUT CURRENT POINT : ACCEPT OR REJECT IT
+       If (current_loglikelihood .ge. old_loglikelihood) then ! ACCEPT CURRENT POINT
 
-            If (m .gt. steps_taken_before_definite_run) then
+          If (m .gt. steps_taken_before_definite_run) then
+
+             number_accepted_points = number_accepted_points + 1         
+
+          End If
+
+          ! COMPUTING ACCEPTANCE PROBABILITY FOR CURRENT POINT
+          acceptance_probability(m) = min(1.d0,exp(current_loglikelihood - old_loglikelihood))    
+        
+          If (m .le. steps_taken_before_definite_run) then ! WRITE OUT INFORMATION IN TEMPORARY FILE
+               
+             write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+
+          Else ! WRITE OUT INFORMATION IN DEFINITE FILE
+
+             write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+
+          End If
+       
+          weight = 1    
+
+          old_loglikelihood = current_loglikelihood
+        
+          Do i=1,number_of_parameters 
+
+             old_point(i) = current_point(i)
+
+             If (i .gt. number_model_parameters) then
+
+                If (using_jeffreys_prior) then
+
+                   x_old(i) = log10(real(old_point(i))) ! CONVERTING alpha_j TO  log10(alpha_j)
+
+                Else
+
+                   x_old(i) = real(old_point(i))
+
+                End If
+
+             Else
+
+                x_old(i) = real(old_point(i))
+
+             End If
+
+          End Do
+   
+       Else ! ACCEPT OR REJECT THE CURRENT POINT ACCORDING TO :
+
+          random_uniform = dble(genunf(real(0.),real(1.)))
+
+          If ( random_uniform .le. exp(current_loglikelihood-old_loglikelihood)) then ! ACCEPT CURRENT POINT
+
+             If (m .gt. steps_taken_before_definite_run) then
 
                 number_accepted_points = number_accepted_points + 1         
 
-            End If
+             End If
+                
+             acceptance_probability(m) = min(1.d0,dexp(current_loglikelihood - old_loglikelihood))    
 
-            ! COMPUTING ACCEPTANCE PROBABILITY FOR CURRENT POINT
-            acceptance_probability(m) = min(1.d0,exp(current_loglikelihood - old_loglikelihood))    
-        
-            If (m .le. steps_taken_before_definite_run) then ! WRITE OUT INFORMATION IN TEMPORARY FILE
-               
-               write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+             If (m .le. steps_taken_before_definite_run) then ! WRITE OUT INFORMATION TO TEMPORARY FILE
 
-            Else ! WRITE OUT INFORMATION IN DEFINITE FILE
+                write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
 
-               write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+             Else ! WRITE OUT INFORMATION TO DEFINITE FILE
+                   
+                write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
 
-            End If
-       
-            weight = 1    
+             End If
 
-            old_loglikelihood = current_loglikelihood
-        
-            Do i=1,number_of_parameters 
+             weight = 1
+
+             old_loglikelihood = current_loglikelihood
+
+             Do i=1,number_of_parameters 
 
                 old_point(i) = current_point(i)
 
                 If (i .gt. number_model_parameters) then
-
-                    If (using_jeffreys_prior) then
-
-                        x_old(i) = log10(real(old_point(i))) ! CONVERTING alpha_j TO  log10(alpha_j)
-
-                    Else
-
-                        x_old(i) = real(old_point(i))
-
-                    End If
-
-                Else
-
-                    x_old(i) = real(old_point(i))
-
-                End If
-
-            End Do
-   
-        Else ! ACCEPT OR REJECT THE CURRENT POINT ACCORDING TO :
-
-            random_uniform = dble(genunf(real(0.),real(1.)))
-
-            If ( random_uniform .le. exp(current_loglikelihood-old_loglikelihood)) then ! ACCEPT CURRENT POINT
-
-                If (m .gt. steps_taken_before_definite_run) then
-
-                    number_accepted_points = number_accepted_points + 1         
-
-                End If
-                
-                acceptance_probability(m) = min(1.d0,dexp(current_loglikelihood - old_loglikelihood))    
-
-                If (m .le. steps_taken_before_definite_run) then ! WRITE OUT INFORMATION TO TEMPORARY FILE
-
-                   write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
-
-                Else ! WRITE OUT INFORMATION TO DEFINITE FILE
-                   
-                   write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
-
-                End If
-
-                weight = 1
-
-                old_loglikelihood = current_loglikelihood
-
-                Do i=1,number_of_parameters 
-
-                    old_point(i) = current_point(i)
-
-                    If (i .gt. number_model_parameters) then
                         
-                        If (using_jeffreys_prior) then
+                   If (using_jeffreys_prior) then
 
-                            x_old(i) = real(log10(old_point(i))) ! CONVERTING alpha_j TO log10(alpha_j)
+                      x_old(i) = real(log10(old_point(i))) ! CONVERTING alpha_j TO log10(alpha_j)
 
-                        Else
+                   Else
 
-                            x_old(i) = real(old_point(i))
+                      x_old(i) = real(old_point(i))
 
-                        End If
+                   End If
 
-                    Else
+                Else
 
-                        x_old(i) = real(old_point(i))
-
-                    End If
-
-                End Do
-
-            Else   ! REJECT CURRENT POINT 
-
-                If (m .gt. steps_taken_before_definite_run) then
-
-                    number_rejected_points = number_rejected_points + 1            
+                   x_old(i) = real(old_point(i))
 
                 End If
 
-                acceptance_probability(m) = min(1.d0,exp(current_loglikelihood - old_loglikelihood))    
+             End Do
 
-                weight = weight + 1
+          Else   ! REJECT CURRENT POINT 
 
-                Do i=1,number_of_parameters 
+             If (m .gt. steps_taken_before_definite_run) then
 
-                    If (i .gt. number_model_parameters) then
+                number_rejected_points = number_rejected_points + 1            
 
-                        If (using_jeffreys_prior) then
+             End If
 
-                            x_old(i) = real(log10(old_point(i))) ! CONVERT alpha_j TO log10(alpha_j)
+             acceptance_probability(m) = min(1.d0,exp(current_loglikelihood - old_loglikelihood))    
 
-                        Else
+             weight = weight + 1
 
-                            x_old(i) = real(old_point(i))
+             Do i=1,number_of_parameters 
 
-                        End If
+                If (i .gt. number_model_parameters) then
 
-                    Else
+                   If (using_jeffreys_prior) then
 
-                        x_old(i) = real(old_point(i))
+                      x_old(i) = real(log10(old_point(i))) ! CONVERT alpha_j TO log10(alpha_j)
 
-                    End If
+                   Else
 
-                End Do
+                      x_old(i) = real(old_point(i))
 
-            End If
+                   End If
 
-        End If
-        ! DECISION ABOUT CURRENT POINT MADE
+                Else
 
-        ! COMPUTING AVERAGE ACCEPTANCE PROBABILITY AND UPDATING BOTH COVARIANCE MATRIX AND JUMPING FACTOR (IF NEEDED)
-        If ((mod(m,jumping_factor_update) .eq. 0) .and. (m .le. steps_taken_before_definite_run) ) then
+                   x_old(i) = real(old_point(i))
 
-            average_acceptance_probability = sum(acceptance_probability(m-jumping_factor_update+1:m))&
-            /real(jumping_factor_update)
+                End If
 
-!            write(15,*) 'CURRENT AVERAGE ACCEPTANCE PROBABILITY = ',average_acceptance_probability
+             End Do
+
+          End If
+
+       End If
+       ! DECISION ABOUT CURRENT POINT MADE
+
+       ! COMPUTING AVERAGE ACCEPTANCE PROBABILITY AND UPDATING BOTH COVARIANCE MATRIX AND JUMPING FACTOR (IF NEEDED)
+       If ((mod(m,jumping_factor_update) .eq. 0) .and. (m .le. steps_taken_before_definite_run) ) then
+
+          average_acceptance_probability = sum(acceptance_probability(m-jumping_factor_update+1:m))&
+               /real(jumping_factor_update)
+
+          !            write(15,*) 'CURRENT AVERAGE ACCEPTANCE PROBABILITY = ',average_acceptance_probability
             
-            ! UPDATE JUMPING FACTOR IF NEEDED        
-            If (average_acceptance_probability .lt. 0.1) then 
+          ! UPDATE JUMPING FACTOR IF NEEDED        
+          If (average_acceptance_probability .lt. 0.1) then 
                
-                jumping_factor = (1.d0 - step_size_changes)    !    Decreasing step size
+             jumping_factor = (1.d0 - step_size_changes)    !    Decreasing step size
 
-                If (testing_Gaussian_likelihood) then
+             If (testing_Gaussian_likelihood) then
 
-                    Covgauss = jumping_factor*Covgauss
+                Covgauss = jumping_factor*Covgauss
 
-                Else
+             Else
 
-                    Covguess = jumping_factor*Covguess
+                Covguess = jumping_factor*Covguess
 
-                End If
+             End If
 
-            Else if (average_acceptance_probability .gt. 0.4) then
+          Else if (average_acceptance_probability .gt. 0.4) then
 
-                jumping_factor = (1.d0 + step_size_changes)    !    Increasing step size 
+             jumping_factor = (1.d0 + step_size_changes)    !    Increasing step size 
 
-                If (testing_Gaussian_likelihood) then
+             If (testing_Gaussian_likelihood) then
 
-                    Covgauss = jumping_factor*Covgauss
+                Covgauss = jumping_factor*Covgauss
 
-                Else
+             Else
 
-                    Covguess = jumping_factor*Covguess
+                Covguess = jumping_factor*Covguess
 
-                End If
+             End If
 
-            End If
-            ! JUMPING FACTOR UPDATED (IF IT WAS NEEDED)
+          End If
+          ! JUMPING FACTOR UPDATED (IF IT WAS NEEDED)
              
-            not_good_aap = (average_acceptance_probability .lt. 0.1) .or. (average_acceptance_probability .gt. 0.4)
+          not_good_aap = (average_acceptance_probability .lt. 0.1) .or. (average_acceptance_probability .gt. 0.4)
 
-            If ( (mod(m,covariance_matrix_update) .eq. 0) .and. not_good_aap) then
+          If ( (mod(m,covariance_matrix_update) .eq. 0) .and. not_good_aap) then
                 
-                call stat('./output/mcmc_output.txt',buff,status1)
+             call stat('./output/mcmc_output.txt',buff,status1)
 
-                If ((status1 .eq. 0) .and. (buff(8) .gt. 0)) then
+             If ((status1 .eq. 0) .and. (buff(8) .gt. 0)) then
               
-                    If (testing_Gaussian_likelihood) then
+                If (testing_Gaussian_likelihood) then
 
-                        call system('cd output; python compute_covariance_matrix_Gaussian.py')
+                   call system('cd output; python compute_covariance_matrix_Gaussian.py')
 
-                        call read_covariance_matrix_mcmc(Covgauss)
+                   call read_covariance_matrix_mcmc(Covgauss)
 
-                        close(14)
+                   close(14)
 
-                        call system('rm ./output/mcmc_output.txt')
+                   call system('rm ./output/mcmc_output.txt')
 
-                        open(14,file='./output/mcmc_output.txt')
+                   open(14,file='./output/mcmc_output.txt')
 
-                     Else
+                Else
 
-                       If (using_hyperparameters) then
+                   If (using_hyperparameters) then
 
-                          If (hyperparameters_as_mcmc) then
+                      If (hyperparameters_as_mcmc) then
                                 
-                             call system('cd output; python compute_covariance_matrix_HP.py')
+                         call system('cd output; python compute_covariance_matrix_HP.py')
                                 
-                          Else
+                      Else
 
-                             call system('cd output; python compute_covariance_matrix.py')
+                         call system('cd output; python compute_covariance_matrix.py')
                                 
-                          End If
+                      End If
 
-                       Else
+                   Else
                            
-                          call system('cd output; python compute_covariance_matrix.py')
+                      call system('cd output; python compute_covariance_matrix.py')
 
-                       End If
+                   End If
 
-                       call read_covariance_matrix_mcmc(Covguess)
+                   call read_covariance_matrix_mcmc(Covguess)
 
-                       close(14)
+                   close(14)
 
-                       call system('rm ./output/mcmc_output.txt')
+                   call system('rm ./output/mcmc_output.txt')
 
-                       open(14,file='./output/mcmc_output.txt')
+                   open(14,file='./output/mcmc_output.txt')
 
-                    End If
+                End If
 
-                 End If
+             End If
 
-              End If
+          End If
 
-           End If
+       End If
 
     End Do
     ! LOOP TO EXPLORE PARAMETER SPACE ENDED
@@ -2769,9 +2943,13 @@ Program mcmc
 
                 If (use_H_band) then
 
-                   print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                     
-                   stop
+                   write(15,*) 'BESTFIT IS : '
+
+                   Do m=1,number_model_parameters
+
+                      write(15,*) ''//trim(paramnames(m))//' = ', bestfit(m)
+
+                   End Do
 
                 Else
 
@@ -2929,10 +3107,14 @@ Program mcmc
 
                 If (use_H_band) then
 
-                   print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                     
-                   stop
-                
+                   write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+
+                   Do m=1,number_model_parameters
+
+                      write(15,*) ''//trim(paramnames(m))//' = ', means(m)
+
+                   End Do
+
                 Else
 
                    write(15,*) 'MEANS FOR THE SAMPLES ARE : '
@@ -3053,10 +3235,67 @@ Program mcmc
 
                     If (use_H_band) then
 
-                       print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                     
-                       stop
-                
+                       If (use_HP_per_host) then
+
+                          print *, 'HPs PER HOST NOT IMPLEMENTED WHEN USING H BAND'
+                          
+                          stop
+
+!                          open(20,file='./output/effective_hyperparameters_hosts.txt')
+
+!                          Do n=1,number_of_hosts_galaxies
+ 
+!                             write(20,*) n, 1.d0/chi2R11_W_host(bestfit(n),bestfit(9),bestfit(10),bestfit(11),&
+!                                        bestfit(13),prior_sigma_int,n), host(n)
+
+!                          End Do
+
+!                          close(20)
+
+!                          call system('cd analyzer; python plot_HP_hosts.py')
+ 
+                       Else If (use_HP_per_cepheid) then
+
+                          open(20,file='./output/effective_hyperparameters_cepheids.txt')
+
+                          Do m=1,size(Field)
+
+                             Do n=1,number_of_hosts_galaxies
+ 
+                                If (host(n) .eq. Field(m)) then
+                                   
+                                   If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                                      If ( chi2R11_H_2(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m)&
+                                        .le. 1.d0 ) then
+
+                                         write(20,*) PeriodR11(m), F160WR11(m) - &
+                                              P_L_relation_passband_H_2(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),&
+                                              OHR11(m),PeriodR11(m)),eF160WR11(m), 1.d0, Field(m)
+
+                                      Else
+
+                                         write(20,*) PeriodR11(m), F160WR11(m) - &
+                                              P_L_relation_passband_H_2(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),&
+                                              OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(9),&
+                                              bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m), Field(m)
+
+                                      End If
+
+                                   End If
+    
+                                End If
+
+                             End Do
+
+                          End Do
+
+                          close(20)
+
+                          call system('cd analyzer; python plot_HP.py')
+
+                       End If
+
                     Else
 
                        If (use_HP_per_host) then
