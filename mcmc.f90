@@ -14,7 +14,7 @@ Program mcmc
 
     Implicit none
 
-    Integer*4 :: m,n,i,q                                        ! INTERGER FOR SHORT LOOPS 
+    Integer*4 :: m,n,i                                      ! INTERGER FOR SHORT LOOPS 
     Integer*4 :: seed1,seed2                                      ! SEEDS FOR RANDOM NUMBER GENERATOR 
     Integer*4 :: number_accepted_points,number_rejected_points    ! MCMC PARAMETERS
     Integer*4 :: weight                                           ! IT COUNTS THE NUMBER OF STEPS TAKEN BEFORE MOVING TO A NEW POINT IN MCMC 
@@ -1953,484 +1953,459 @@ Program mcmc
     ! LOOP TO EXPLORE PARAMETER SPACE STARTS HERE
     Do m=1,number_iterations
 
-        ! GENERATE NEW POINT IN PARAMETER SPACE FROM MULTIVARIATE DISTRIBUTION; CODE USES RANLIB LIBRARY (BE CAREFUL WITH X_OLD AND OLD_POINT DEFINITIONS)
-        Do q=1,number_iterations 
+       ! GENERATE NEW POINT IN PARAMETER SPACE FROM MULTIVARIATE DISTRIBUTION; CODE USES RANLIB LIBRARY (BE CAREFUL WITH X_OLD AND OLD_POINT DEFINITIONS)
+       If (testing_Gaussian_likelihood) then
 
-            If (testing_Gaussian_likelihood) then
-
-                call setgmn(x_old,real(Covgauss),number_of_parameters,parm) 
+          call setgmn(x_old,real(Covgauss),number_of_parameters,parm) 
  
-                call genmn(parm,x_new,work)
+          call genmn(parm,x_new,work)
 
-                exit
-
-            Else
+       Else
           
-                call setgmn(x_old,real(Covguess),number_of_parameters,parm) 
+          call setgmn(x_old,real(Covguess),number_of_parameters,parm) 
 
-                call genmn(parm,x_new,work)
+          call genmn(parm,x_new,work)
 
-            End If
+       End If
 
-            If (doing_R11_analysis) then
+       If (doing_R11_analysis) then
 
-               If (include_only_cepheids) then
+          If (include_only_cepheids) then
 
-                  If (all_R11_hosts) then
+             If (all_R11_hosts) then
 
-                     plausibility(1) = (x_new(1) .le. real(20.d0)) .or. (x_new(1) .ge. real(4.d1))
+                plausibility(1) = (x_new(1) .le. real(20.d0)) .or. (x_new(1) .ge. real(4.d1))
 
-                     plausibility(2) = (x_new(2) .le. real(20.d0)) .or. (x_new(2) .ge. real(4.d1))
+                plausibility(2) = (x_new(2) .le. real(20.d0)) .or. (x_new(2) .ge. real(4.d1))
 
-                     plausibility(3) = (x_new(3) .le. real(20.d0)) .or. (x_new(3) .ge. real(4.d1))
+                plausibility(3) = (x_new(3) .le. real(20.d0)) .or. (x_new(3) .ge. real(4.d1))
 
-                     plausibility(4) = (x_new(4) .le. real(20.d0)) .or. (x_new(4) .ge. real(4.d1))
+                plausibility(4) = (x_new(4) .le. real(20.d0)) .or. (x_new(4) .ge. real(4.d1))
 
-                     plausibility(5) = (x_new(5) .le. real(20.d0)) .or. (x_new(5) .ge. real(4.d1))
+                plausibility(5) = (x_new(5) .le. real(20.d0)) .or. (x_new(5) .ge. real(4.d1))
 
-                     plausibility(6) = (x_new(6) .le. real(20.d0)) .or. (x_new(6) .ge. real(4.d1))
+                plausibility(6) = (x_new(6) .le. real(20.d0)) .or. (x_new(6) .ge. real(4.d1))
 
-                     plausibility(7) = (x_new(7) .le. real(20.d0)) .or. (x_new(7) .ge. real(4.d1))
+                plausibility(7) = (x_new(7) .le. real(20.d0)) .or. (x_new(7) .ge. real(4.d1))
 
-                     plausibility(8) = (x_new(8) .le. real(20.d0)) .or. (x_new(8) .ge. real(4.d1))
+                plausibility(8) = (x_new(8) .le. real(20.d0)) .or. (x_new(8) .ge. real(4.d1))
 
-                     plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(30.d0))
+                plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(30.d0))
 
-                     plausibility(10) =  (x_new(10) .le. real(25.d0)) .or. (x_new(10) .ge. real(34.d0)) 
+                plausibility(10) =  (x_new(10) .le. real(25.d0)) .or. (x_new(10) .ge. real(34.d0)) 
 
-                     plausibility(11) =  (x_new(11) .le. real(-3.2d0)) .or. (x_new(11) .ge. real(-2.5d0)) 
+                plausibility(11) =  (x_new(11) .le. real(-3.2d0)) .or. (x_new(11) .ge. real(-2.5d0)) 
 
-                     plausibility(12) =  (x_new(12) .le. real(-1.d0)) .or. (x_new(12) .ge. real(1.d0)) 
+                plausibility(12) =  (x_new(12) .le. real(-1.d0)) .or. (x_new(12) .ge. real(1.d0)) 
 
-                  Else
+             Else
 
-                     plausibility(1) =  (x_new(1) .le. real(25.d0)) .or. (x_new(1) .ge. real(34.d0)) 
+                plausibility(1) =  (x_new(1) .le. real(25.d0)) .or. (x_new(1) .ge. real(34.d0)) 
 
-                     plausibility(2) =  (x_new(2) .le. real(-3.2d0)) .or. (x_new(2) .ge. real(-2.5d0)) 
+                plausibility(2) =  (x_new(2) .le. real(-3.2d0)) .or. (x_new(2) .ge. real(-2.5d0)) 
 
-                     plausibility(3) =  (x_new(3) .le. real(-1.d0)) .or. (x_new(3) .ge. real(1.d0)) 
+                plausibility(3) =  (x_new(3) .le. real(-1.d0)) .or. (x_new(3) .ge. real(1.d0)) 
 
-                  End If
+             End If
 
-               Else
+          Else
 
-                  If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
+             If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
     
-                     print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
-
-                     stop
-
-                  Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                     print *,'NGC4258+LMC NOT IMPLEMENTED YET'
-
-                     stop
-
-                  Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                     print *,'NGC4258+MW NOT IMPLEMENTED YET'
-
-                     stop
-
-                  Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                     print *,'MW+LMC NOT IMPLEMENTED YET'
-
-                     stop
-
-                  Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                     print *,'MW NOT IMPLEMENTED YET'
-
-                     stop
-
-                  Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                     If (use_metallicity) then 
-
-                        If (use_H_band) then
-
-                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
-                     
-                           stop
-
-                        Else
-
-                           plausibility(1) = (x_new(1) .le. real(20.d0)) .or. (x_new(1) .ge. real(4.d1))
-
-                           plausibility(2) = (x_new(2) .le. real(20.d0)) .or. (x_new(2) .ge. real(4.d1))
-
-                           plausibility(3) = (x_new(3) .le. real(20.d0)) .or. (x_new(3) .ge. real(4.d1))
-
-                           plausibility(4) = (x_new(4) .le. real(20.d0)) .or. (x_new(4) .ge. real(4.d1))
-
-                           plausibility(5) = (x_new(5) .le. real(20.d0)) .or. (x_new(5) .ge. real(4.d1))
-
-                           plausibility(6) = (x_new(6) .le. real(20.d0)) .or. (x_new(6) .ge. real(4.d1))
-
-                           plausibility(7) = (x_new(7) .le. real(20.d0)) .or. (x_new(7) .ge. real(4.d1))
-
-                           plausibility(8) = (x_new(8) .le. real(20.d0)) .or. (x_new(8) .ge. real(4.d1))
-
-                           plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(30.d0))
-
-                           plausibility(10) = (x_new(10) .le. real(0.d0)) .or. (x_new(10) .ge. real(40.d0))
-
-                           plausibility(11) =  (x_new(11) .le. real(15.d0)) .or. (x_new(11) .ge. real(25.d0)) 
-
-                           plausibility(12) =  (x_new(12) .le. real(-3.5d0)) .or. (x_new(12) .ge. real(-2.5d0)) 
-
-                           plausibility(13) =  (x_new(13) .le. real(55.d0)) .or. (x_new(13) .ge. real(95.d0)) 
-
-                           plausibility(14) =  (x_new(14) .le. real(-2.d0)) .or. (x_new(14) .ge. real(1.d0)) 
-
-                           plausibility(15) =  (x_new(15) .le. real(0.d0)) .or. (x_new(15) .ge. real(1.d0)) 
-
-                           plausibility(16) =  (x_new(16) .le. real(-1.d0)) .or. (x_new(16) .ge. real(1.d0)) 
-
-                        End If
-
-                     Else
-
-                        If (use_H_band) then
-
-                           print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
-                     
-                           stop
-
-                        Else
-
-                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
-                     
-                           stop
-                        
-                        End If
-
-                     End If
-
-                  Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                     If (use_metallicity) then 
-
-                        If (use_H_band) then
-
-                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
-                     
-                           stop
-
-                        Else
-
-                           plausibility(1) = (x_new(1) .le. real(20.d0)) .or. (x_new(1) .ge. real(4.d1))
-
-                           plausibility(2) = (x_new(2) .le. real(20.d0)) .or. (x_new(2) .ge. real(4.d1))
-
-                           plausibility(3) = (x_new(3) .le. real(20.d0)) .or. (x_new(3) .ge. real(4.d1))
-
-                           plausibility(4) = (x_new(4) .le. real(20.d0)) .or. (x_new(4) .ge. real(4.d1))
-
-                           plausibility(5) = (x_new(5) .le. real(20.d0)) .or. (x_new(5) .ge. real(4.d1))
-
-                           plausibility(6) = (x_new(6) .le. real(20.d0)) .or. (x_new(6) .ge. real(4.d1))
-
-                           plausibility(7) = (x_new(7) .le. real(20.d0)) .or. (x_new(7) .ge. real(4.d1))
-
-                           plausibility(8) = (x_new(8) .le. real(20.d0)) .or. (x_new(8) .ge. real(4.d1))
-
-                           plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(30.d0))
-
-                           plausibility(10) =  (x_new(10) .le. real(25.d0)) .or. (x_new(10) .ge. real(34.d0)) 
-
-                           plausibility(11) =  (x_new(11) .le. real(-3.2d0)) .or. (x_new(11) .ge. real(-2.5d0)) 
-
-                           plausibility(12) =  (x_new(12) .le. real(55.d0)) .or. (x_new(12) .ge. real(95.d0)) 
-
-                           plausibility(13) =  (x_new(13) .le. real(-1.d0)) .or. (x_new(13) .ge. real(1.d0)) 
-
-                           plausibility(14) =  (x_new(14) .le. real(0.d0)) .or. (x_new(14) .ge. real(1.d0)) 
-
-                        End If
-
-                     Else
-
-                        If (use_H_band) then
-
-                           plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
-
-                           plausibility(2) = (x_new(2) .le. real(0.d0)) .or. (x_new(2) .ge. real(5.d1))
-
-                           plausibility(3) = (x_new(3) .le. real(0.d0)) .or. (x_new(3) .ge. real(5.d1))
-
-                           plausibility(4) = (x_new(4) .le. real(0.d0)) .or. (x_new(4) .ge. real(5.d1))
-
-                           plausibility(5) = (x_new(5) .le. real(0.d0)) .or. (x_new(5) .ge. real(5.d1))
-
-                           plausibility(6) = (x_new(6) .le. real(0.d0)) .or. (x_new(6) .ge. real(5.d1))
-
-                           plausibility(7) = (x_new(7) .le. real(0.d0)) .or. (x_new(7) .ge. real(5.d1))
-
-                           plausibility(8) = (x_new(8) .le. real(0.d0)) .or. (x_new(8) .ge. real(5.d1))
-
-                           plausibility(9) = (x_new(9) .le. real(0.d0)) .or. (x_new(9) .ge. real(50.d0))
-
-                           plausibility(10) =  (x_new(10) .le. real(-20.d0)) .or. (x_new(10) .ge. real(0.d0)) 
-
-                        Else
-
-                           print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
-                     
-                           stop
-                        
-                        End If
-
-                     End If
-
-                  Else
-
-                     print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
-
-                     stop
-
-                  End If ! OF ANCHOR
-
-               End If ! OF CEPHEIDS
-    
-            Else
-
-               plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
-               plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
-               !plausibility(3) =  (x_new(3) .gt. real(0.d0)) .or. (x_new(3) .lt. real(-10.d0))    ! limit log10(sigma_int)
-
-            End If
-
-            If (hyperparameters_as_mcmc) then
-                ! CHECKING PLAUSIBILITY FOR HYPER-PARAMETERS
-                Do n=number_model_parameters+1,number_of_parameters
-                   
-                    If (x_new(n) .gt. real(1.d0)) then
-                     
-                        x_new(n) = x_old(n)
-
-                    Else If (x_new(n) .lt. real(0.d0)) then
-
-                        x_new(n) = x_old(n)
-
-                    End If
-
-                    plausibility(n) =  (x_new(n) .gt. real(1.d0)) .or. (x_new(n) .lt. real(0.d0))    ! limit alpha_j
-
-                End Do
-            
-            End If
-
-            Do n=1,number_of_parameters
-
-                If (plausibility(n)) then
-
-                   x_new(n) = x_old(n)
-!                    non_plausible_parameters = .true.
-
-!                    exit
-
-!                Else if (n .eq. number_of_parameters) then
-
-                    non_plausible_parameters = .false.
-
-                End If
-
-            End Do
-
-            If (non_plausible_parameters .and. (q .ne. number_iterations)) then
-
-                call genmn(parm,x_new,work)
-
-            Else If (q .eq. number_iterations) then
-
-                write(15,*) 'LOOP TO GENERATE MULTIVARIATE GAUSSIAN DEVIATE HIT MAXIMUM NUMBER OF'
-                write(15,*) 'ITERATIONS WITHOUT FINDING AN ALLOWED POINT'
+                print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
                 stop
 
-            Else 
+             Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                exit
+                print *,'NGC4258+LMC NOT IMPLEMENTED YET'
 
-            End If
+                stop
 
-        End Do
-        ! NEW POINT GENERATED 
+             Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
 
-        Do n=1,number_of_parameters
+                print *,'NGC4258+MW NOT IMPLEMENTED YET'
 
-            If (n .gt. number_model_parameters) then
+                stop
 
-                If (using_jeffreys_prior) then
+             Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
 
-                    current_point(n) = 10**(dble(x_new(n))) ! CONVERTING LOG10(alpha_j) to alpha_j 
+                print *,'MW+LMC NOT IMPLEMENTED YET'
+
+                stop
+
+             Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                print *,'MW NOT IMPLEMENTED YET'
+
+                stop
+
+             Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                If (use_metallicity) then 
+
+                   If (use_H_band) then
+
+                      print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                      stop
+
+                   Else
+
+                      plausibility(1) = (x_new(1) .le. real(20.d0)) .or. (x_new(1) .ge. real(4.d1))
+                      
+                      plausibility(2) = (x_new(2) .le. real(20.d0)) .or. (x_new(2) .ge. real(4.d1))
+
+                      plausibility(3) = (x_new(3) .le. real(20.d0)) .or. (x_new(3) .ge. real(4.d1))
+
+                      plausibility(4) = (x_new(4) .le. real(20.d0)) .or. (x_new(4) .ge. real(4.d1))
+
+                      plausibility(5) = (x_new(5) .le. real(20.d0)) .or. (x_new(5) .ge. real(4.d1))
+
+                      plausibility(6) = (x_new(6) .le. real(20.d0)) .or. (x_new(6) .ge. real(4.d1))
+
+                      plausibility(7) = (x_new(7) .le. real(20.d0)) .or. (x_new(7) .ge. real(4.d1))
+
+                      plausibility(8) = (x_new(8) .le. real(20.d0)) .or. (x_new(8) .ge. real(4.d1))
+
+                      plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(30.d0))
+
+                      plausibility(10) = (x_new(10) .le. real(0.d0)) .or. (x_new(10) .ge. real(40.d0))
+
+                      plausibility(11) =  (x_new(11) .le. real(15.d0)) .or. (x_new(11) .ge. real(25.d0)) 
+
+                      plausibility(12) =  (x_new(12) .le. real(-3.5d0)) .or. (x_new(12) .ge. real(-2.5d0)) 
+
+                      plausibility(13) =  (x_new(13) .le. real(55.d0)) .or. (x_new(13) .ge. real(95.d0)) 
+
+                      plausibility(14) =  (x_new(14) .le. real(-2.d0)) .or. (x_new(14) .ge. real(1.d0)) 
+
+                      plausibility(15) =  (x_new(15) .le. real(0.d0)) .or. (x_new(15) .ge. real(1.d0)) 
+
+                      plausibility(16) =  (x_new(16) .le. real(-1.d0)) .or. (x_new(16) .ge. real(1.d0)) 
+
+                   End If
 
                 Else
 
-                    current_point(n) = dble(x_new(n))
+                   If (use_H_band) then
+
+                      print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                      stop
+
+                   Else
+
+                      print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE WHEN LMC AS ANCHOR'
+                     
+                      stop
+                        
+                   End If
+
+                End If
+
+             Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                If (use_metallicity) then 
+
+                   If (use_H_band) then
+
+                      print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                      stop
+
+                   Else
+
+                      plausibility(1) = (x_new(1) .le. real(20.d0)) .or. (x_new(1) .ge. real(4.d1))
+
+                      plausibility(2) = (x_new(2) .le. real(20.d0)) .or. (x_new(2) .ge. real(4.d1))
+
+                      plausibility(3) = (x_new(3) .le. real(20.d0)) .or. (x_new(3) .ge. real(4.d1))
+                           
+                      plausibility(4) = (x_new(4) .le. real(20.d0)) .or. (x_new(4) .ge. real(4.d1))
+
+                      plausibility(5) = (x_new(5) .le. real(20.d0)) .or. (x_new(5) .ge. real(4.d1))
+
+                      plausibility(6) = (x_new(6) .le. real(20.d0)) .or. (x_new(6) .ge. real(4.d1))
+
+                      plausibility(7) = (x_new(7) .le. real(20.d0)) .or. (x_new(7) .ge. real(4.d1))
+
+                      plausibility(8) = (x_new(8) .le. real(20.d0)) .or. (x_new(8) .ge. real(4.d1))
+
+                      plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(30.d0))
+
+                      plausibility(10) =  (x_new(10) .le. real(25.d0)) .or. (x_new(10) .ge. real(34.d0)) 
+
+                      plausibility(11) =  (x_new(11) .le. real(-3.2d0)) .or. (x_new(11) .ge. real(-2.5d0)) 
+
+                      plausibility(12) =  (x_new(12) .le. real(55.d0)) .or. (x_new(12) .ge. real(95.d0)) 
+
+                      plausibility(13) =  (x_new(13) .le. real(-1.d0)) .or. (x_new(13) .ge. real(1.d0)) 
+
+                      plausibility(14) =  (x_new(14) .le. real(0.d0)) .or. (x_new(14) .ge. real(1.d0)) 
+
+                   End If
+
+                Else
+
+                   If (use_H_band) then
+
+                      plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
+
+                      plausibility(2) = (x_new(2) .le. real(0.d0)) .or. (x_new(2) .ge. real(5.d1))
+
+                      plausibility(3) = (x_new(3) .le. real(0.d0)) .or. (x_new(3) .ge. real(5.d1))
+
+                      plausibility(4) = (x_new(4) .le. real(0.d0)) .or. (x_new(4) .ge. real(5.d1))
+
+                      plausibility(5) = (x_new(5) .le. real(0.d0)) .or. (x_new(5) .ge. real(5.d1))
+
+                      plausibility(6) = (x_new(6) .le. real(0.d0)) .or. (x_new(6) .ge. real(5.d1))
+
+                      plausibility(7) = (x_new(7) .le. real(0.d0)) .or. (x_new(7) .ge. real(5.d1))
+
+                      plausibility(8) = (x_new(8) .le. real(0.d0)) .or. (x_new(8) .ge. real(5.d1))
+
+                      plausibility(9) = (x_new(9) .le. real(0.d0)) .or. (x_new(9) .ge. real(50.d0))
+
+                      plausibility(10) =  (x_new(10) .le. real(-20.d0)) .or. (x_new(10) .ge. real(0.d0)) 
+
+                   Else
+
+                      print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                      stop
+                        
+                   End If
+
+                End If
+
+             Else
+
+                print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+                stop
+
+             End If ! OF ANCHOR
+
+          End If ! OF CEPHEIDS
+    
+       Else
+
+          plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
+          plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
+          !plausibility(3) =  (x_new(3) .gt. real(0.d0)) .or. (x_new(3) .lt. real(-10.d0))    ! limit log10(sigma_int)
+
+       End If
+
+       If (hyperparameters_as_mcmc) then
+          ! CHECKING PLAUSIBILITY FOR HYPER-PARAMETERS
+          Do n=number_model_parameters+1,number_of_parameters
+                   
+             plausibility(n) =  (x_new(n) .gt. real(1.d0)) .or. (x_new(n) .lt. real(0.d0))    ! limit alpha_j
+
+          End Do
+            
+       End If
+
+       Do n=1,number_of_parameters
+
+          If (plausibility(n)) then
+
+             non_plausible_parameters = .true.
+
+             exit
+
+          Else 
+
+             non_plausible_parameters = .false.
+
+          End If
+
+       End Do
+
+       ! NEW POINT GENERATED 
+
+       Do n=1,number_of_parameters
+
+          If (n .gt. number_model_parameters) then
+
+             If (using_jeffreys_prior) then
+
+                current_point(n) = 10**(dble(x_new(n))) ! CONVERTING LOG10(alpha_j) to alpha_j 
+
+             Else
+
+                current_point(n) = dble(x_new(n))
+              
+             End If
+
+          Else
+
+             current_point(n) = dble(x_new(n))
+
+          End If
+
+       End Do
+
+       ! EVALUATE LOG_LIKELIHOOD FOR CURRENT POINT IN PARAMETER SPACE
+       If (testing_Gaussian_likelihood) then
+
+          current_loglikelihood = log_Gaussian_likelihood(current_point)
+
+       Else
+
+          If (non_plausible_parameters) then
+
+             current_loglikelihood = -1.d10
+
+          Else
+
+             If (using_hyperparameters) then    
+
+                If (doing_R11_analysis) then
+
+                   If (include_only_cepheids) then
+
+                      If (all_R11_hosts) then
+                        
+                         current_loglikelihood = log_R11_likelihood_W_cepheids(current_point(1:number_model_parameters-3),&
+                              current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
+                              current_point(number_model_parameters),prior_sigma_int)
+
+                      Else
+
+                         current_loglikelihood = log_likelihood_only_cepheids(galaxy,current_point(1),&
+                              current_point(2),current_point(3),prior_sigma_int)
+
+                      End If
+
+                   Else
+
+                      If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then !!!HERE
+    
+                         print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+
+                         stop
+
+                      Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                         print *,'NGC4258+LMC NOT IMPLEMENTED YET'
+
+                         stop
+
+                      Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                         print *,'NGC4258+MW NOT IMPLEMENTED YET'
+
+                         stop
+
+                      Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                         print *,'MW+LMC NOT IMPLEMENTED YET'
+
+                         stop
+
+                      Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+                         print *,'MW NOT IMPLEMENTED YET'
+
+                         stop
+
+                      Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                         If (use_metallicity) then 
+
+                            If (use_H_band) then
+                     
+                               print *,'H BAND NOT IMPLEMENTED USING LMC AS ANCHOR AND INCLUDING METALLICITY DEPENDENCE'
+                     
+                               stop
+                     
+                            Else
+                          
+                               current_loglikelihood = log_R11_likelihood_W_LMC(current_point(1:number_model_parameters-6),&
+                                    current_point(number_model_parameters-5),current_point(number_model_parameters-4),&
+                                    current_point(number_model_parameters-3),current_point(number_model_parameters-2),&
+                                    current_point(number_model_parameters-1),current_point(number_model_parameters),&
+                                    prior_sigma_int,prior_sigma_int_LMC)
+
+                            End If
+
+                         Else
+
+                            If (use_H_band) then
+                               
+                               print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                               stop
+
+                            Else
+
+                               print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+                     
+                               stop
+
+                            End If
+
+                         End If
+
+                      Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+                         If (use_metallicity) then 
+
+                            If (use_H_band) then
+                     
+                               print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
+                            
+                               stop
+                     
+                            Else
+
+                               current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-5),&
+                                    current_point(number_model_parameters-4),current_point(number_model_parameters-3),&
+                                    current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
+                                    current_point(number_model_parameters),prior_sigma_int)
+
+                            End If
+
+                         Else
+
+                            If (use_H_band) then
+
+                               current_loglikelihood = log_R11_likelihood_H(current_point(1:number_model_parameters-1),&
+                                    current_point(number_model_parameters),prior_sigma_int)
+
+                            Else
+
+                               print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+                     
+                               stop
+
+                            End If
+
+                         End If
+
+                      End If ! OF ANCHORS 
+
+                   End If
+
+                Else
+
+                   current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),&
+                        current_point(2),prior_sigma_int)
               
                 End If
 
-            Else
+             Else
 
-                current_point(n) = dble(x_new(n))
+                current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int)
 
-            End If
+             End If
 
-        End Do
+          End If
 
-        ! EVALUATE LOG_LIKELIHOOD FOR CURRENT POINT IN PARAMETER SPACE
-        If (testing_Gaussian_likelihood) then
-
-            current_loglikelihood = log_Gaussian_likelihood(current_point)
-
-        Else
-
-           If (using_hyperparameters) then    
-
-              If (doing_R11_analysis) then
-
-                 If (include_only_cepheids) then
-
-                    If (all_R11_hosts) then
-                        
-                       current_loglikelihood = log_R11_likelihood_W_cepheids(current_point(1:number_model_parameters-3),&
-                            current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
-                            current_point(number_model_parameters),prior_sigma_int)
-
-                    Else
-
-                       current_loglikelihood = log_likelihood_only_cepheids(galaxy,current_point(1),&
-                            current_point(2),current_point(3),prior_sigma_int)
-
-                    End If
-
-                 Else
-
-                    If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then !!!HERE
-    
-                       print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
-
-                       stop
-
-                    Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                       print *,'NGC4258+LMC NOT IMPLEMENTED YET'
-
-                       stop
-
-                    Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                       print *,'NGC4258+MW NOT IMPLEMENTED YET'
-
-                       stop
-
-                    Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                       print *,'MW+LMC NOT IMPLEMENTED YET'
-
-                       stop
-
-                    Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
-
-                       print *,'MW NOT IMPLEMENTED YET'
-
-                       stop
-
-                    Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                       If (use_metallicity) then 
-
-                          If (use_H_band) then
-                     
-                             print *,'H BAND NOT IMPLEMENTED USING LMC AS ANCHOR AND INCLUDING METALLICITY DEPENDENCE'
-                     
-                             stop
-                     
-                          Else
-                          
-                             current_loglikelihood = log_R11_likelihood_W_LMC(current_point(1:number_model_parameters-6),&
-                                  current_point(number_model_parameters-5),current_point(number_model_parameters-4),&
-                                  current_point(number_model_parameters-3),current_point(number_model_parameters-2),&
-                                  current_point(number_model_parameters-1),current_point(number_model_parameters),&
-                                  prior_sigma_int,prior_sigma_int_LMC)
-
-                          End If
-
-                       Else
-
-                          If (use_H_band) then
-
-                             print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
-                     
-                             stop
-
-                          Else
-
-                             print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
-                     
-                             stop
-
-                          End If
-
-                       End If
-
-                    Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
-
-                       If (use_metallicity) then 
-
-                          If (use_H_band) then
-                     
-                             print *,'H BAND NOT IMPLEMENTED INCLUDING METALLICITY DEPENDENCE'
-                     
-                             stop
-                     
-                          Else
-
-                             current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-5),&
-                                  current_point(number_model_parameters-4),current_point(number_model_parameters-3),&
-                                  current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
-                                  current_point(number_model_parameters),prior_sigma_int)
-
-                          End If
-
-                       Else
-
-                          If (use_H_band) then
-
-                             current_loglikelihood = log_R11_likelihood_H(current_point(1:number_model_parameters-1),&
-                                  current_point(number_model_parameters),prior_sigma_int)
-
-                          Else
-
-                             print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
-                     
-                             stop
-
-                          End If
-
-                       End If
-
-                    End If ! OF ANCHORS 
-
-                 End If
-
-              Else
-
-                 current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),&
-                   current_point(2),prior_sigma_int)
-              
-              End If
-
-           Else
-
-              current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int)
-
-           End If
-
-        End If
+       End If
         ! LOG_LIKELIHOOD FOR CURRENT POINT COMPUTED
 
         !MAKE DECISION ABOUT CURRENT POINT : ACCEPT OR REJECT IT
