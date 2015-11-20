@@ -85,7 +85,7 @@ Program mcmc
         ! COVARIANCE MATRIX ADJUSTED
         Covgauss = jumping_factor*Covgauss
 
-        open(15,file='./output/execution_information.txt')    ! OPEN FILE FOR EXECUTION INFORMATION 
+        open(UNIT_EXE_FILE,file= EXECUTION_INFORMATION)    ! OPEN FILE FOR EXECUTION INFORMATION 
 
     Else
 
@@ -457,20 +457,20 @@ Program mcmc
             
             If (hyperparameters_as_mcmc) then
 
-                open(15,file='./output/execution_information_HP_as_MCMC.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
+                open(UNIT_EXE_FILE,file=EXECUTION_INFORMATION)    ! OPEN FILE FOR EXECUTION INFORMATION
             
-                write(15,*) 'WORKING WITH HYPER-PARAMETERS'     
+                write(UNIT_EXE_FILE,*) 'WORKING WITH HYPER-PARAMETERS'     
 
-                write(15,*) 'HYPER-PARAMETERS USED AS MCMC PARAMETERS'
+                write(UNIT_EXE_FILE,*) 'HYPER-PARAMETERS USED AS MCMC PARAMETERS'
 
                 call read_data_Efstathiou(path_to_datafileABC)
 
                 If (number_hyperparameters .ne. (size(NameA)+size(NameB)+size(NameC))) then
                 
-                    write(15,*) 'NUMBER OF HYPER-PARAMETERS MUST MATCH TOTAL NUMBER OF DATA POINTS ',&
+                    write(UNIT_EXE_FILE,*) 'NUMBER OF HYPER-PARAMETERS MUST MATCH TOTAL NUMBER OF DATA POINTS ',&
                     size(NameA)+size(NameB)+size(NameC)
 
-                    write(15,*) 'CHECK FIDUCIAL MODULE'
+                    write(UNIT_EXE_FILE,*) 'CHECK FIDUCIAL MODULE'
        
                     stop
 
@@ -480,23 +480,23 @@ Program mcmc
 
                 If (doing_R11_analysis) then
 
-                   open(15,file='./output/execution_information_HP_R11.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
+                   open(UNIT_EXE_FILE,file=EXECUTION_INFORMATION)    ! OPEN FILE FOR EXECUTION INFORMATION
             
-                   write(15,*) 'WORKING WITH HYPER-PARAMETERS AND DOING R11 ANALYSIS'
+                   write(UNIT_EXE_FILE,*) 'WORKING WITH HYPER-PARAMETERS AND DOING R11 ANALYSIS'
                    
                 Else
 
-                   open(15,file='./output/execution_information_HP.txt')    ! OPEN FILE FOR EXECUTION INFORMATION
+                   open(UNIT_EXE_FILE,file=EXECUTION_INFORMATION)    ! OPEN FILE FOR EXECUTION INFORMATION
             
-                   write(15,*) 'WORKING WITH HYPER-PARAMETERS'
+                   write(UNIT_EXE_FILE,*) 'WORKING WITH HYPER-PARAMETERS'
    
                 End If
 
                 If (number_hyperparameters .ne. 0) then
                 
-                    write(15,*) 'NUMBER OF HYPER-PARAMETERS MUST BE ZERO WHEN SETTING FALSE "hyperparameters_as_mcmc" '
+                    write(UNIT_EXE_FILE,*) 'NUMBER OF HYPER-PARAMETERS MUST BE ZERO WHEN SETTING FALSE "hyperparameters_as_mcmc" '
  
-                    write(15,*) 'CHECK FIDUCIAL MODULE'
+                    write(UNIT_EXE_FILE,*) 'CHECK FIDUCIAL MODULE'
        
                     stop
 
@@ -515,7 +515,7 @@ Program mcmc
 
             End If
 
-            open(15,file='./output/execution_information.txt')    ! OPEN FILE FOR EXECUTION INFORMATION 
+            open(UNIT_EXE_FILE,file=EXECUTION_INFORMATION)    ! OPEN FILE FOR EXECUTION INFORMATION 
 
         End If
 
@@ -525,23 +525,23 @@ Program mcmc
 ! MARKOV CHAIN MONTE CARLO ANALYSIS
 !##################################
 
-    write(15,*) 'STARTING MCMC ANALYSIS'
+    write(UNIT_EXE_FILE,*) 'STARTING MCMC ANALYSIS'
 
     If (testing_Gaussian_likelihood) then
 
-       write(15,*) 'TESTING CODE WITH GAUSSIAN LIKELIHOOD'
+       write(UNIT_EXE_FILE,*) 'TESTING CODE WITH GAUSSIAN LIKELIHOOD'
 
-       open(13,file='./output/mcmc_final_output.txt')
+       open(UNIT_MCMC_FINAL_FILE,file='./output/chains/mcmc_final_output.txt')
 
-       open(17,file='./output/mcmc_final_output.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
+       open(UNIT_RANGES_FILE,file='./output/chains/mcmc_final_output.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
 
-       write(17,*) 'A    N    N '
+       write(UNIT_RANGES_FILE,*) 'A    N    N '
 
-       write(17,*) 'bw    N    N '
+       write(UNIT_RANGES_FILE,*) 'bw    N    N '
 
        !    write(17,*) 'sigma_int    N    N '
 
-       close(17)
+       close(UNIT_RANGES_FILE)
 
        Do i=1,number_of_parameters
 
@@ -573,7 +573,7 @@ Program mcmc
 
        If (start_from_fiducial) then
 
-          write(15,*) 'STARTING FROM FIDUCIAL POINT'
+          write(UNIT_EXE_FILE,*) 'STARTING FROM FIDUCIAL POINT'
 
           If (doing_R11_analysis) then
 
@@ -1161,11 +1161,11 @@ Program mcmc
 
        If (using_hyperparameters) then
           ! OPEN FILE TO STORE MCMC COMPUTATION
-          open(13,file='./output/mcmc_final_output_HP.txt')
+          open(UNIT_MCMC_FINAL_FILE,file='./output/chains/mcmc_final_output_HP.txt')
 
-          write(15,*) 'WORKING WITH HYPER-PARAMETERS'
+          write(UNIT_EXE_FILE,*) 'WORKING WITH HYPER-PARAMETERS'
 
-          write(15,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
+          write(UNIT_EXE_FILE,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
             
           ! COMPUTE INITIAL LIKELIHOOD
           If (doing_R11_analysis) then
@@ -1302,24 +1302,24 @@ Program mcmc
 
           End If
 
-          open(16,file='./output/mcmc_final_output_HP.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
+          open(UNIT_PARAMNAMES_FILE,file='./output/chains/mcmc_final_output_HP.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
 
-          open(17,file='./output/mcmc_final_output_HP.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
+          open(UNIT_RANGES_FILE,file='./output/chains/mcmc_final_output_HP.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST
 
        Else
           ! OPEN FILE TO STORE MCMC COMPUTATION
-          open(13,file='./output/mcmc_final_output.txt')
+          open(UNIT_MCMC_FINAL_FILE,file='./output/chains/mcmc_final_output.txt')
 
-          write(15,*) 'NOT WORKING WITH HYPER-PARAMETERS' 
+          write(UNIT_EXE_FILE,*) 'NOT WORKING WITH HYPER-PARAMETERS' 
 
-          write(15,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
+          write(UNIT_EXE_FILE,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
 
           ! COMPUTE INITIAL LIKELIHOOD
           old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),prior_sigma_int) 
 
-          open(16,file='./output/mcmc_final_output.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
+          open(UNIT_PARAMNAMES_FILE,file='./output/chains/mcmc_final_output.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
 
-          open(17,file='./output/mcmc_final_output.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST 
+          open(UNIT_RANGES_FILE,file='./output/chains/mcmc_final_output.ranges')    !    OPEN FILE WITH HARD BOUNDS NEEDED BY GETDIST 
 
        End If
 
@@ -1367,7 +1367,7 @@ Program mcmc
 
                 Do m=1,number_model_parameters
 
-                   write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+                   write(UNIT_PARAMNAMES_FILE,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
 
                 End Do
 
@@ -1384,7 +1384,7 @@ Program mcmc
 
                 Do m=1,number_model_parameters
 
-                   write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+                   write(UNIT_PARAMNAMES_FILE,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
 
                 End Do
 
@@ -1484,7 +1484,7 @@ Program mcmc
 
                       Do m=1,number_model_parameters
 
-                         write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+                         write(UNIT_PARAMNAMES_FILE,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
 
                       End Do
 
@@ -1558,7 +1558,7 @@ Program mcmc
 
                       Do m=1,number_model_parameters
 
-                         write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+                         write(UNIT_PARAMNAMES_FILE,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
 
                       End Do
 
@@ -1608,7 +1608,7 @@ Program mcmc
 
                       Do m=1,number_model_parameters
 
-                         write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+                         write(UNIT_PARAMNAMES_FILE,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
 
                       End Do
 
@@ -1618,25 +1618,25 @@ Program mcmc
 
                    If (use_H_band) then
 
-                      write(16,*) 'zpH1    zp_{H1}'
+                      write(UNIT_PARAMNAMES_FILE,*) 'zpH1    zp_{H1}'
 
-                      write(16,*) 'zpH2    zp_{H2}'
+                      write(UNIT_PARAMNAMES_FILE,*) 'zpH2    zp_{H2}'
 
-                      write(16,*) 'zpH3    zp_{H3}'
+                      write(UNIT_PARAMNAMES_FILE,*) 'zpH3    zp_{H3}'
 
-                      write(16,*) 'zpH4    zp_{H4}'
+                      write(UNIT_PARAMNAMES_FILE,*) 'zpH4    zp_{H4}'
 
-                      write(16,*) 'zpH5    zp_{H5}'
+                      write(UNIT_PARAMNAMES_FILE,*) 'zpH5    zp_{H5}'
 
-                      write(16,*) 'zpH6    zp_{H6}'
+                      write(UNIT_PARAMNAMES_FILE,*) 'zpH6    zp_{H6}'
 
-                      write(16,*) 'zpH7    zp_{H7}'
+                      write(UNIT_PARAMNAMES_FILE,*) 'zpH7    zp_{H7}'
 
-                      write(16,*) 'zpH8    zp_{H8}'
+                      write(UNIT_PARAMNAMES_FILE,*) 'zpH8    zp_{H8}'
 
-                      write(16,*) 'zpH4258    zp_{H4258}'
+                      write(UNIT_PARAMNAMES_FILE,*) 'zpH4258    zp_{H4258}'
 
-                      write(16,*) 'bH    b_H'
+                      write(UNIT_PARAMNAMES_FILE,*) 'bH    b_H'
 
                    Else
 
@@ -1662,7 +1662,7 @@ Program mcmc
 
           Do m=1,number_model_parameters
 
-             write(16,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+             write(UNIT_PARAMNAMES_FILE,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
 
           End Do
 
@@ -1676,7 +1676,7 @@ Program mcmc
 
              write(string,'(i2.2)') m-number_model_parameters
 
-             write(16,*) 'alpha_'//trim(string)//'    \alpha_{'//trim(string)//'}'
+             write(UNIT_PARAMNAMES_FILE,*) 'alpha_'//trim(string)//'    \alpha_{'//trim(string)//'}'
 
              alpha_string(m-number_model_parameters) = 'alpha_'//trim(string)//'    '
 
@@ -1684,7 +1684,7 @@ Program mcmc
             
        End If
 
-       close(16)
+       close(UNIT_PARAMNAMES_FILE)
 
        If (doing_R11_analysis) then
 
@@ -1692,37 +1692,37 @@ Program mcmc
               
              If (all_R11_hosts) then
 
-                write(17,*) ''//trim(paramnames(1))//'    20.    40.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    20.    40.'
 
-                write(17,*) ''//trim(paramnames(2))//'    20.    40.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    20.    40.'
 
-                write(17,*) ''//trim(paramnames(3))//'    20.    40.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    20.    40.'
 
-                write(17,*) ''//trim(paramnames(4))//'    20.    40.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(4))//'    20.    40.'
 
-                write(17,*) ''//trim(paramnames(5))//'    20.    40.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(5))//'    20.    40.'
 
-                write(17,*) ''//trim(paramnames(6))//'    20.    40.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(6))//'    20.    40.'
 
-                write(17,*) ''//trim(paramnames(7))//'    20.    40.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(7))//'    20.    40.'
 
-                write(17,*) ''//trim(paramnames(8))//'    20.    40.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(8))//'    20.    40.'
 
-                write(17,*) ''//trim(paramnames(9))//'    20.    30.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(9))//'    20.    30.'
 
-                write(17,*) ''//trim(paramnames(10))//'    25.    34.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(10))//'    25.    34.'
 
-                write(17,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
 
-                write(17,*) ''//trim(paramnames(12))//'    -1.    1.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(12))//'    -1.    1.'
 
              Else
 
-                write(17,*) ''//trim(paramnames(1))//'    25.    34.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    25.    34.'
 
-                write(17,*) ''//trim(paramnames(2))//'    -3.2    -2.5'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    -3.2    -2.5'
 
-                write(17,*) ''//trim(paramnames(3))//'    -1.    1.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    -1.    1.'
 
              End If
 
@@ -1770,37 +1770,37 @@ Program mcmc
                     
                    Else
 
-                      write(17,*) ''//trim(paramnames(1))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(2))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    20.    40.'
                       
-                      write(17,*) ''//trim(paramnames(3))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(4))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(4))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(5))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(5))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(6))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(6))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(7))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(7))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(8))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(8))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(9))//'    20.    30.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(9))//'    20.    30.'
 
-                      write(17,*) ''//trim(paramnames(10))//'    0.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(10))//'    0.    40.'
 
-                      write(17,*) ''//trim(paramnames(11))//'    15.    25.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(11))//'    15.    25.'
 
-                      write(17,*) ''//trim(paramnames(12))//'    -3.5    -2.5'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(12))//'    -3.5    -2.5'
 
-                      write(17,*) ''//trim(paramnames(13))//'    55.    95.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(13))//'    55.    95.'
 
-                      write(17,*) ''//trim(paramnames(14))//'    -2.    1.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(14))//'    -2.    1.'
 
-                      write(17,*) ''//trim(paramnames(15))//'    0.    1.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(15))//'    0.    1.'
 
-                      write(17,*) ''//trim(paramnames(16))//'    -1.    1.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(16))//'    -1.    1.'
 
                    End If
 
@@ -1828,63 +1828,63 @@ Program mcmc
 
                    If (use_H_band) then
 
-                      write(17,*) ''//trim(paramnames(1))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(2))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(3))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(4))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(4))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(5))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(5))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(6))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(6))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(7))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(7))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(8))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(8))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(9))//'    20.    30.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(9))//'    20.    30.'
 
-                      write(17,*) ''//trim(paramnames(10))//'    25.    34.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(10))//'    25.    34.'
 
-                      write(17,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
 
-                      write(17,*) ''//trim(paramnames(12))//'    55.    95.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(12))//'    55.    95.'
 
-                      write(17,*) ''//trim(paramnames(13))//'    -1.    1.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(13))//'    -1.    1.'
 
-                      write(17,*) ''//trim(paramnames(14))//'    0.    1.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(14))//'    0.    1.'
 
                    Else
 
-                      write(17,*) ''//trim(paramnames(1))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(2))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(3))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(4))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(4))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(5))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(5))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(6))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(6))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(7))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(7))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(8))//'    20.    40.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(8))//'    20.    40.'
 
-                      write(17,*) ''//trim(paramnames(9))//'    20.    30.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(9))//'    20.    30.'
 
-                      write(17,*) ''//trim(paramnames(10))//'    25.    34.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(10))//'    25.    34.'
 
-                      write(17,*) ''//trim(paramnames(11))//'    -3.2    -2.5'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(11))//'    -3.5    -2.5'
 
-                      write(17,*) ''//trim(paramnames(12))//'    55.    95.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(12))//'    55.    95.'
 
-                      write(17,*) ''//trim(paramnames(13))//'    -1.    1.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(13))//'    -1.    1.'
 
-                      write(17,*) ''//trim(paramnames(14))//'    0.    1.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(14))//'    0.    1.'
 
                    End If
 
@@ -1892,25 +1892,25 @@ Program mcmc
 
                    If (use_H_band) then
 
-                      write(17,*) 'zpH1    0.    50.'
+                      write(UNIT_RANGES_FILE,*) 'zpH1    0.    50.'
 
-                      write(17,*) 'zpH2    0.    50.'
+                      write(UNIT_RANGES_FILE,*) 'zpH2    0.    50.'
 
-                      write(17,*) 'zpH3    0.    50.'
+                      write(UNIT_RANGES_FILE,*) 'zpH3    0.    50.'
 
-                      write(17,*) 'zpH4    0.    50.'
+                      write(UNIT_RANGES_FILE,*) 'zpH4    0.    50.'
 
-                      write(17,*) 'zpH5    0.    50.'
+                      write(UNIT_RANGES_FILE,*) 'zpH5    0.    50.'
 
-                      write(17,*) 'zpH6    0.    50.'
+                      write(UNIT_RANGES_FILE,*) 'zpH6    0.    50.'
 
-                      write(17,*) 'zpH7    0.    50.'
+                      write(UNIT_RANGES_FILE,*) 'zpH7    0.    50.'
 
-                      write(17,*) 'zpH8    0.    50.'
+                      write(UNIT_RANGES_FILE,*) 'zpH8    0.    50.'
 
-                      write(17,*) 'zpH4258    0.    50.'
+                      write(UNIT_RANGES_FILE,*) 'zpH4258    0.    50.'
 
-                      write(17,*) 'bH    -20.    0.'
+                      write(UNIT_RANGES_FILE,*) 'bH    -20.    0.'
 
                    Else
 
@@ -1928,9 +1928,9 @@ Program mcmc
     
        Else
 
-          write(17,*) ''//trim(paramnames(1))//'    0.    50.'
+          write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    0.    50.'
 
-          write(17,*) ''//trim(paramnames(2))//'    -20.    0.'
+          write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    -20.    0.'
 
           !    write(17,*) 'sigma_int    1.e-10    1 '
 
@@ -1950,7 +1950,7 @@ Program mcmc
 
              Else
 
-                write(17,*) 'alpha_'//trim(string)//'    0.    1.'
+                write(UNIT_RANGES_FILE,*) 'alpha_'//trim(string)//'    0.    1.'
 
              End If
 
@@ -1958,26 +1958,26 @@ Program mcmc
             
        End If
 
-       close(17)
+       close(UNIT_RANGES_FILE)
 
     End If
 
     ! OPEN TEMPORARY FILE TO SAVE CHAIN
-    open(14,file='./output/mcmc_output.txt')     
+    open(UNIT_MCMC_FILE,file='./output/mcmc_output.txt')     
 
-    write(13,*) '# NUMBER OF ITERATIONS IN MCMC : ', number_iterations - steps_taken_before_definite_run
+    write(UNIT_EXE_FILE,*) '# NUMBER OF ITERATIONS IN MCMC : ', number_iterations - steps_taken_before_definite_run
 
     If (start_from_fiducial .and. .not.testing_Gaussian_likelihood) then
 
-        write(15,*) '# FIDUCIAL MODEL IS (PARAMETERS ARE ORDERED AS IN CHAINS FILES) :', old_point
+        write(UNIT_EXE_FILE,*) '# FIDUCIAL MODEL IS (PARAMETERS ARE ORDERED AS IN CHAINS FILES) :', old_point
 
-        write(15,'(a37,es18.10)') '# ln(L/L_max) AT THE FIDUCIAL MODEL :', old_loglikelihood
+        write(UNIT_EXE_FILE,'(a37,es18.10)') '# ln(L/L_max) AT THE FIDUCIAL MODEL :', old_loglikelihood
 
     End If
 
     If (hyperparameters_as_mcmc) then
 
-        write(13,*) '# WEIGHT   -ln(L/L_{max})    A    bw   ', alpha_string(1:number_hyperparameters)
+        write(UNIT_EXE_FILE,*) '# WEIGHT   -ln(L/L_{max})    A    bw   ', alpha_string(1:number_hyperparameters)
  
     Else
 
@@ -1985,7 +1985,7 @@ Program mcmc
 
           If (include_only_cepheids) then
 
-             write(13,*) '# WEIGHT   -ln(L/L_{max})    ', paramnames(1:number_model_parameters) 
+             write(UNIT_EXE_FILE,*) '# WEIGHT   -ln(L/L_{max})    ', paramnames(1:number_model_parameters) 
 
           Else
 
@@ -2031,7 +2031,7 @@ Program mcmc
                    
                    Else
 
-                      write(13,*) '# WEIGHT   -ln(L/L_{max})    ', paramnames(1:number_model_parameters) 
+                      write(UNIT_EXE_FILE,*) '# WEIGHT   -ln(L/L_{max})    ', paramnames(1:number_model_parameters) 
 
                    End If
 
@@ -2059,11 +2059,11 @@ Program mcmc
 
                    If (use_H_band) then
 
-                      write(13,*) '# WEIGHT   -ln(L/L_{max})    ', paramnames(1:number_model_parameters) 
+                      write(UNIT_EXE_FILE,*) '# WEIGHT   -ln(L/L_{max})    ', paramnames(1:number_model_parameters) 
                    
                    Else
 
-                      write(13,*) '# WEIGHT   -ln(L/L_{max})    ', paramnames(1:number_model_parameters) 
+                      write(UNIT_EXE_FILE,*) '# WEIGHT   -ln(L/L_{max})    ', paramnames(1:number_model_parameters) 
 
                    End If
 
@@ -2071,7 +2071,7 @@ Program mcmc
 
                    If (use_H_band) then
 
-                      write(13,*) '# WEIGHT   -ln(L/L_{max})    zpH1    zpH2    zpH3'//trim(&
+                      write(UNIT_EXE_FILE,*) '# WEIGHT   -ln(L/L_{max})    zpH1    zpH2    zpH3'//trim(&
                            '    zpH4    zpH5    zpH6    zpH7    zpH8    zpH4258    bH')//'' 
 
                    Else
@@ -2091,13 +2091,13 @@ Program mcmc
        Else
 
           !write(13,*) '# Weight   -ln(L/L_{max})    A    bw    sigma_int ' 
-          write(13,*) '# WEIGHT   -ln(L/L_{max})   ', paramnames(1:number_model_parameters) 
+          write(UNIT_EXE_FILE,*) '# WEIGHT   -ln(L/L_{max})   ', paramnames(1:number_model_parameters) 
 
        End If
 
     End If
 
-    write(15,*)'STARTING SAMPLING OF PARAMETER SPACE'
+    write(UNIT_EXE_FILE,*)'STARTING SAMPLING OF PARAMETER SPACE'
 
     ! LOOP TO EXPLORE PARAMETER SPACE STARTS HERE
     Do m=1,number_iterations
@@ -2309,7 +2309,7 @@ Program mcmc
 
                       plausibility(10) =  (x_new(10) .le. real(25.d0)) .or. (x_new(10) .ge. real(34.d0)) 
 
-                      plausibility(11) =  (x_new(11) .le. real(-3.2d0)) .or. (x_new(11) .ge. real(-2.5d0)) 
+                      plausibility(11) =  (x_new(11) .le. real(-3.5d0)) .or. (x_new(11) .ge. real(-2.5d0)) 
 
                       plausibility(12) =  (x_new(12) .le. real(55.d0)) .or. (x_new(12) .ge. real(95.d0)) 
 
@@ -2596,11 +2596,11 @@ Program mcmc
         
           If (m .le. steps_taken_before_definite_run) then ! WRITE OUT INFORMATION IN TEMPORARY FILE
                
-             write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+             write(UNIT_MCMC_FILE,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
 
           Else ! WRITE OUT INFORMATION IN DEFINITE FILE
 
-             write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+             write(UNIT_MCMC_FINAL_FILE,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
 
           End If
        
@@ -2648,11 +2648,11 @@ Program mcmc
 
              If (m .le. steps_taken_before_definite_run) then ! WRITE OUT INFORMATION TO TEMPORARY FILE
 
-                write(14,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+                write(UNIT_MCMC_FILE,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
 
              Else ! WRITE OUT INFORMATION TO DEFINITE FILE
                    
-                write(13,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
+                write(UNIT_MCMC_FINAL_FILE,*) weight,-old_loglikelihood,old_point(1:number_of_parameters)
 
              End If
 
@@ -2777,11 +2777,11 @@ Program mcmc
 
                    call read_covariance_matrix_mcmc(Covgauss)
 
-                   close(14)
+                   close(UNIT_MCMC_FILE)
 
                    call system('rm ./output/mcmc_output.txt')
 
-                   open(14,file='./output/mcmc_output.txt')
+                   open(UNIT_MCMC_FILE,file='./output/mcmc_output.txt')
 
                 Else
 
@@ -2805,11 +2805,11 @@ Program mcmc
 
                    call read_covariance_matrix_mcmc(Covguess)
 
-                   close(14)
+                   close(UNIT_MCMC_FILE)
 
                    call system('rm ./output/mcmc_output.txt')
 
-                   open(14,file='./output/mcmc_output.txt')
+                   open(UNIT_MCMC_FILE,file='./output/mcmc_output.txt')
 
                 End If
 
@@ -2822,15 +2822,15 @@ Program mcmc
     End Do
     ! LOOP TO EXPLORE PARAMETER SPACE ENDED
 
-    write(15,*) 'NUMBER OF REJECTED POINTS = ', number_rejected_points
+    write(UNIT_EXE_FILE,*) 'NUMBER OF REJECTED POINTS = ', number_rejected_points
 
-    write(15,*) 'ACCEPTANCE RATIO = ', dble(number_iterations - steps_taken_before_definite_run - number_rejected_points)/&
-    dble(number_iterations - steps_taken_before_definite_run)
+    write(UNIT_EXE_FILE,*) 'ACCEPTANCE RATIO = ', dble(number_iterations - steps_taken_before_definite_run&
+    - number_rejected_points)/dble(number_iterations - steps_taken_before_definite_run)
  
     ! CLOSE FILE STORING CHAIN
-    close(13)
+    close(UNIT_MCMC_FINAL_FILE)
     ! CLOSE TEMPORARY FILE FOR CHAINS
-    close(14)
+    close(UNIT_MCMC_FILE)
 
     !ANALYZE SAMPLES, MAKE FIGURES, COMPUTE BESTFIT AND HYPER-PARAMETERS (IF NEEDED)
     If (testing_Gaussian_likelihood) then
@@ -2891,11 +2891,11 @@ Program mcmc
 
        If (include_only_cepheids) then 
 
-          write(15,*) 'BESTFIT IS : '
+          write(UNIT_EXE_FILE,*) 'BESTFIT IS : '
 
           Do m=1,number_model_parameters
 
-             write(15,*) ''//trim(paramnames(m))//' = ', bestfit(m)
+             write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', bestfit(m)
 
           End Do
 
@@ -2943,21 +2943,21 @@ Program mcmc
 
                 If (use_H_band) then
 
-                   write(15,*) 'BESTFIT IS : '
+                   write(UNIT_EXE_FILE,*) 'BESTFIT IS : '
 
                    Do m=1,number_model_parameters
 
-                      write(15,*) ''//trim(paramnames(m))//' = ', bestfit(m)
+                      write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', bestfit(m)
 
                    End Do
 
                 Else
 
-                   write(15,*) 'BESTFIT IS : '
+                   write(UNIT_EXE_FILE,*) 'BESTFIT IS : '
 
                    Do m=1,number_model_parameters
 
-                      write(15,*) ''//trim(paramnames(m))//' = ', bestfit(m)
+                      write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', bestfit(m)
 
                    End Do
 
@@ -2967,9 +2967,9 @@ Program mcmc
 
                 If (use_H_band) then
 
-                   write(15,*) 'BESTFIT IS : '
+                   write(UNIT_EXE_FILE,*) 'BESTFIT IS : '
 
-                   write(15,*) 'bH = ', bestfit(number_of_parameters)
+                   write(UNIT_EXE_FILE,*) 'bH = ', bestfit(number_of_parameters)
 
                 Else
 
@@ -2993,11 +2993,11 @@ Program mcmc
     
     Else
 
-       write(15,*) 'BESTFIT IS : '
+       write(UNIT_EXE_FILE,*) 'BESTFIT IS : '
 
        Do m=1,number_model_parameters
 
-          write(15,*) ''//trim(paramnames(m))//' = ', bestfit(m)
+          write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', bestfit(m)
 
        End Do
 
@@ -3011,7 +3011,7 @@ Program mcmc
 
             write(string,'(i2)') m-number_model_parameters
 
-            write(15,*) 'alpha_'//trim(string)//' = ', bestfit(m)
+            write(UNIT_EXE_FILE,*) 'alpha_'//trim(string)//' = ', bestfit(m)
 
         End Do
             
@@ -3021,11 +3021,11 @@ Program mcmc
 
        If (include_only_cepheids) then
 
-          write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+          write(UNIT_EXE_FILE,*) 'MEANS FOR THE SAMPLES ARE : '
 
           Do m=1,number_model_parameters
 
-             write(15,*) ''//trim(paramnames(m))//' = ', means(m)
+             write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', means(m)
 
           End Do
 
@@ -3073,11 +3073,11 @@ Program mcmc
                 
                 Else
 
-                   write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+                   write(UNIT_EXE_FILE,*) 'MEANS FOR THE SAMPLES ARE : '
 
                    Do m=1,number_model_parameters
 
-                      write(15,*) ''//trim(paramnames(m))//' = ', means(m)
+                      write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', means(m)
 
                    End Do
 
@@ -3107,21 +3107,21 @@ Program mcmc
 
                 If (use_H_band) then
 
-                   write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+                   write(UNIT_EXE_FILE,*) 'MEANS FOR THE SAMPLES ARE : '
 
                    Do m=1,number_model_parameters
 
-                      write(15,*) ''//trim(paramnames(m))//' = ', means(m)
+                      write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', means(m)
 
                    End Do
 
                 Else
 
-                   write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+                   write(UNIT_EXE_FILE,*) 'MEANS FOR THE SAMPLES ARE : '
 
                    Do m=1,number_model_parameters
 
-                      write(15,*) ''//trim(paramnames(m))//' = ', means(m)
+                      write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', means(m)
 
                    End Do
 
@@ -3131,9 +3131,9 @@ Program mcmc
 
                 If (use_H_band) then
 
-                   write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+                   write(UNIT_EXE_FILE,*) 'MEANS FOR THE SAMPLES ARE : '
 
-                   write(15,*) 'bH = ', means(number_of_parameters)
+                   write(UNIT_EXE_FILE,*) 'bH = ', means(number_of_parameters)
 
                 Else
 
@@ -3157,11 +3157,11 @@ Program mcmc
     
     Else
 
-       write(15,*) 'MEANS FOR THE SAMPLES ARE : '
+       write(UNIT_EXE_FILE,*) 'MEANS FOR THE SAMPLES ARE : '
 
        Do m=1,number_model_parameters
 
-          write(15,*) ''//trim(paramnames(m))//' = ', means(m)
+          write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', means(m)
 
        End Do
 
@@ -3175,7 +3175,7 @@ Program mcmc
 
             write(string,'(i2)') m-number_model_parameters
 
-            write(15,*) 'alpha_'//trim(string)//' = ', means(m)
+            write(UNIT_EXE_FILE,*) 'alpha_'//trim(string)//' = ', means(m)
 
         End Do
             
@@ -3183,7 +3183,7 @@ Program mcmc
 
     If (using_hyperparameters .and. .not.hyperparameters_as_mcmc) then
 
-        write(15,*) 'COMPUTING EFFECTIVE HYPER-PARAMETERS'
+        write(UNIT_EXE_FILE,*) 'COMPUTING EFFECTIVE HYPER-PARAMETERS'
 
         If (doing_R11_analysis) then
 
@@ -3256,7 +3256,7 @@ Program mcmc
  
                        Else If (use_HP_per_cepheid) then
 
-                          open(20,file='./output/effective_hyperparameters_cepheids.txt')
+                          open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids.txt')
 
                           Do m=1,size(Field)
 
@@ -3269,13 +3269,13 @@ Program mcmc
                                       If ( chi2R11_H_2(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m)&
                                         .le. 1.d0 ) then
 
-                                         write(20,*) PeriodR11(m), F160WR11(m) - &
+                                         write(UNIT_HP_FILE,*) PeriodR11(m), F160WR11(m) - &
                                               P_L_relation_passband_H_2(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),&
                                               OHR11(m),PeriodR11(m)),eF160WR11(m), 1.d0, Field(m)
 
                                       Else
 
-                                         write(20,*) PeriodR11(m), F160WR11(m) - &
+                                         write(UNIT_HP_FILE,*) PeriodR11(m), F160WR11(m) - &
                                               P_L_relation_passband_H_2(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),&
                                               OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(9),&
                                               bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m), Field(m)
@@ -3290,7 +3290,7 @@ Program mcmc
 
                           End Do
 
-                          close(20)
+                          close(UNIT_HP_FILE)
 
                           call system('cd analyzer; python plot_HP.py')
 
@@ -3300,22 +3300,22 @@ Program mcmc
 
                        If (use_HP_per_host) then
 
-                          open(20,file='./output/effective_hyperparameters_hosts.txt')
+                          open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_hosts.txt')
 
                           Do n=1,number_of_hosts_galaxies
  
-                             write(20,*) n, 1.d0/chi2R11_W_host(bestfit(n),bestfit(9),bestfit(10),bestfit(11),&
+                             write(UNIT_HP_FILE,*) n, 1.d0/chi2R11_W_host(bestfit(n),bestfit(9),bestfit(10),bestfit(11),&
                                         bestfit(13),prior_sigma_int,n), host(n)
 
                           End Do
 
-                          close(20)
+                          close(UNIT_HP_FILE)
 
                           call system('cd analyzer; python plot_HP_hosts.py')
  
                        Else If (use_HP_per_cepheid) then
 
-                          open(20,file='./output/effective_hyperparameters_cepheids.txt')
+                          open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids.txt')
 
                           Do m=1,size(Field)
 
@@ -3328,13 +3328,13 @@ Program mcmc
                                       If ( chi2R11_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m)&
                                         .le. 1.d0 ) then
 
-                                         write(20,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
+                                         write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
                                               P_L_relation_passband_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),&
                                               OHR11(m),PeriodR11(m)),eF160WR11(m), 1.d0, Field(m)
 
                                       Else
 
-                                         write(20,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
+                                         write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
                                               P_L_relation_passband_W(bestfit(n),bestfit(9),bestfit(10),bestfit(11),bestfit(13),&
                                               OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(9),&
                                               bestfit(10),bestfit(11),bestfit(13),prior_sigma_int,m), Field(m)
@@ -3349,7 +3349,7 @@ Program mcmc
 
                           End Do
 
-                          close(20)
+                          close(UNIT_HP_FILE)
 
                           call system('cd analyzer; python plot_HP.py')
 
@@ -3393,17 +3393,17 @@ Program mcmc
 
                  If (using_jeffreys_prior) then
 
-                    write(15,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+                    write(UNIT_EXE_FILE,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
                     
                  Else
 
                     If (chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m) .le. 1.d0 ) then
 
-                       write(15,*) 'Point ', m,' in data set A = ', 1.d0
+                       write(UNIT_EXE_FILE,*) 'Point ', m,' in data set A = ', 1.d0
 
                     Else
 
-                       write(15,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+                       write(UNIT_EXE_FILE,*) 'Point ', m,' in data set A = ', 1.d0/chi2A_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
                     End If
 
@@ -3414,7 +3414,7 @@ Program mcmc
            Else if (include_dataA .and. .not.separate_dataA) then
 
               !    write(15,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),bestfit(3))
-              write(15,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),prior_sigma_int)
+              write(UNIT_EXE_FILE,*) 'For data set A = ', dble(size(NameA))/chi2A(bestfit(1),bestfit(2),prior_sigma_int)
 
            End If
 
@@ -3424,17 +3424,17 @@ Program mcmc
 
                  If (using_jeffreys_prior) then
 
-                    write(15,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+                    write(UNIT_EXE_FILE,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
                  Else
 
                     If (chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m) .le. 1.d0 ) then
 
-                       write(15,*) 'Point ', m,' in data set B = ', 1.d0
+                       write(UNIT_EXE_FILE,*) 'Point ', m,' in data set B = ', 1.d0
 
                     Else
 
-                       write(15,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+                       write(UNIT_EXE_FILE,*) 'Point ', m,' in data set B = ', 1.d0/chi2B_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
                     End If
 
@@ -3445,7 +3445,7 @@ Program mcmc
            Else if (include_dataB .and. .not.separate_dataB) then
 
               !    write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),bestfit(3))
-              write(15,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),prior_sigma_int)
+              write(UNIT_EXE_FILE,*) 'For data set B = ', dble(size(NameB))/chi2B(bestfit(1),bestfit(2),prior_sigma_int)
 
            End If
 
@@ -3455,17 +3455,17 @@ Program mcmc
 
                  If (using_jeffreys_prior) then
 
-                    write(15,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+                    write(UNIT_EXE_FILE,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
                  Else
 
                     If (chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m) .le. 1.d0) then
 
-                       write(15,*) 'Point ', m,' in data set C = ', 1.d0
+                       write(UNIT_EXE_FILE,*) 'Point ', m,' in data set C = ', 1.d0
 
                     Else
 
-                       write(15,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+                       write(UNIT_EXE_FILE,*) 'Point ', m,' in data set C = ', 1.d0/chi2C_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
                     End If
 
@@ -3476,18 +3476,18 @@ Program mcmc
            Else if (include_dataC .and. .not.separate_dataC) then
 
               !write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),bestfit(3))
-              write(15,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),prior_sigma_int)
+              write(UNIT_EXE_FILE,*) 'For data set C = ', dble(size(NameC))/chi2C(bestfit(1),bestfit(2),prior_sigma_int)
 
            End If
 
-           write(15,*) '\ln P(\vec{w},D) at the bestfit is ', log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),&
-                prior_sigma_int)
+           write(UNIT_EXE_FILE,*) '\ln P(\vec{w},D) at the bestfit is ', &
+                log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),prior_sigma_int)
            
         End If
 
      End If
 
-     close(15)
+     close(UNIT_EXE_FILE)
 
     If ((.not. testing_Gaussian_likelihood) .and. (.not. using_hyperparameters) ) then
 

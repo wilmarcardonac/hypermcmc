@@ -986,6 +986,17 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
        continue
 
     End If
+
+    If (use_prior_on_Zw) then
+
+       log_R11_likelihood_W = -((Zw - prior_Zw)**2/sigma_Zw_prior**2 + log(2.d0*Pi*sigma_Zw_prior**2) )/2.d0  +&
+            log_R11_likelihood_W
+
+    Else 
+
+       continue
+
+    End If
         
     If ( abs(log_R11_likelihood_W) .ge. 0.d0 ) then
 
@@ -1896,7 +1907,7 @@ subroutine read_bestfit_mcmc(vector)
     Real*8,dimension(number_of_parameters) :: vector
     Integer*4 :: index1
 
-    open(12,file='./output/bestfit.txt')
+    open(12,file='./output/chains/bestfit.txt')
 
     Do index1=1,number_of_parameters
 
@@ -1914,7 +1925,7 @@ subroutine read_means_mcmc(vector)
     Real*8,dimension(number_of_parameters) :: vector
     Integer*4 :: index1
 
-    open(12,file='./output/means.txt')
+    open(12,file='./output/chains/means.txt')
 
     Do index1=1,number_of_parameters
 

@@ -10,7 +10,7 @@ Module fiducial
 
     Real*8,parameter    :: prior_A = 12.5d0
     Real*8,parameter    :: prior_bw = -3.23d0
-    Real*8,parameter    :: prior_sigma_int = 0.2d0 !0.d0 !0.1d0!0.20d0 SN Ia hosts
+    Real*8,parameter    :: prior_sigma_int = 0.14d0 !0.2d0 !0.d0 !0.1d0!0.20d0 SN Ia hosts
     Real*8,parameter    :: prior_sigma_int_LMC = 0.113d0 ! SAME VALUE AS IN EQUATION (4a) OF EFSTATHIOU'S PAPER
     Real*8,parameter    :: prior_alpha_j = 5.d-1
     Real*8,parameter    :: R = 0.410d0                  ! TAKEN FROM PAGE 7 IN R11
@@ -36,7 +36,7 @@ Module fiducial
     Real*8,parameter    :: prior_zpw = 29.d0
     Real*8,parameter    :: prior_zpw4258 = 30.5d0  ! CENTRAL VALUE OF PRIOR ON zp_{w,4258} 
     Real*8,parameter    :: prior_zpwLMC = 20.98d0
-    Real*8,parameter    :: prior_Zw = 0.d0
+    Real*8,parameter    :: prior_Zw = 0.d0         ! CENTRAL VALUE FOR PRIOR ON Zw 
     Real*8,parameter    :: prior_H0 = 70.0d0
 
     !################################################
@@ -69,6 +69,7 @@ Module fiducial
     Real*8,parameter    :: sigma_zpw4258 = 0.1d0 
     Real*8,parameter    :: sigma_zpwLMC = 0.78d0
     Real*8,parameter    :: sigma_Zw = 0.25d0
+    Real*8,parameter    :: sigma_Zw_prior = 0.02d0
     Real*8,parameter    :: sigma_H0 = 1.0d-1
 
     !#####################
@@ -81,7 +82,7 @@ Module fiducial
     ! MCMC PARAMETERS
     !################
 
-    Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
+    Integer*4,parameter :: number_iterations = 1100000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
     Integer*4,parameter :: number_model_parameters = 14 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
     ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR
@@ -91,6 +92,12 @@ Module fiducial
     Integer*4,parameter :: covariance_matrix_update = 10000        ! STEPS TAKEN BEFORE UPDATING COVARIANCE MATRIX (IF NEEDED)
     Integer*4,parameter :: steps_taken_before_definite_run = 100000 ! STEPS TAKEN BEFORE DEFINITE RUN
     Integer*4,parameter :: number_of_hosts_galaxies = 9 ! TOTAL NUMBER OF HOSTS GALAXIES AS IN R11 (NUMBER INCLUDES NGC4258)
+    Integer*4,parameter :: UNIT_EXE_FILE = 90           ! UNIT NUMBER FOR EXECUTION INFORMATION FILE
+    Integer*4,parameter :: UNIT_RANGES_FILE = 91           ! UNIT NUMBER FOR RANGES FILE
+    Integer*4,parameter :: UNIT_PARAMNAMES_FILE = 92           ! UNIT NUMBER FOR PARAMNAMES FILE
+    Integer*4,parameter :: UNIT_MCMC_FILE = 93           ! UNIT NUMBER FOR MCMC OUTPUT FILE (CALIBRATING PHASE)
+    Integer*4,parameter :: UNIT_MCMC_FINAL_FILE = 94           ! UNIT NUMBER FOR MCMC FINAL OUTPUT FILE
+    Integer*4,parameter :: UNIT_HP_FILE = 95           ! UNIT EFFECTIVE HPS FILE
 
     Real*8,parameter    :: step_size_changes = 1.d-2             ! CHANGES IN STEP SIZE
     Real*8,parameter    :: cepheid_Period_limit = 6.d1           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
@@ -111,7 +118,7 @@ Module fiducial
     Logical,parameter   :: use_LMC_as_anchor = .false.           ! USE LMC AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_MW_as_anchor = .false.            ! USE MW AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_metallicity = .true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
-    Logical,parameter   :: use_H_band = .true.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
+    Logical,parameter   :: use_H_band = .false.!.true.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
     Logical,parameter   :: use_HP_in_SNIa = .false.               ! USE HPs WHEN COMPUTING SNIa CHI2
     Logical,parameter   :: use_HP_in_av = .false.                ! USE HPs WHEN COMPUTINNG av CHI2
     Logical,parameter   :: use_HP_in_anchor = .false.            ! USE HPs WHEN COMPUTING ANCHOR CHI2
@@ -121,6 +128,7 @@ Module fiducial
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
+    Logical,parameter   :: use_prior_on_Zw = .true.              ! USE PRIOR ON Zw IF SET IT TRUE 
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 
@@ -132,5 +140,6 @@ Module fiducial
     character(len=*),parameter :: path_to_table3_R11 = './data/table3_R11.txt' ! PATH TO DATA OF TABLE 2 IN R11
     Character(len=5),dimension(number_of_hosts_galaxies), parameter :: host = ['n4536','n4639','n3982','n3370','n3021','n1309',&
     'n4038','n5584','n4258'] ! HOST GALAXIES IN SAME ORDER LISTED IN TABLE 2 OF R11
+    Character(len=*),parameter :: EXECUTION_INFORMATION = './output/chains/execution_information.txt' ! PATH TO EXECUTION INFORMATION FILE
 
 End Module fiducial
