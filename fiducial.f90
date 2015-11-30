@@ -10,7 +10,7 @@ Module fiducial
 
     Real*8,parameter    :: prior_A = 12.5d0
     Real*8,parameter    :: prior_bw = -3.23d0
-    Real*8,parameter    :: prior_sigma_int = 0.2d0 !0.14d0 !0.2d0 !0.d0 !0.1d0!0.20d0 SN Ia hosts
+    Real*8,parameter    :: prior_sigma_int = 0.2d0 !0.2d0 !0.d0 !0.1d0!0.20d0 SN Ia hosts
     Real*8,parameter    :: prior_sigma_int_LMC = 0.113d0 ! SAME VALUE AS IN EQUATION (4a) OF EFSTATHIOU'S PAPER
     Real*8,parameter    :: prior_sigma_int_MW = 0.10d0 ! SAME VALUE AS IN SUBSECTION 4.2 OF EFSTATHIOU'S PAPER
     Real*8,parameter    :: prior_alpha_j = 5.d-1
@@ -120,7 +120,7 @@ Module fiducial
     Logical,parameter   :: using_hyperparameters = .true.        ! USE HYPER-PARAMETERS IF SET IT TRUE
     Logical,parameter   :: using_jeffreys_prior = .false.        ! USE JEFFREYS PRIOR IF SET IT TRUE, OTHERWISE USE UNIFORM PRIOR [0,1] 
     Logical,parameter   :: hyperparameters_as_mcmc = .false.      ! SET HYPER-PARAMETERS AS MCMC PARAMETERS IF SET IT TRUE
-    Logical,parameter   :: use_NGC4258_as_anchor = .true. !.false.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_NGC4258_as_anchor = .false.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_LMC_as_anchor = .true.           ! USE LMC AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_MW_as_anchor = .true.            ! USE MW AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_metallicity = .true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE

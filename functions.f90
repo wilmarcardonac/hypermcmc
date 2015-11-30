@@ -1576,7 +1576,7 @@ function log_R11_likelihood_W_LMC_MW(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_i
 
     Else
 
-       log_R11_likelihood_W_LMC_MW =  -(chi2R11_anchor_LMC(mu0j(10)) + log(2.d0*Pi*sigma_mu_0_LMC**2))/2.d0 - &
+       log_R11_likelihood_W_LMC_MW =  -(chi2R11_anchor_LMC(mu0j(10)) + log(2.d0*Pi*sigma_mu_0_LMC**2))/2.d0 + &
             log_R11_likelihood_W_LMC_MW
 
     End If
