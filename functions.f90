@@ -1093,8 +1093,17 @@ function log_R11_likelihood_W_LMC_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,si
 
     If (use_prior_on_Zw) then
 
-       log_R11_likelihood_W_LMC_NGC4258 = -((Zw - prior_Zw)**2/sigma_Zw_prior**2 + log(2.d0*Pi*sigma_Zw_prior**2) )/2.d0  +&
-            log_R11_likelihood_W_LMC_NGC4258
+       If (use_HP_in_Zw) then
+
+          log_R11_likelihood_W_LMC_NGC4258 = log(new_chi2(chi2_Zw(Zw))) - log(2.d0*Pi*sigma_Zw_prior**2)/2.d0 + &
+               log_R11_likelihood_W_LMC_NGC4258
+
+       Else
+
+          log_R11_likelihood_W_LMC_NGC4258 = -(chi2_Zw(Zw) + log(2.d0*Pi*sigma_Zw_prior**2) )/2.d0  +&
+               log_R11_likelihood_W_LMC_NGC4258
+
+       End If
 
     Else 
 
@@ -1121,6 +1130,7 @@ function log_R11_likelihood_W_LMC_MW_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int
     Implicit none
 
     Real*8 :: log_R11_likelihood_W_LMC_MW_NGC4258,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_LMC,normalizationA
+    Real*8 :: normalizationMW,chiMW
     Real*8,dimension(number_of_hosts_galaxies + 1) :: mu0j 
     Integer*4 :: m,index_host,number_cepheid
 
@@ -1257,7 +1267,7 @@ function log_R11_likelihood_W_LMC_MW_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int
 
     End If
 
-    If (use_HP_per_cepheid) then ! MW CEPHEID VARIABLES
+    If (use_HP_per_MW_cepheid) then ! MW CEPHEID VARIABLES
 
        Do m=1,size(FieldHipp)
 
@@ -1282,16 +1292,37 @@ function log_R11_likelihood_W_LMC_MW_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int
 
     Else
 
-       Do m=1,size(FieldHipp)
+       If (use_HP_for_MW_dataset) then
 
-          If (10**(logP(m)) .lt. cepheid_Period_limit) then
+             normalizationMW = 0.d0
 
-             log_R11_likelihood_W_LMC_MW_NGC4258 = -chi2R11_W_MW(M_w,bw,Zw,prior_sigma_int_MW,m)/2.d0 + &
-                  log(N_tilde_R11_W_MW(prior_sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW_NGC4258
+             chiMW = 0.d0 
 
-          End If
+             Do m=1, size(FieldHipp)
 
-       End Do
+                normalizationMW = log( sigmaMw(m)**2 + prior_sigma_int_MW**2 ) + normalizationMW
+
+                chiMW = chi2R11_W_MW(M_w,bw,Zw,prior_sigma_int_MW,m) + chiMW
+
+             End Do
+             
+             log_R11_likelihood_W_LMC_MW_NGC4258 = - dble(size(FieldHipp))*log(chiMW)/2.d0 - normalizationMW/2.d0&
+                  + log_R11_likelihood_W_LMC_MW_NGC4258
+
+       Else
+
+          Do m=1,size(FieldHipp)
+
+             If (10**(logP(m)) .lt. cepheid_Period_limit) then
+
+                log_R11_likelihood_W_LMC_MW_NGC4258 = -chi2R11_W_MW(M_w,bw,Zw,prior_sigma_int_MW,m)/2.d0 + &
+                     log(N_tilde_R11_W_MW(prior_sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW_NGC4258
+
+             End If
+
+          End Do
+
+       End If
 
     End If
 
@@ -1709,7 +1740,7 @@ function log_R11_likelihood_W_MW(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_M
 
     End If
 
-    If (use_HP_per_cepheid) then ! MW CEPHEID VARIABLES
+    If (use_HP_per_MW_cepheid) then ! MW CEPHEID VARIABLES
 
        Do m=1,size(FieldHipp)
 
@@ -2470,6 +2501,18 @@ function chi2R11_anchor_NGC4258(mu09)    !    It computes equation (3) in publis
     chi2R11_anchor_NGC4258 = ( mu09 - mu_0_NGC4258)**2/sigma_mu_0_NGC4258**2
 
 end function chi2R11_anchor_NGC4258
+
+function chi2_Zw(Zw)    !    It computes equation (3) in published version of 1311.3461
+
+    use fiducial
+
+    Implicit none
+
+    Real*8 :: Zw,chi2_Zw
+
+    chi2_Zw = ( Zw - prior_Zw)**2/sigma_Zw_prior**2
+
+end function chi2_Zw
 
 function chi2R11_anchor_LMC(mu09)    !    It computes equation (3) in published version of 1311.3461
 

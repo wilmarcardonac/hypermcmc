@@ -24,6 +24,7 @@ Program mcmc
     Real*8 :: jumping_factor                           ! SAVES JUMPING FACTOR FOR MCMC (INCREASE IF WANT BIGGER STEP SIZE, DECREASE OTHERWISE) 
     Real*8 :: random_uniform                           ! SAVES RANDOM UNIFORM DEVIATE BETWEEN 0 AND 1 
     Real*8 :: old_loglikelihood,current_loglikelihood  ! TEMPORALY SAVES LIKELIHOOD VALUES 
+    Real*8 :: chi2SNIabestfit                          ! SAVES CHI2 OF SNIA AT THE BEST FIT
     Real*4,dimension(number_of_parameters*(number_of_parameters+3)/2 + 1) :: parm     ! ARRAY NEEDED BY RANDON NUMBER GENERATOR 
     Real*8,dimension(number_of_parameters,number_of_parameters)           :: Covgauss ! COVARIANCE MATRIX OF GAUSSIAN LIKELIHOOD 
     Real*8,dimension(number_of_parameters,number_of_parameters)           :: Covguess ! COVARIANCE MATRIX 
@@ -41,7 +42,7 @@ Program mcmc
 !##########################################################
 ! ASSIGNMENTS AND INITIALIZATION OF RANDOM NUMBER GENERATOR
 !##########################################################
-    
+
     galaxy = host(1)
 
     weight = 1
@@ -5240,11 +5241,71 @@ Program mcmc
 
           If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
     
+             write(UNIT_EXE_FILE,*) 'BESTFIT IS : '
+
+             Do m=1,number_model_parameters
+
+                write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', bestfit(m)
+
+             End Do
+
+             chi2SNIabestfit = 0.d0
+
+             Do n=1,number_of_hosts_galaxies-1 ! SN Ia
+
+                If (use_HP_in_SNIa) then
+                   
+                   write(UNIT_EXE_FILE,*) 'NEED TO IMPLEMENT CHI2 VALUE WHEN HPs IN SNIa'
+
+                   stop
+!                   chi2SNIabestfit = log(new_chi2(chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n))) + &
+ !                       log(N_tilde_R11_SNIa(n)) + chi2SNIabestfit
+
+                Else
+
+                   chi2SNIabestfit = chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n) + chi2SNIabestfit
+
+                End If
+              
+             End Do
+
+             write(UNIT_EXE_FILE,*) 'CHI2 CONTRIBUTION OF SNIa IS', chi2SNIabestfit
+
              print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
              stop
 
           Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+             write(UNIT_EXE_FILE,*) 'BESTFIT IS : '
+
+             Do m=1,number_model_parameters
+
+                write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', bestfit(m)
+
+             End Do
+
+             chi2SNIabestfit = 0.d0
+
+             Do n=1,number_of_hosts_galaxies-1 ! SN Ia
+
+                If (use_HP_in_SNIa) then
+                   
+                   write(UNIT_EXE_FILE,*) 'NEED TO IMPLEMENT CHI2 VALUE WHEN HPs IN SNIa'
+
+                   stop
+!                   chi2SNIabestfit = log(new_chi2(chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n))) + &
+ !                       log(N_tilde_R11_SNIa(n)) + chi2SNIabestfit
+
+                Else
+
+                   chi2SNIabestfit = chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n) + chi2SNIabestfit
+
+                End If
+              
+             End Do
+
+             write(UNIT_EXE_FILE,*) 'CHI2 CONTRIBUTION OF SNIa IS', chi2SNIabestfit
 
              print *,'NGC4258+LMC NOT IMPLEMENTED YET'
 
@@ -5299,6 +5360,30 @@ Program mcmc
                    End Do
 
                 End If
+
+                chi2SNIabestfit = 0.d0
+
+                Do n=1,number_of_hosts_galaxies-1 ! SN Ia
+
+                   If (use_HP_in_SNIa) then
+                   
+                      write(UNIT_EXE_FILE,*) 'NEED TO IMPLEMENT CHI2 VALUE WHEN HPs IN SNIa'
+
+                      stop
+                      !                   chi2SNIabestfit = log(new_chi2(chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n))) + &
+                      !                       log(N_tilde_R11_SNIa(n)) + chi2SNIabestfit
+
+                   Else
+
+                      chi2SNIabestfit = chi2R11_SNIa(bestfit(n),bestfit(12),bestfit(14),n) + chi2SNIabestfit
+
+                      print *, chi2R11_SNIa(bestfit(n),bestfit(12),bestfit(14),n)
+
+                   End If
+              
+                End Do
+
+                write(UNIT_EXE_FILE,*) 'CHI2 CONTRIBUTION OF SNIa IS', chi2SNIabestfit
 
              Else
 

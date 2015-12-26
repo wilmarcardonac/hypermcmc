@@ -52,7 +52,7 @@ Module fiducial
     Real*8,parameter    :: sigma_alpha_j = 1.d-3
     Real*8,parameter    :: sigma_a_v = 0.00201d0        ! TAKEN FROM PAGE 9 IN R11
     Real*8,parameter    :: sigma_a_cal = 0.04d0         ! TAKEN FROM PAGE 10 IN EFSTATHIOU'S PAPER
-    Real*8,parameter    :: sigma_NGC4258_quadrature = 0.23d0    ! TAKEN FROM PAGE 1 IN H13. UNITS : MPC
+    Real*8,parameter    :: sigma_NGC4258_quadrature =  0.23d0    ! TAKEN FROM PAGE 1 IN H13. UNITS : MPC
     Real*8,parameter    :: sigma_mu_0_NGC4258 = 5.d0/log(10.d0)/NGC4258_distance*sigma_NGC4258_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_LMC_quadrature = 1.13d-3 ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : MPC
     Real*8,parameter    :: sigma_mu_0_LMC = 5.d0/log(10.d0)/LMC_distance*sigma_LMC_quadrature ! ERROR ON DISTANCE MODULUS
@@ -87,7 +87,7 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 1100000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 16 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    Integer*4,parameter :: number_model_parameters = 14 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
     ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 15 FOR ALL R11 CEPHEIDS +
     ! MW CEPHEIDS ANS USING MW AS ANCHOR, 16 FOR ALL R11 CEPHEIDS + NGC4258 AND LMC AS ANCHORS, 15 FOR ALL R11 CEPHEIDS + NGC4258 AND MW AS ANCHORS,
@@ -106,7 +106,7 @@ Module fiducial
     Integer*4,parameter :: UNIT_HP_FILE = 95           ! UNIT EFFECTIVE HPS FILE
 
     Real*8,parameter    :: step_size_changes = 1.d-2             ! CHANGES IN STEP SIZE
-    Real*8,parameter    :: cepheid_Period_limit = 205.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
+    Real*8,parameter    :: cepheid_Period_limit = 60.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
 
     Logical,parameter   :: separate_dataA = .true.               ! INCLUDE DATA SET A AS SINGLE POINTS IF SET IT TRUE
     Logical,parameter   :: separate_dataB = .true.               ! INCLUDE DATA SET B AS SINGLE POINTS IF SET IT TRUE
@@ -120,9 +120,9 @@ Module fiducial
     Logical,parameter   :: using_hyperparameters = .true.        ! USE HYPER-PARAMETERS IF SET IT TRUE
     Logical,parameter   :: using_jeffreys_prior = .false.        ! USE JEFFREYS PRIOR IF SET IT TRUE, OTHERWISE USE UNIFORM PRIOR [0,1] 
     Logical,parameter   :: hyperparameters_as_mcmc = .false.      ! SET HYPER-PARAMETERS AS MCMC PARAMETERS IF SET IT TRUE
-    Logical,parameter   :: use_NGC4258_as_anchor = .false.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
-    Logical,parameter   :: use_LMC_as_anchor = .true.           ! USE LMC AS ANCHOR IF SET IT TRUE
-    Logical,parameter   :: use_MW_as_anchor = .true.            ! USE MW AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_NGC4258_as_anchor = .true.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_LMC_as_anchor = .false.!.true.           ! USE LMC AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_MW_as_anchor = .false.!.true.            ! USE MW AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_metallicity = .true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
     Logical,parameter   :: use_H_band = .false.!.true.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
     Logical,parameter   :: use_HP_in_SNIa = .false.               ! USE HPs WHEN COMPUTING SNIa CHI2
@@ -130,11 +130,14 @@ Module fiducial
     Logical,parameter   :: use_HP_in_anchor = .false.            ! USE HPs WHEN COMPUTING ANCHOR CHI2
     Logical,parameter   :: use_HP_per_host = .false.              ! USE HPs FOR EACH HOST IN R11 IF SET IT TRUE
     Logical,parameter   :: use_HP_per_cepheid = .true.           ! USE HPs FOR EACH CEPHEID IN R11 IF SET IT TRUE
+    Logical,parameter   :: use_HP_per_MW_cepheid = .false.       ! USE HPs FOR EACH CEPHEID IN MW IF SET IT TRUE
+    Logical,parameter   :: use_HP_for_MW_dataset = .true.       ! USE HP FOR MW DATASET IF SET IT TRUE (JEFFREY'S PRIOR)
     Logical,parameter   :: doing_R11_analysis = .true.           ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
     Logical,parameter   :: use_prior_on_Zw = .true.              ! USE PRIOR ON Zw IF SET IT TRUE 
+    Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 
