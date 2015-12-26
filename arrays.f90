@@ -10,6 +10,8 @@ Module arrays
     Real*8, allocatable, dimension(:) :: Period,H,Sigma_m,V,II,PeriodR11,VIR11,F160WR11,eF160WR11,OHR11
     Real*8, allocatable, dimension(:,:,:,:,:) :: cov,inv_cov
     Real*4, allocatable, dimension(:) :: acceptance_probability
+    Real*8, allocatable, dimension(:,:) :: Covgauss,Covguess
+    Real*8 :: jumping_factor                           ! SAVES JUMPING FACTOR FOR MCMC (INCREASE IF WANT BIGGER STEP SIZE, DECREASE OTHERWISE) 
 
     Character(len=10),allocatable,dimension(:) :: Name,NameA,NameB,NameC
     Character(len=5),allocatable,dimension(:) :: Field,Fieldmvi

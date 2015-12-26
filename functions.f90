@@ -428,11 +428,15 @@ function log_Efstathiou_likelihood(A,bw,sigma_int)    !    It computes equation 
 
     Do m=1, size(Name)
 
-        chi2 = ( observed_wesenheit_magnitude(H(m),V(m),II(m)) - wesenheit_magnitude(A,bw,Period(m)) )**2/&
-        ( Sigma_m(m)**2 + sigma_int**2 ) + chi2
+       If (Period(m) .lt. cepheid_Period_limit) then
 
-        normalization = log(Sigma_m(m)**2 + sigma_int**2) + normalization 
-   
+          chi2 = ( observed_wesenheit_magnitude(H(m),V(m),II(m)) - wesenheit_magnitude(A,bw,Period(m)) )**2/&
+               ( Sigma_m(m)**2 + sigma_int**2 ) + chi2
+
+          normalization = log(Sigma_m(m)**2 + sigma_int**2) + normalization 
+
+        End If
+
     End Do
 
     If ((abs(chi2) .ge. 0.d0) .and. (normalization**2 .ge. 0.d0 )) then
@@ -2685,9 +2689,9 @@ function log_Efstathiou_likelihoodA(A,bw,sigma_int)    !    It computes equation
                 + log_Efstathiou_likelihoodA
 
             Else
-
-                log_Efstathiou_likelihoodA = log(new_chi2(chi2A_i(A,bw,sigma_int,m))) + log(N_tilde_A_i(sigma_int,m))&
-                + log_Efstathiou_likelihoodA
+               
+                  log_Efstathiou_likelihoodA = log(new_chi2(chi2A_i(A,bw,sigma_int,m))) + log(N_tilde_A_i(sigma_int,m))&
+                       + log_Efstathiou_likelihoodA
 
             End If
 
@@ -2856,9 +2860,9 @@ function log_Efstathiou_likelihoodB(A,bw,sigma_int)    !    It computes equation
                 + log_Efstathiou_likelihoodB
 
             Else
-              
-               log_Efstathiou_likelihoodB = log(new_chi2(chi2B_i(A,bw,sigma_int,m))) + log(N_tilde_B_i(sigma_int,m))&
-                + log_Efstathiou_likelihoodB
+
+                  log_Efstathiou_likelihoodB = log(new_chi2(chi2B_i(A,bw,sigma_int,m))) + log(N_tilde_B_i(sigma_int,m))&
+                       + log_Efstathiou_likelihoodB
 
             End If
 
@@ -2937,8 +2941,8 @@ function log_Efstathiou_likelihoodC(A,bw,sigma_int)    !    It computes equation
 
             Else
 
-                log_Efstathiou_likelihoodC = log(new_chi2(chi2C_i(A,bw,sigma_int,m))) + log(N_tilde_C_i(sigma_int,m))&
-                + log_Efstathiou_likelihoodC
+                  log_Efstathiou_likelihoodC = log(new_chi2(chi2C_i(A,bw,sigma_int,m))) + log(N_tilde_C_i(sigma_int,m))&
+                       + log_Efstathiou_likelihoodC
 
             End If
 
@@ -3242,6 +3246,824 @@ subroutine read_means_mcmc(vector)
     close(12)
 
 end subroutine read_means_mcmc
+
+subroutine set_covariance_matrix()
+
+  use fiducial
+  use arrays
+  
+  Implicit none
+
+  Integer*4 :: m,n
+
+  If (testing_Gaussian_likelihood) then
+
+     ! SETTING COVARIANCE MATRIX
+     Do m=1,number_of_parameters
+
+        Do n=1,number_of_parameters
+
+           If (m .eq. n) then     
+
+              Covgauss(m,n) = 1.d0
+
+           Else 
+
+              Covgauss(m,n) = 0.d0
+
+           End If
+
+        End Do
+
+     End Do
+     ! COVARIANCE MATRIX SET
+     jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))    ! MODIFY ACCORDING TO WANTED INITIAL ACCEPTANCE PROBABILITY
+     ! COVARIANCE MATRIX ADJUSTED
+     Covgauss = jumping_factor*Covgauss
+
+     open(UNIT_EXE_FILE,file= EXECUTION_INFORMATION)    ! OPEN FILE FOR EXECUTION INFORMATION 
+
+  Else
+
+     ! SETTING COVARIANCE MATRIX
+     Covguess = 0.d0
+  
+     If (doing_R11_analysis) then  
+
+        If (include_only_cepheids) then
+
+           If (all_R11_hosts) then
+
+              If (number_model_parameters .eq. 12) then
+                          
+                 Covguess(1,1) = sigma_mu1**2 
+
+                 Covguess(2,2) = sigma_mu2**2 
+
+                 Covguess(3,3) = sigma_mu3**2 
+
+                 Covguess(4,4) = sigma_mu4**2 
+
+                 Covguess(5,5) = sigma_mu5**2 
+
+                 Covguess(6,6) = sigma_mu6**2 
+
+                 Covguess(7,7) = sigma_mu7**2 
+
+                 Covguess(8,8) = sigma_mu8**2 
+
+                 Covguess(9,9) = sigma_mu9**2 
+
+                 Covguess(10,10) = sigma_zpw**2
+
+                 Covguess(11,11) = sigma_bw**2 
+
+                 Covguess(12,12) = sigma_Zw**2 
+
+              Else
+                        
+                 print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE AND COMPARE WITH EQUATION (18) IN R09'
+
+                 stop
+
+              End If
+
+           Else
+
+              If (number_model_parameters .eq. 3) then
+                          
+                 Covguess(1,1) = sigma_zpw**2
+
+                 Covguess(2,2) = sigma_bw**2
+
+                 Covguess(3,3) = sigma_Zw**2
+
+              Else
+                        
+                 print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE AND COMPARE WITH EQUATION (7) IN R09'
+
+                 stop
+
+              End If
+
+           End If
+
+        Else
+
+           If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then !!!HERE
+    
+              If (use_metallicity) then 
+
+                 If (use_H_band) then
+                     
+                    print *,'H BAND NOT IMPLEMENTED USING LMC+MW+NGC4258 AS ANCHORS AND INCLUDING METALLICITY DEPENDENCE'
+                     
+                    stop
+                     
+                 Else
+
+                    If (number_model_parameters .eq. 16) then
+                          
+                       Covguess(1,1) = sigma_mu1**2 
+
+                       Covguess(2,2) = sigma_mu2**2 
+
+                       Covguess(3,3) = sigma_mu3**2 
+
+                       Covguess(4,4) = sigma_mu4**2 
+
+                       Covguess(5,5) = sigma_mu5**2 
+
+                       Covguess(6,6) = sigma_mu6**2 
+
+                       Covguess(7,7) = sigma_mu7**2 
+
+                       Covguess(8,8) = sigma_mu8**2 
+
+                       Covguess(9,9) = sigma_mu9**2 
+
+                       Covguess(10,10) = sigma_mu10**2 
+
+                       Covguess(11,11) = sigma_Mw**2
+
+                       Covguess(12,12) = sigma_bw**2 
+
+                       Covguess(13,13) = sigma_H0**2 
+
+                       Covguess(14,14) = sigma_Zw**2 
+                          
+                       Covguess(15,15) = sigma_a_v**2
+
+                       Covguess(16,16) = sigma_a_cal**2
+
+                    Else
+                        
+                       print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE'
+
+                       stop
+
+                    End If
+
+                 End If
+
+              Else
+
+                 If (use_H_band) then
+
+                    print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC+MW+NGC4258 AS ANCHORS'
+                     
+                    stop
+
+                 Else
+
+                    print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC+NGC4258+MW AS ANCHORS'
+                     
+                    stop
+
+                 End If
+
+              End If
+
+           Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+              If (use_metallicity) then 
+
+                 If (use_H_band) then
+                     
+                    print *,'H BAND NOT IMPLEMENTED USING LMC AND NGC4258 AS ANCHORS AND INCLUDING METALLICITY DEPENDENCE'
+                     
+                    stop
+                     
+                 Else
+
+                    If (number_model_parameters .eq. 16) then
+                          
+                       Covguess(1,1) = sigma_mu1**2 
+
+                       Covguess(2,2) = sigma_mu2**2 
+
+                       Covguess(3,3) = sigma_mu3**2 
+
+                       Covguess(4,4) = sigma_mu4**2 
+
+                       Covguess(5,5) = sigma_mu5**2 
+
+                       Covguess(6,6) = sigma_mu6**2 
+
+                       Covguess(7,7) = sigma_mu7**2 
+
+                       Covguess(8,8) = sigma_mu8**2 
+
+                       Covguess(9,9) = sigma_mu9**2 
+
+                       Covguess(10,10) = sigma_mu10**2 
+
+                       Covguess(11,11) = sigma_Mw**2
+
+                       Covguess(12,12) = sigma_bw**2 
+
+                       Covguess(13,13) = sigma_H0**2 
+
+                       Covguess(14,14) = sigma_Zw**2 
+
+                       Covguess(15,15) = sigma_a_v**2
+
+                       Covguess(16,16) = sigma_a_cal**2
+
+                    Else
+                          
+                       print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE'
+
+                       stop
+
+                    End If
+
+                 End If
+
+              Else
+
+                 If (use_H_band) then
+
+                    print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AND NGC4258 AS ANCHORS'
+
+                    stop
+
+                 Else
+
+                    print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AND NGC4258 AS ANCHORS'
+
+                    stop
+
+                 End If
+
+              End If
+
+           Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+              If (use_metallicity) then 
+
+                 If (use_H_band) then
+
+                    print *,'H BAND NOT IMPLEMENTED USING MW+NGC4258 AS ANCHOR AND INCLUDING METALLICITY DEPENDENCE'
+
+                    stop
+
+                 Else
+
+                    If (number_model_parameters .eq. 15) then
+
+                       Covguess(1,1) = sigma_mu1**2 
+
+                       Covguess(2,2) = sigma_mu2**2 
+
+                       Covguess(3,3) = sigma_mu3**2 
+
+                       Covguess(4,4) = sigma_mu4**2 
+
+                       Covguess(5,5) = sigma_mu5**2 
+
+                       Covguess(6,6) = sigma_mu6**2 
+
+                       Covguess(7,7) = sigma_mu7**2 
+
+                       Covguess(8,8) = sigma_mu8**2 
+
+                       Covguess(9,9) = sigma_mu9**2 
+
+                       Covguess(10,10) = sigma_Mw**2 
+
+                       Covguess(11,11) = sigma_bw**2 
+
+                       Covguess(12,12) = sigma_H0**2 
+
+                       Covguess(13,13) = sigma_Zw**2 
+
+                       Covguess(14,14) = sigma_a_v**2
+
+                       Covguess(15,15) = sigma_a_cal**2
+
+                    Else
+
+                       print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE'
+
+                       stop
+
+                    End If
+
+                 End If
+
+              Else
+
+                 If (use_H_band) then
+
+                    print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR MW+NGC4258 AS ANCHORS'
+
+                    stop
+
+                 Else
+
+                    print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR MW+NGC4258 AS ANCHORS'
+
+                    stop
+
+                 End If
+
+              End If
+
+           Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+              If (use_metallicity) then 
+
+                 If (use_H_band) then
+
+                    print *,'H BAND NOT IMPLEMENTED USING LMC AND MW AS ANCHORS AND INCLUDING METALLICITY DEPENDENCE'
+
+                    stop
+
+                 Else
+
+                    If (number_model_parameters .eq. 16) then
+
+                       Covguess(1,1) = sigma_mu1**2 
+
+                       Covguess(2,2) = sigma_mu2**2 
+
+                       Covguess(3,3) = sigma_mu3**2 
+
+                       Covguess(4,4) = sigma_mu4**2 
+
+                       Covguess(5,5) = sigma_mu5**2 
+
+                       Covguess(6,6) = sigma_mu6**2 
+
+                       Covguess(7,7) = sigma_mu7**2 
+
+                       Covguess(8,8) = sigma_mu8**2 
+
+                       Covguess(9,9) = sigma_mu9**2 
+
+                       Covguess(10,10) = sigma_mu10**2 
+
+                       Covguess(11,11) = sigma_Mw**2
+
+                       Covguess(12,12) = sigma_bw**2 
+
+                       Covguess(13,13) = sigma_H0**2 
+
+                       Covguess(14,14) = sigma_Zw**2 
+
+                       Covguess(15,15) = sigma_a_v**2
+
+                       Covguess(16,16) = sigma_a_cal**2
+
+                    Else
+
+                       print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE'
+
+                       stop
+
+                    End If
+
+                 End If
+
+              Else
+
+                 If (use_H_band) then
+
+                    print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AND MW AS ANCHORS'
+
+                    stop
+
+                 Else
+
+                    print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AND MW AS ANCHORS'
+
+                    stop
+
+                 End If
+
+              End If
+
+           Else If ( ( .not.use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. use_MW_as_anchor ) then
+
+              If (use_metallicity) then 
+
+                 If (use_H_band) then
+
+                    print *,'H BAND NOT IMPLEMENTED USING MW AS ANCHOR AND INCLUDING METALLICITY DEPENDENCE'
+
+                    stop
+
+                 Else
+
+                    If (number_model_parameters .eq. 15) then
+
+                       Covguess(1,1) = sigma_mu1**2 
+
+                       Covguess(2,2) = sigma_mu2**2 
+
+                       Covguess(3,3) = sigma_mu3**2 
+
+                       Covguess(4,4) = sigma_mu4**2 
+
+                       Covguess(5,5) = sigma_mu5**2 
+
+                       Covguess(6,6) = sigma_mu6**2 
+
+                       Covguess(7,7) = sigma_mu7**2 
+
+                       Covguess(8,8) = sigma_mu8**2 
+
+                       Covguess(9,9) = sigma_mu9**2 
+
+                       Covguess(10,10) = sigma_Mw**2 
+
+                       Covguess(11,11) = sigma_bw**2 
+
+                       Covguess(12,12) = sigma_H0**2 
+
+                       Covguess(13,13) = sigma_Zw**2 
+
+                       Covguess(14,14) = sigma_a_v**2
+
+                       Covguess(15,15) = sigma_a_cal**2
+
+                    Else
+
+                       print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE'
+
+                       stop
+
+                    End If
+
+                 End If
+
+              Else
+
+                 If (use_H_band) then
+
+                    print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR MW AS ANCHOR'
+
+                    stop
+
+                 Else
+
+                    print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR MW AS ANCHOR'
+
+                    stop
+
+                 End If
+
+              End If
+
+           Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+              If (use_metallicity) then 
+
+                 If (use_H_band) then
+
+                    print *,'H BAND NOT IMPLEMENTED USING LMC AS ANCHOR AND INCLUDING METALLICITY DEPENDENCE'
+
+                    stop
+
+                 Else
+
+                    If (number_model_parameters .eq. 16) then
+
+                       Covguess(1,1) = sigma_mu1**2 
+
+                       Covguess(2,2) = sigma_mu2**2 
+
+                       Covguess(3,3) = sigma_mu3**2 
+
+                       Covguess(4,4) = sigma_mu4**2 
+
+                       Covguess(5,5) = sigma_mu5**2 
+
+                       Covguess(6,6) = sigma_mu6**2 
+
+                       Covguess(7,7) = sigma_mu7**2 
+
+                       Covguess(8,8) = sigma_mu8**2 
+
+                       Covguess(9,9) = sigma_mu9**2 
+
+                       Covguess(10,10) = sigma_mu10**2 
+
+                       Covguess(11,11) = sigma_zpwLMC**2
+
+                       Covguess(12,12) = sigma_bw**2 
+
+                       Covguess(13,13) = sigma_H0**2 
+
+                       Covguess(14,14) = sigma_Zw**2 
+
+                       Covguess(15,15) = sigma_a_v**2
+
+                       Covguess(16,16) = sigma_a_cal**2
+
+                    Else
+
+                       print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE'
+
+                       stop
+
+                    End If
+
+                 End If
+
+              Else
+
+                 If (use_H_band) then
+
+                    print *,'H BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+
+                    stop
+
+                 Else
+
+                    print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC AS ANCHOR'
+
+                    stop
+
+                 End If
+
+              End If
+
+           Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
+
+              If (use_metallicity) then 
+
+                 If (use_H_band) then
+
+                    If (number_model_parameters .eq. 14) then ! ASSIGN VALUES TO COVARIANCE MATRIX. SINCE VALUES OF PARAMETERS DEPENDING 
+
+                       Covguess(1,1) = sigma_mu1**2           ! ON H BAND ARE NOT EXPECTED TO BE TOO MUCH DIFFERENT FROM THOSE FOR W BAND 
+
+                       Covguess(2,2) = sigma_mu2**2           ! I USE SAME VALUES AS FOR W BAND BELOW
+
+                       Covguess(3,3) = sigma_mu3**2 
+
+                       Covguess(4,4) = sigma_mu4**2 
+
+                       Covguess(5,5) = sigma_mu5**2 
+
+                       Covguess(6,6) = sigma_mu6**2 
+
+                       Covguess(7,7) = sigma_mu7**2 
+
+                       Covguess(8,8) = sigma_mu8**2 
+
+                       Covguess(9,9) = sigma_mu9**2 
+
+                       Covguess(10,10) = sigma_zpw**2
+
+                       Covguess(11,11) = sigma_bw**2 
+
+                       Covguess(12,12) = sigma_H0**2 
+
+                       Covguess(13,13) = sigma_Zw**2 
+
+                       Covguess(14,14) = sigma_a_v**2
+
+                    Else
+
+                       print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE AND COMPARE WITH EQUATION (18) IN R09'
+
+                       stop
+
+                    End If
+
+                 Else
+
+                    If (number_model_parameters .eq. 14) then
+
+                       Covguess(1,1) = sigma_mu1**2 
+
+                       Covguess(2,2) = sigma_mu2**2 
+
+                       Covguess(3,3) = sigma_mu3**2 
+
+                       Covguess(4,4) = sigma_mu4**2 
+
+                       Covguess(5,5) = sigma_mu5**2 
+
+                       Covguess(6,6) = sigma_mu6**2 
+
+                       Covguess(7,7) = sigma_mu7**2 
+
+                       Covguess(8,8) = sigma_mu8**2 
+
+                       Covguess(9,9) = sigma_mu9**2 
+
+                       Covguess(10,10) = sigma_zpw**2
+
+                       Covguess(11,11) = sigma_bw**2 
+
+                       Covguess(12,12) = sigma_H0**2 
+
+                       Covguess(13,13) = sigma_Zw**2 
+
+                       Covguess(14,14) = sigma_a_v**2
+
+                    Else
+
+                       print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE AND COMPARE WITH EQUATION (18) IN R09'
+
+                       stop
+
+                    End If
+
+                 End If
+
+              Else
+
+                 If (use_H_band) then
+
+                    If (number_model_parameters .eq. 10) then
+
+                       Covguess(1,1) = sigma_zpH**2 
+
+                       Covguess(2,2) = sigma_zpH**2 
+
+                       Covguess(3,3) = sigma_zpH**2 
+
+                       Covguess(4,4) = sigma_zpH**2 
+
+                       Covguess(5,5) = sigma_zpH**2 
+
+                       Covguess(6,6) = sigma_zpH**2 
+
+                       Covguess(7,7) = sigma_zpH**2 
+
+                       Covguess(8,8) = sigma_zpH**2 
+
+                       Covguess(9,9) = sigma_zpH**2 
+
+                       Covguess(10,10) = sigma_bH**2
+
+                    Else
+
+                       print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE AND COMPARE WITH EQUATION (3) IN R09'
+
+                       stop
+
+                    End If
+
+                 Else
+
+                    print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE'
+
+                    stop
+
+                 End If
+
+              End If
+
+           Else
+
+              print *, 'USER MUST SET TRUE AT LEAST ONE ANCHOR DISTANCE IN FIDUCIAL MODULE'
+
+              stop
+
+           End If ! OF ANCHORS 
+
+        End If ! OF INCLUDE ONLY CEPHEIDS
+    
+     Else
+
+        Covguess(1,1) = sigma_A**2 
+
+        Covguess(2,2) = sigma_bw**2
+
+        !Covguess(3,3) = sigma_sigma_int**2
+ 
+     End If ! OF R11 ANALYSIS
+         
+     If (hyperparameters_as_mcmc) then
+        ! SETTING PIECE OF COVARIANCE MATRIX FOR HYPER-PARAMETERS
+        Do m=number_model_parameters+1,number_of_parameters
+
+           Covguess(m,m) = sigma_alpha_j**2
+
+        End Do
+            
+     End If
+        
+     ! COVARIANCE MATRIX SET
+
+     jumping_factor = 2.38d0/sqrt(dble(number_of_parameters))!*1.d-3    !    MODIFY ACCORDING TO WANTED ACCEPTANCE PROBABILITY
+
+     ! COVARIANCE MATRIX ADJUSTED 
+     Covguess = jumping_factor*Covguess
+
+  End If
+
+end subroutine set_covariance_matrix
+
+subroutine read_data()
+
+  use fiducial
+  use arrays
+
+  Implicit none
+
+  If (using_hyperparameters) then
+
+     If (include_dataA) then
+
+        call read_data_EfstathiouA(path_to_datafileA)
+
+     End If
+
+     If (include_dataB) then
+
+        call read_data_EfstathiouB(path_to_datafileB)
+
+     End If
+
+     If (include_dataC) then
+
+        call read_data_EfstathiouC(path_to_datafileC)
+
+     End If
+
+     If (include_table2_R11) then
+
+        call read_table2_R11(path_to_table2_R11)
+
+        call read_table3_R11(path_to_table3_R11)
+
+        call read_data_Efstathiou(path_to_datafileABC)
+
+        call read_table2_LEEUWEN(path_to_table2_LEEUWEN)
+
+     End If
+
+     If (hyperparameters_as_mcmc) then
+
+        open(UNIT_EXE_FILE,file=EXECUTION_INFORMATION)    ! OPEN FILE FOR EXECUTION INFORMATION
+
+        write(UNIT_EXE_FILE,*) 'WORKING WITH HYPER-PARAMETERS'     
+
+        write(UNIT_EXE_FILE,*) 'HYPER-PARAMETERS USED AS MCMC PARAMETERS'
+
+        call read_data_Efstathiou(path_to_datafileABC)
+
+        If (number_hyperparameters .ne. (size(NameA)+size(NameB)+size(NameC))) then
+
+           write(UNIT_EXE_FILE,*) 'NUMBER OF HYPER-PARAMETERS MUST MATCH TOTAL NUMBER OF DATA POINTS ',&
+                size(NameA)+size(NameB)+size(NameC)
+
+           write(UNIT_EXE_FILE,*) 'CHECK FIDUCIAL MODULE'
+
+           stop
+
+        End If
+
+     Else
+
+        If (doing_R11_analysis) then
+
+           open(UNIT_EXE_FILE,file=EXECUTION_INFORMATION)    ! OPEN FILE FOR EXECUTION INFORMATION
+
+           write(UNIT_EXE_FILE,*) 'WORKING WITH HYPER-PARAMETERS AND DOING R11 ANALYSIS'
+
+        Else
+
+           open(UNIT_EXE_FILE,file=EXECUTION_INFORMATION)    ! OPEN FILE FOR EXECUTION INFORMATION
+
+           write(UNIT_EXE_FILE,*) 'WORKING WITH HYPER-PARAMETERS BUT NOT DOING R11 ANALYSIS. DOING SECTION 2 OF EFSTATHIOU S PAPER'
+
+        End If
+
+        If (number_hyperparameters .ne. 0) then
+
+           write(UNIT_EXE_FILE,*) 'NUMBER OF HYPER-PARAMETERS MUST BE ZERO WHEN SETTING FALSE "hyperparameters_as_mcmc" '
+
+           write(UNIT_EXE_FILE,*) 'CHECK FIDUCIAL MODULE'
+
+           stop
+
+        End If
+
+     End If
+
+  Else
+
+     call read_data_Efstathiou(path_to_datafileAB)
+
+     If (include_table2_R11) then
+
+        call read_table2_R11(path_to_table2_R11)
+
+     End If
+
+     open(UNIT_EXE_FILE,file=EXECUTION_INFORMATION)    ! OPEN FILE FOR EXECUTION INFORMATION 
+
+  End If
+
+end subroutine read_data
 
 !subroutine inverting_matrix()
 !    use fiducial
