@@ -422,31 +422,69 @@ function log_Efstathiou_likelihood(A,bw,sigma_int)    !    It computes equation 
     Real*8 :: log_Efstathiou_likelihood,A,bw,sigma_int,chi2,normalization
     Integer*4 :: m
 
-    chi2 = 0.d0
+    If (using_hyperparameters .and. use_HP_per_cepheid) then
 
-    normalization = 0.d0
+        log_Efstathiou_likelihood = 0.d0
 
-    Do m=1, size(Name)
+        Do m=1,size(Name)
+ 
+           If ( (Period(m) .gt. cepheid_lower_Period_limit) .and. (Period(m) .lt. cepheid_Period_limit)) then
 
-       If (Period(m) .lt. cepheid_Period_limit) then
+              If (using_jeffreys_prior) then
 
-          chi2 = ( observed_wesenheit_magnitude(H(m),V(m),II(m)) - wesenheit_magnitude(A,bw,Period(m)) )**2/&
-               ( Sigma_m(m)**2 + sigma_int**2 ) + chi2
+                 log_Efstathiou_likelihood = -log(chi2_i(A,bw,sigma_int,m))/2.d0 + log(N_tilde_i(sigma_int,m))&
+                      + log_Efstathiou_likelihood
 
-          normalization = log(Sigma_m(m)**2 + sigma_int**2) + normalization 
+              Else
+               
+                 log_Efstathiou_likelihood = log(new_chi2(chi2_i(A,bw,sigma_int,m))) + log(N_tilde_i(sigma_int,m))&
+                      + log_Efstathiou_likelihood
+
+              End If
+
+            End If
+
+         End Do
+
+        If ( abs(log_Efstathiou_likelihood) .ge. 0.d0 ) then
+
+           continue
+
+        Else 
+
+           log_Efstathiou_likelihood = -1.d10
 
         End If
 
-    End Do
-
-    If ((abs(chi2) .ge. 0.d0) .and. (normalization**2 .ge. 0.d0 )) then
-
-        log_Efstathiou_likelihood = - chi2/2.d0 - normalization/2.d0
-
     Else
 
-        log_Efstathiou_likelihood = -1.d10
+       chi2 = 0.d0
+
+       normalization = 0.d0
+
+       Do m=1, size(Name)
+
+          If ( (Period(m) .gt. cepheid_lower_Period_limit) .and. (Period(m) .lt. cepheid_Period_limit)) then
+
+             chi2 = ( observed_wesenheit_magnitude(H(m),V(m),II(m)) - wesenheit_magnitude(A,bw,Period(m)) )**2/&
+                  ( Sigma_m(m)**2 + sigma_int**2 ) + chi2
+
+             normalization = log(Sigma_m(m)**2 + sigma_int**2) + normalization 
+
+          End If
+
+       End Do
+
+       If ((abs(chi2) .ge. 0.d0) .and. (normalization**2 .ge. 0.d0 )) then
+
+          log_Efstathiou_likelihood = - chi2/2.d0 - normalization/2.d0
+
+       Else
+
+          log_Efstathiou_likelihood = -1.d10
    
+       End If
+
     End If
 
 end function log_Efstathiou_likelihood
@@ -2208,6 +2246,17 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
     If (use_prior_on_Zw) then
 
        log_R11_likelihood_W = -((Zw - prior_Zw)**2/sigma_Zw_prior**2 + log(2.d0*Pi*sigma_Zw_prior**2) )/2.d0  +&
+            log_R11_likelihood_W
+
+    Else 
+
+       continue
+
+    End If
+
+    If (use_prior_on_bw) then
+
+       log_R11_likelihood_W = -((bw - prior_bw_from_LMC)**2/sigma_bw_prior**2 + log(2.d0*Pi*sigma_bw_prior**2) )/2.d0  +&
             log_R11_likelihood_W
 
     Else 

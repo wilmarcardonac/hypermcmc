@@ -9,7 +9,7 @@ marker = ['o','v','^','<','>','D','+','x','*']
 
 alpha_eff = np.dtype([('Period',np.float32),('residual',np.float32),('error',np.float32),('alpha',np.float32),('name',np.str_,5)])
 
-P,re,er,HP,galaxy = np.loadtxt('../output/effective_hyperparameters_cepheids.txt',unpack=True,usecols=[0,1,2,3,4],dtype=alpha_eff)
+P,re,er,HP,galaxy = np.loadtxt('../output/chains/effective_hyperparameters_cepheids.txt',unpack=True,usecols=[0,1,2,3,4],dtype=alpha_eff)
 
 indexs = 0
 
@@ -268,23 +268,23 @@ for index in range(indexs,indexf+1):
 
         py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[8],mfc='k',fmt='',ls='None',label=host[8])
 
-    elif HP[index] < 1. and HP[index] >= .5:
+    elif HP[index] < 1. and HP[index] >= .1:
 
         py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[8],mfc='b',fmt='',ls='None',label=host[8])
 
-    elif HP[index] < .5 and HP[index] >= .3:
+    elif HP[index] < .1 and HP[index] >= 1.e-2:
 
         py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[8],mfc='g',fmt='',ls='None',label=host[8])
 
-    elif HP[index] < .3 and HP[index] >= .1:
+    elif HP[index] < 1.e-2 and HP[index] >= 1.e-3:
 
         py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[8],mfc='r',fmt='',ls='None',label=host[8])
 
-    elif HP[index] < .1 :
+    elif HP[index] < 1.e-3 :
 
         py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[8],mfc='y',fmt='',ls='None',label=host[8])
 
-py.hlines(0.,2.,7.e1,color='k',linestyles='dotted')
+py.hlines(0.,2.,3.e2,color='k',linestyles='dotted')
 
 py.xscale('log')
 
@@ -292,7 +292,7 @@ py.yscale('linear')
 
 #py.ylim(5.e-3,1.e1)
 
-py.xlim(2.e0,7.e1)
+py.xlim(2.e0,3.e2)
 
 py.xlabel('Period [days]')
 
@@ -302,7 +302,7 @@ py.title('NGC4258')
 
 #py.legend(loc=0,numpoints=1,ncol=1)
 
-py.savefig('effective_HP_cepheids_NGC4258_W.pdf')
+py.savefig('../output/chains/effective_HP_cepheids_NGC4258_W.pdf')
 
 exit()
 

@@ -1573,7 +1573,8 @@ Program mcmc
 
           Else
 
-             old_loglikelihood = log_Efstathiou_likelihood_hyperparameters(old_point(1),old_point(2),prior_sigma_int)
+!             old_loglikelihood = log_Efstathiou_likelihood_hyperparameters(old_point(1),old_point(2),prior_sigma_int)
+             old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),prior_sigma_int_LMC)
 
           End If
 
@@ -1590,7 +1591,7 @@ Program mcmc
           write(UNIT_EXE_FILE,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
 
           ! COMPUTE INITIAL LIKELIHOOD
-          old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),prior_sigma_int) 
+          old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),prior_sigma_int_LMC) 
 
           open(UNIT_PARAMNAMES_FILE,file='./output/chains/mcmc_final_output.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
 
@@ -4108,14 +4109,16 @@ Program mcmc
 
                 Else
 
-                   current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),&
-                        current_point(2),prior_sigma_int)
+!                   current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),&
+ !                       current_point(2),prior_sigma_int)
+
+                   current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int_LMC)
               
                 End If
 
              Else
 
-                current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int)
+                current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int_LMC)
 
              End If
 
@@ -4573,7 +4576,7 @@ Program mcmc
                    
                       write(UNIT_EXE_FILE,*) 'NEED TO IMPLEMENT CHI2 VALUE WHEN HPs IN SNIa'
 
-                      stop
+                      continue
                       !                   chi2SNIabestfit = log(new_chi2(chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n))) + &
                       !                       log(N_tilde_R11_SNIa(n)) + chi2SNIabestfit
 
@@ -4977,7 +4980,57 @@ Program mcmc
 
                           close(UNIT_HP_FILE)
 
-                          call system('cd analyzer; python plot_HP.py')
+                          If (use_HP_in_SNIa) then
+
+                             open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_SNIa.txt')
+                          
+                             write(UNIT_HP_FILE,*) 'n4258', bestfit(9),0.d0, 0.d0, &
+                                  bestfit(9)+5.d0*log10(bestfit(12))-25.d0,1.d0
+
+                             Do m=1,number_of_hosts_galaxies-1
+
+                                If ( chi2R11_SNIa(bestfit(m),bestfit(12),bestfit(14),m) .le. 1.d0) then
+
+                                   write(UNIT_HP_FILE,*) host(m), bestfit(m),mvi5av(m), Sigma_mvi5av(m), &
+                                        bestfit(m)+5.d0*log10(bestfit(12))-25.d0,1.d0
+
+                                Else
+
+                                   write(UNIT_HP_FILE,*) host(m), bestfit(m),mvi5av(m), Sigma_mvi5av(m), &
+                                        bestfit(m)+5.d0*log10(bestfit(12))-25.d0,&
+                                        1.d0/chi2R11_SNIa(bestfit(m),bestfit(12),bestfit(14),m)
+
+                                End If
+
+                             End Do
+
+                             close(UNIT_HP_FILE)
+
+                          Else
+
+                             continue
+
+                          End If
+
+                          If (use_HP_in_anchor) then
+
+                             If ( chi2R11_anchor_NGC4258(bestfit(9)) .le. 1.d0) then
+
+                                write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 IS: ',1.d0
+
+                             Else
+
+                                write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 IS: ',1.d0/chi2R11_anchor_NGC4258(bestfit(9))
+
+                             End If
+
+                          Else
+                                
+                             continue
+   
+                          End If
+                          
+                          call system('cd analyzer; python plot_HP_NGC4258_W.py')
 
                        End If
 
@@ -5106,9 +5159,56 @@ Program mcmc
 
            End If
 
-           write(UNIT_EXE_FILE,*) '\ln P(\vec{w},D) at the bestfit is ', &
-                log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),prior_sigma_int)
+           If (using_hyperparameters .and. use_HP_per_cepheid) then
+
+              open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids.txt')
+
+              Do m=1,size(Name)
+                 
+                 If ( (Period(m) .gt. cepheid_lower_Period_limit) .and. (Period(m) .lt. cepheid_Period_limit)) then
+
+                    If (using_jeffreys_prior) then
+
+                       write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
+                            1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+                    
+                    Else
+
+                       If (chi2_i(bestfit(1),bestfit(2),prior_sigma_int_LMC,m) .le. 1.d0 ) then
+
+                          write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', 1.d0
+
+                          write(UNIT_HP_FILE,*) Period(m), observed_wesenheit_magnitude(H(m),V(m),II(m)),&
+                               observed_wesenheit_magnitude(H(m),V(m),II(m)) - &
+                               wesenheit_magnitude(bestfit(1),bestfit(2),Period(m)),Sigma_m(m), 1.d0, 'LMC'
+
+
+                       Else
+
+                          write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
+                               1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int_LMC,m)
+
+                          write(UNIT_HP_FILE,*) Period(m), observed_wesenheit_magnitude(H(m),V(m),II(m)),&
+                               observed_wesenheit_magnitude(H(m),V(m),II(m)) - &
+                               wesenheit_magnitude(bestfit(1),bestfit(2),Period(m)), Sigma_m(m), &
+                               1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int_LMC,m), 'LMC'
+
+                       End If
+
+                    End If
+
+                 End If
+
+              End Do
+
+              close(UNIT_HP_FILE)
+
+              write(UNIT_EXE_FILE,*) '\ln P(\vec{w},D) at the bestfit is ', &
+                   ! log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),prior_sigma_int)
+                   log_Efstathiou_likelihood(bestfit(1),bestfit(2),prior_sigma_int_LMC)
            
+           End If
+
         End If
 
      End If
