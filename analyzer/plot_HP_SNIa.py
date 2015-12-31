@@ -15,34 +15,15 @@ mean,error = np.loadtxt('../output/chains/1Dstatistics_HP_R11_W.txt',unpack=True
 
 fig = py.figure()
 
-#fig.subplots_adjust(bottom=0.1, left=0.06, top=0.85, right=0.97,hspace=0.3)
-
-py.plot(mvi,mui,markersize='small',color='k')
-
-#py.xscale('log')
+#py.plot(mvi,mui,markersize='small',color='k')
 
 py.xlim(13.4,17.5)
 
 py.ylim(-0.3,3.5)
 
-#py.title('LMC Cepheid variables')
+py.xlabel(r'SN Ia $m_v^0 + 5a_v$ [mag]')
 
-#py.xlabel('Period [days]')
-
-#py.ylabel('W [mag]')
-
-#exit()
-#py.subplot(2,1,1)
-
-#indexs = 0
-
-#indexf = 0
-
-#for index in range(len(P)):
-
-#    if galaxy[index] == host[0]:
-
-#        indexf = index
+py.ylabel(r'Cepheid $(\mu_0-\mu_{0,4258})$ [mag]')
 
 py.errorbar(mean[8],0.,xerr=error[8],yerr=None,ecolor='k',marker=marker[0],mfc='k',fmt='',ls='None')
 
@@ -68,82 +49,10 @@ for index in range(1,len(snia)):
 
         py.errorbar(mvi[index],mean[index-1],xerr=er[index]/np.sqrt(HP[index]),yerr=error[index-1],ecolor='k',mfc='y',marker=marker[0],fmt='',ls='None')
 
-#py.scatter(P,mw)
-
 py.savefig('../output/chains/effective_HP_SNIa.pdf')
 
 exit()
-py.plot(P,mw-re,markersize='small',color='k')
 
-py.xscale('log')
-
-py.xlim(1,2.e2)
-
-py.title('LMC Cepheid variables')
-
-#py.xlabel('Period [days]')
-
-py.ylabel('W [mag]')
-
-py.gca().invert_yaxis()
-
-py.subplot(2,1,2)
-
-indexs = 0
-
-indexf = 0
-
-for index in range(len(P)):
-
-    if galaxy[index] == host[0]:
-
-        indexf = index
-
-for index in range(indexs,indexf+1):
-
-    if HP[index] == 1.:
-
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[0],mfc='k',fmt='',ls='None',label=host[0])
-
-    elif HP[index] < 1. and HP[index] >= .1:
-
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[0],mfc='b',fmt='',ls='None',label=host[0])
-
-    elif HP[index] < .1 and HP[index] >= 1.e-2:
-
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[0],mfc='g',fmt='',ls='None',label=host[0])
-
-    elif HP[index] < 1.e-2 and HP[index] >= 1.e-3:
-
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',marker=marker[0],mfc='r',fmt='',ls='None',label=host[0])
-
-    elif HP[index] < 1.e-3 :
-
-        py.errorbar(P[index],re[index],yerr=er[index],xerr=None,ecolor='k',mfc='y',marker=marker[0],fmt='',ls='None',label=host[0])
-
-
-py.xscale('log')
-
-py.yscale('linear')
-
-py.hlines(0.,1.,2.e2,color='k',linestyles='dotted')
-
-#py.ylim(5.e-3,1.e1)
-
-py.xlim(1.e0,2.e2)
-
-py.xlabel('Period [days]')
-
-py.ylabel('W residual [mag]')
-
-
-
-#py.legend(loc=0,numpoints=1,ncol=4)
-
-
-py.savefig('../output/chains/effective_HP_cepheids.pdf')
-
-exit()
 
 
 
