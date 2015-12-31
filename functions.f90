@@ -935,6 +935,17 @@ function log_R11_likelihood_W_LMC(mu0j,zpw_ref,bw,H0,Zw,av,acal,sigma_int,sigma_
        continue
 
     End If
+
+    If (use_prior_on_bw) then
+
+       log_R11_likelihood_W_LMC = -((bw - prior_bw_from_LMC)**2/sigma_bw_prior**2 + log(2.d0*Pi*sigma_bw_prior**2) )/2.d0  +&
+            log_R11_likelihood_W_LMC
+
+    Else 
+
+       continue
+
+    End If
         
     If ( abs(log_R11_likelihood_W_LMC) .ge. 0.d0 ) then
 
@@ -1848,18 +1859,6 @@ function log_R11_likelihood_W_MW(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_M
 
     End If
         
-    !If (use_HP_in_anchor) then ! ANCHOR
-
-    !   log_R11_likelihood_W_MW =  log(new_chi2(chi2R11_anchor_LMC(mu0j(10)))) - log(2.d0*Pi*sigma_mu_0_LMC**2)/2.d0 + &
-    !        log_R11_likelihood_W_MW
-
-    !Else
-
-    !   log_R11_likelihood_W_MW =  -(chi2R11_anchor_LMC(mu0j(10)) + log(2.d0*Pi*sigma_mu_0_LMC**2))/2.d0 + &
-    !        log_R11_likelihood_W_MW
-
-    !End If
-
     If (use_prior_on_Zw) then
 
        log_R11_likelihood_W_MW = -((Zw - prior_Zw)**2/sigma_Zw_prior**2 + log(2.d0*Pi*sigma_Zw_prior**2) )/2.d0  +&
