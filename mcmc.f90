@@ -63,7 +63,7 @@ Program mcmc
     call set_covariance_matrix()
 
     call read_data()
-
+    
 !##################################
 ! MARKOV CHAIN MONTE CARLO ANALYSIS
 !##################################
@@ -4427,7 +4427,7 @@ Program mcmc
         End If    
 
     End If
-
+    
     call read_bestfit_mcmc(bestfit)
 
     call read_means_mcmc(means)
@@ -4456,31 +4456,31 @@ Program mcmc
 
              End Do
 
-             chi2SNIabestfit = 0.d0
+!             chi2SNIabestfit = 0.d0
 
-             Do n=1,number_of_hosts_galaxies-1 ! SN Ia
+ !            Do n=1,number_of_hosts_galaxies-1 ! SN Ia
 
-                If (use_HP_in_SNIa) then
+  !              If (use_HP_in_SNIa) then
                    
-                   write(UNIT_EXE_FILE,*) 'NEED TO IMPLEMENT CHI2 VALUE WHEN HPs IN SNIa'
+   !                write(UNIT_EXE_FILE,*) 'NEED TO IMPLEMENT CHI2 VALUE WHEN HPs IN SNIa'
 
-                   stop
+    !               stop
 !                   chi2SNIabestfit = log(new_chi2(chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n))) + &
  !                       log(N_tilde_R11_SNIa(n)) + chi2SNIabestfit
 
-                Else
+     !           Else
 
-                   chi2SNIabestfit = chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n) + chi2SNIabestfit
+      !             chi2SNIabestfit = chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n) + chi2SNIabestfit
 
-                End If
+       !         End If
               
-             End Do
+        !     End Do
 
-             write(UNIT_EXE_FILE,*) 'CHI2 CONTRIBUTION OF SNIa IS', chi2SNIabestfit
+         !    write(UNIT_EXE_FILE,*) 'CHI2 CONTRIBUTION OF SNIa IS', chi2SNIabestfit
 
-             print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+          !   print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
-             stop
+           !  stop
 
           Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
@@ -4538,9 +4538,14 @@ Program mcmc
 
           Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-             print *,'LMC NOT IMPLEMENTED YET'
 
-             stop
+             write(UNIT_EXE_FILE,*) 'BESTFIT IS : '
+
+             Do m=1,number_model_parameters
+
+                write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', bestfit(m)
+
+             End Do
 
           Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
@@ -4661,10 +4666,14 @@ Program mcmc
        Else
 
           If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
-    
-             print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
 
-             stop
+             write(UNIT_EXE_FILE,*) 'MEANS FOR THE SAMPLES ARE : '
+
+             Do m=1,number_model_parameters
+
+                write(UNIT_EXE_FILE,*) ''//trim(paramnames(m))//' = ', means(m)
+
+             End Do
 
           Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
@@ -4854,10 +4863,57 @@ Program mcmc
 
               Else If ( ( .not.use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
-                 print *,'LMC NOT IMPLEMENTED YET'
+                 If (use_HP_in_SNIa) then
 
-                 stop
-                 
+                    open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_SNIa.txt')
+
+                    write(UNIT_HP_FILE,*) 'n4258', bestfit(9)-bestfit(9),&
+                         bestfit(9)+5.d0*log10(bestfit(13))-25.d0,0.d0,&
+                         bestfit(9)+5.d0*log10(bestfit(13))-25.d0,1.d0
+
+                    Do m=1,number_of_hosts_galaxies-1
+
+                       If ( chi2R11_SNIa(bestfit(m),bestfit(13),bestfit(15),m) .le. 1.d0) then
+
+                          write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                               bestfit(m)+5.d0*log10(bestfit(13))-25.d0,1.d0
+
+                       Else
+
+                          write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                               bestfit(m)+5.d0*log10(bestfit(13))-25.d0,&
+                               1.d0/chi2R11_SNIa(bestfit(m),bestfit(13),bestfit(15),m)
+
+                       End If
+
+                    End Do
+
+                    close(UNIT_HP_FILE)
+
+                 Else
+
+                    continue
+
+                 End If
+
+                 If (use_HP_in_anchor) then
+
+                    If ( chi2R11_anchor_LMC(bestfit(10)) .le. 1.d0) then
+
+                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR LMC IS: ',1.d0
+
+                    Else
+
+                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR LMC IS: ',1.d0/chi2R11_anchor_LMC(bestfit(10))
+
+                    End If
+
+                 Else
+
+                    continue
+
+                 End If
+
               Else If ( ( use_NGC4258_as_anchor .and. .not.use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
                  If (use_metallicity) then 
@@ -4997,7 +5053,7 @@ Program mcmc
 
                                 Else
 
-                                   write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m),mvi5av(m), Sigma_mvi5av(m), &
+                                   write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
                                         bestfit(m)+5.d0*log10(bestfit(12))-25.d0,&
                                         1.d0/chi2R11_SNIa(bestfit(m),bestfit(12),bestfit(14),m)
 
