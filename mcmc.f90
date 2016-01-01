@@ -2494,7 +2494,7 @@ Program mcmc
 
                       write(UNIT_RANGES_FILE,*) ''//trim(paramnames(10))//'    0.    40.'
 
-                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(11))//'    -7.    -4.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(11))//'    -7.    1.'
 
                       write(UNIT_RANGES_FILE,*) ''//trim(paramnames(12))//'    -3.5    -2.5'
 
@@ -3351,7 +3351,7 @@ Program mcmc
 
                       plausibility(10) = (x_new(10) .le. real(0.d0)) .or. (x_new(10) .ge. real(40.d0))
 
-                      plausibility(11) =  (x_new(11) .le. real(-7.d0)) .or. (x_new(11) .ge. real(-4.d0)) 
+                      plausibility(11) =  (x_new(11) .le. real(-7.d0)) .or. (x_new(11) .ge. real(1.d0)) 
 
                       plausibility(12) =  (x_new(12) .le. real(-3.5d0)) .or. (x_new(12) .ge. real(-2.5d0)) 
 
