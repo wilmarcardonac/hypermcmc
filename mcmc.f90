@@ -2682,11 +2682,11 @@ Program mcmc
 
                       write(UNIT_RANGES_FILE,*) ''//trim(paramnames(9))//'    20.    30.'
 
-                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(10))//'   -7.    -4.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(10))//'   -7.    0.'
 
                       write(UNIT_RANGES_FILE,*) ''//trim(paramnames(11))//'    -3.5    -2.5'
 
-                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(12))//'    55.    95.'
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(12))//'    55.    105.'
 
                       write(UNIT_RANGES_FILE,*) ''//trim(paramnames(13))//'    -2.    1.'
 
@@ -3539,11 +3539,11 @@ Program mcmc
 
                       plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(30.d0))
 
-                      plausibility(10) = (x_new(10) .le. real(-7.d0)) .or. (x_new(10) .ge. real(-4.d0))
+                      plausibility(10) = (x_new(10) .le. real(-7.d0)) .or. (x_new(10) .ge. real(0.d0))
 
                       plausibility(11) =  (x_new(11) .le. real(-3.5d0)) .or. (x_new(11) .ge. real(-2.5d0)) 
 
-                      plausibility(12) =  (x_new(12) .le. real(55.d0)) .or. (x_new(12) .ge. real(95.d0)) 
+                      plausibility(12) =  (x_new(12) .le. real(55.d0)) .or. (x_new(12) .ge. real(105.d0)) 
 
                       plausibility(13) =  (x_new(13) .le. real(-2.d0)) .or. (x_new(13) .ge. real(1.d0)) 
 
