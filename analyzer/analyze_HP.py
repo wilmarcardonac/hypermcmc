@@ -1,6 +1,6 @@
 from getdist import loadMCSamples,plots
 
-number_of_parameters = 2 # 2 IF LMC ALONE, 3,  12, 14
+number_of_parameters = 2 # 2 IF LMC ALONE, 2 IF MW ALONE, 3,  12, 14
 
 samples = loadMCSamples('../output/chains/mcmc_final_output_HP',settings={'ignore_rows': 0.2 }) 
 

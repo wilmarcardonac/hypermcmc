@@ -1444,6 +1444,90 @@ function log_R11_likelihood_W_LMC_MW_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int
 
 end function log_R11_likelihood_W_LMC_MW_NGC4258
 
+function log_likelihood_W_MW_alone(M_w,bw,sigma_int_MW)
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: log_likelihood_W_MW_alone,M_w,bw,sigma_int_MW,normalizationA
+    Real*8 :: normalizationMW,chiMW
+    Integer*4 :: m,index_host,number_cepheid
+
+    log_likelihood_W_MW_alone = 0.d0
+
+    If (use_HP_per_MW_cepheid) then ! MW CEPHEID VARIABLES
+
+       Do m=1,size(FieldHipp)
+
+          If (using_jeffreys_prior) then
+
+             print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+             stop
+
+          Else
+                       
+             If (10**(logP(m)) .lt. cepheid_Period_limit) then
+
+                log_likelihood_W_MW_alone = log(new_chi2(chi2R11_W_MW(M_w,bw,0.d0,prior_sigma_int_MW,m))) + &
+                     log(N_tilde_R11_W_MW(prior_sigma_int_MW,m)) + log_likelihood_W_MW_alone
+                      
+             End If
+
+          End If
+
+       End Do
+
+    Else
+
+       If (use_HP_for_MW_dataset) then
+
+             normalizationMW = 0.d0
+
+             chiMW = 0.d0 
+
+             Do m=1, size(FieldHipp)
+
+                normalizationMW = log( sigmaMw(m)**2 + prior_sigma_int_MW**2 ) + normalizationMW
+
+                chiMW = chi2R11_W_MW(M_w,bw,0.d0,prior_sigma_int_MW,m) + chiMW
+
+             End Do
+             
+             log_likelihood_W_MW_alone = - dble(size(FieldHipp))*log(chiMW)/2.d0 - normalizationMW/2.d0&
+                  + log_likelihood_W_MW_alone
+
+       Else
+
+          Do m=1,size(FieldHipp)
+
+             If (10**(logP(m)) .lt. cepheid_Period_limit) then
+
+                log_likelihood_W_MW_alone = -chi2R11_W_MW(M_w,bw,0.d0,prior_sigma_int_MW,m)/2.d0 + &
+                     log(N_tilde_R11_W_MW(prior_sigma_int_MW,m)) + log_likelihood_W_MW_alone
+
+             End If
+
+          End Do
+
+       End If
+
+    End If
+        
+    If ( abs(log_likelihood_W_MW_alone) .ge. 0.d0 ) then
+
+       continue
+
+    Else 
+
+       log_likelihood_W_MW_alone = -1.d10
+
+    End If
+
+end function log_likelihood_W_MW_alone
+
+
 function log_R11_likelihood_W_LMC_MW(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_LMC)    !    EQUATION (4) IN R09
 
     use arrays
@@ -3980,11 +4064,21 @@ subroutine set_covariance_matrix()
     
      Else
 
-        Covguess(1,1) = sigma_A**2 
+        If (fit_MW_cepheids_alone) then 
 
-        Covguess(2,2) = sigma_bw**2
+           Covguess(1,1) = sigma_Mw**2 
 
-        !Covguess(3,3) = sigma_sigma_int**2
+           Covguess(2,2) = sigma_bw**2
+
+        Else
+
+           Covguess(1,1) = sigma_A**2 
+
+           Covguess(2,2) = sigma_bw**2
+
+           !Covguess(3,3) = sigma_sigma_int**2
+
+        End If
  
      End If ! OF R11 ANALYSIS
          
