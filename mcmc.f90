@@ -34,7 +34,7 @@ Program mcmc
 
     Character(len=10) :: string ! STORES STRINGS FOR INTEGERS
     Character(len=12),dimension(number_hyperparameters) :: alpha_string
-    Character(len=25),dimension(number_of_parameters) :: paramnames,latexname
+    Character(len=30),dimension(number_of_parameters) :: paramnames,latexname
     Character(len=5) :: galaxy
 
 !##########################################################
