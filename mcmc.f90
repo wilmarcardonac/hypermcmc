@@ -34,7 +34,7 @@ Program mcmc
 
     Character(len=10) :: string ! STORES STRINGS FOR INTEGERS
     Character(len=12),dimension(number_hyperparameters) :: alpha_string
-    Character(len=12),dimension(number_of_parameters) :: paramnames,latexname
+    Character(len=25),dimension(number_of_parameters) :: paramnames,latexname
     Character(len=5) :: galaxy
 
 !##########################################################
@@ -603,6 +603,8 @@ Program mcmc
                          old_point(13) = prior_Zw
 
                          old_point(14) = a_v
+
+                         old_point(15) = log10(prior_sigma_int) ! log10(sigma_int) 
                         
                       End If
 
@@ -1178,6 +1180,8 @@ Program mcmc
 
                          x_old(14) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
 
+                         x_old(15) = genunf(real(-3.d0),real(-0.7d0)) ! log10(sigma_int)
+
                       End If
 
                    Else
@@ -1543,10 +1547,14 @@ Program mcmc
                      
                       Else
 
-                         old_loglikelihood = log_R11_likelihood_W(old_point(1:number_model_parameters-5),&
-                              old_point(number_model_parameters-4),old_point(number_model_parameters-3),&
-                              old_point(number_model_parameters-2),old_point(number_model_parameters-1),&
-                              old_point(number_model_parameters),prior_sigma_int)
+                         old_point(15) = 10**(old_point(15))
+
+                         old_loglikelihood = log_R11_likelihood_W(old_point(1:number_model_parameters-6),&
+                              old_point(number_model_parameters-5),old_point(number_model_parameters-4),&
+                              old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
+                              old_point(number_model_parameters-1),old_point(number_model_parameters))
+
+                         old_point(15) = log10(old_point(15))
 
                       End If
 
@@ -2276,6 +2284,9 @@ Program mcmc
                       paramnames(14) = 'av'
                       latexname(14) = 'a_v'
 
+                      paramnames(15) = 'log10sigma_int'
+                      latexname(15) = '\log_{10}\sigma_{int}'
+
                       Do m=1,number_model_parameters
 
                          write(UNIT_PARAMNAMES_FILE,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
@@ -2841,6 +2852,8 @@ Program mcmc
                       write(UNIT_RANGES_FILE,*) ''//trim(paramnames(13))//'    -1.    1.'
 
                       write(UNIT_RANGES_FILE,*) ''//trim(paramnames(14))//'    0.    1.'
+
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(15))//'    -3.    -0.7'
 
                    End If
 
@@ -3699,6 +3712,8 @@ Program mcmc
 
                       plausibility(14) =  (x_new(14) .le. real(0.d0)) .or. (x_new(14) .ge. real(1.d0)) 
 
+                      plausibility(15) =  (x_new(15) .lt. real(-3.d0)) .or. (x_new(15) .gt. real(-0.7d0)) 
+
                    End If
 
                 Else
@@ -4079,10 +4094,14 @@ Program mcmc
 
                             Else
 
-                               current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-5),&
-                                    current_point(number_model_parameters-4),current_point(number_model_parameters-3),&
-                                    current_point(number_model_parameters-2),current_point(number_model_parameters-1),&
-                                    current_point(number_model_parameters),prior_sigma_int)
+                               current_point(15) = 10**(current_point(15))
+
+                               current_loglikelihood = log_R11_likelihood_W(current_point(1:number_model_parameters-6),&
+                                    current_point(number_model_parameters-5),current_point(number_model_parameters-4),&
+                                    current_point(number_model_parameters-3),current_point(number_model_parameters-2),&
+                                    current_point(number_model_parameters-1),current_point(number_model_parameters))
+
+                               current_point(15) = log10(current_point(15)) ! log10(sigma_int)
 
                             End If
 
@@ -4573,29 +4592,29 @@ Program mcmc
 
                 End If
 
-                chi2SNIabestfit = 0.d0
-
-                Do n=1,number_of_hosts_galaxies-1 ! SN Ia
-
-                   If (use_HP_in_SNIa) then
-                   
-                      write(UNIT_EXE_FILE,*) 'NEED TO IMPLEMENT CHI2 VALUE WHEN HPs IN SNIa'
-
-                      continue
-                      !                   chi2SNIabestfit = log(new_chi2(chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n))) + &
-                      !                       log(N_tilde_R11_SNIa(n)) + chi2SNIabestfit
-
-                   Else
-
-                      chi2SNIabestfit = chi2R11_SNIa(bestfit(n),bestfit(12),bestfit(14),n) + chi2SNIabestfit
-
-                      print *, chi2R11_SNIa(bestfit(n),bestfit(12),bestfit(14),n)
-
-                   End If
-              
-                End Do
-
-                write(UNIT_EXE_FILE,*) 'CHI2 CONTRIBUTION OF SNIa IS', chi2SNIabestfit
+!!$                chi2SNIabestfit = 0.d0
+!!$
+!!$                Do n=1,number_of_hosts_galaxies-1 ! SN Ia
+!!$
+!!$                   If (use_HP_in_SNIa) then
+!!$                   
+!!$                      write(UNIT_EXE_FILE,*) 'NEED TO IMPLEMENT CHI2 VALUE WHEN HPs IN SNIa'
+!!$
+!!$                      continue
+!!$                      !                   chi2SNIabestfit = log(new_chi2(chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n))) + &
+!!$                      !                       log(N_tilde_R11_SNIa(n)) + chi2SNIabestfit
+!!$
+!!$                   Else
+!!$
+!!$                      chi2SNIabestfit = chi2R11_SNIa(bestfit(n),bestfit(12),bestfit(14),n) + chi2SNIabestfit
+!!$
+!!$                      print *, chi2R11_SNIa(bestfit(n),bestfit(12),bestfit(14),n)
+!!$
+!!$                   End If
+!!$              
+!!$                End Do
+!!$
+!!$                write(UNIT_EXE_FILE,*) 'CHI2 CONTRIBUTION OF SNIa IS', chi2SNIabestfit
 
              Else
 
