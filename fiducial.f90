@@ -89,7 +89,7 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 18 ! NUMBER OF PARAMETERS IN MODEL : 3 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    Integer*4,parameter :: number_model_parameters = 3 ! NUMBER OF PARAMETERS IN MODEL : 3 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
     ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 18 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 15 FOR ALL R11 CEPHEIDS +
     ! MW CEPHEIDS ANS USING MW AS ANCHOR, 16 FOR ALL R11 CEPHEIDS + NGC4258 AND LMC AS ANCHORS, 15 FOR ALL R11 CEPHEIDS + NGC4258 AND MW AS ANCHORS,
@@ -135,7 +135,7 @@ Module fiducial
     Logical,parameter   :: use_HP_per_cepheid = .true.           ! USE HPs FOR EACH CEPHEID IN R11 IF SET IT TRUE
     Logical,parameter   :: use_HP_per_MW_cepheid = .true.       ! USE HPs FOR EACH CEPHEID IN MW IF SET IT TRUE
     Logical,parameter   :: use_HP_for_MW_dataset = .false.       ! USE HP FOR MW DATASET IF SET IT TRUE (JEFFREY'S PRIOR)
-    Logical,parameter   :: doing_R11_analysis = .true.           ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU'S SECTION 2 (LMC CEPHEIDS ALONE)
+    Logical,parameter   :: doing_R11_analysis = .false.!.true.           ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU'S SECTION 2 (LMC CEPHEIDS ALONE)
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE

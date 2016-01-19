@@ -5272,11 +5272,11 @@ Program mcmc
                     If (using_jeffreys_prior) then
 
                        write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
-                            1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+                            1.d0/chi2_i(bestfit(1),bestfit(2),bestfit(3),m)
                     
                     Else
 
-                       If (chi2_i(bestfit(1),bestfit(2),prior_sigma_int_LMC,m) .le. 1.d0 ) then
+                       If (chi2_i(bestfit(1),bestfit(2),bestfit(3),m) .le. 1.d0 ) then
 
                           write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', 1.d0
 
@@ -5288,12 +5288,12 @@ Program mcmc
                        Else
 
                           write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
-                               1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int_LMC,m)
+                               1.d0/chi2_i(bestfit(1),bestfit(2),bestfit(3),m)
 
                           write(UNIT_HP_FILE,*) Period(m), observed_wesenheit_magnitude(H(m),V(m),II(m)),&
                                observed_wesenheit_magnitude(H(m),V(m),II(m)) - &
                                wesenheit_magnitude(bestfit(1),bestfit(2),Period(m)), Sigma_m(m), &
-                               1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int_LMC,m), 'LMC'
+                               1.d0/chi2_i(bestfit(1),bestfit(2),bestfit(3),m), 'LMC'
 
                        End If
 
@@ -5307,7 +5307,7 @@ Program mcmc
 
               write(UNIT_EXE_FILE,*) '\ln P(\vec{w},D) at the bestfit is ', &
                    ! log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),prior_sigma_int)
-                   log_Efstathiou_likelihood(bestfit(1),bestfit(2),prior_sigma_int_LMC)
+                   log_Efstathiou_likelihood(bestfit(1),bestfit(2),bestfit(3))
            
            End If
 
