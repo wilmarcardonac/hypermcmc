@@ -4081,6 +4081,8 @@ subroutine set_covariance_matrix()
 
            Covguess(2,2) = sigma_bw**2
 
+           Covguess(3,3) = sigma_sigma_int**2
+
         Else
 
            Covguess(1,1) = sigma_A**2 

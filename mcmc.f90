@@ -34,7 +34,7 @@ Program mcmc
 
     Character(len=10) :: string ! STORES STRINGS FOR INTEGERS
     Character(len=12),dimension(number_hyperparameters) :: alpha_string
-    Character(len=12),dimension(number_of_parameters) :: paramnames,latexname
+    Character(len=30),dimension(number_of_parameters) :: paramnames,latexname
     Character(len=5) :: galaxy
 
 !##########################################################
@@ -658,6 +658,8 @@ Program mcmc
 
                 old_point(2) = prior_bw        ! bw 
 
+                old_point(3) = log10(prior_sigma_int_MW) ! log10(sigma_int_MW)
+
              Else
 
                 old_point(1) = prior_A         ! A 
@@ -1244,6 +1246,8 @@ Program mcmc
 
                 x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
 
+                x_old(3) = genunf(real(-3.d0),real(-0.7d0)) ! log10(sigma_int_MW)
+
              Else
 
                 x_old(1) = genunf(real(prior_A - sigma_A),real(prior_A + sigma_A))         ! A
@@ -1599,7 +1603,11 @@ Program mcmc
 
              If (fit_MW_cepheids_alone) then 
 
-                old_loglikelihood = log_likelihood_W_MW_alone(old_point(1),old_point(2),prior_sigma_int_MW)
+                old_point(3) = 10**(old_point(3))
+
+                old_loglikelihood = log_likelihood_W_MW_alone(old_point(1),old_point(2),old_point(3))
+
+                old_point(3) = log10(old_point(3))
 
              Else
 
@@ -2365,6 +2373,9 @@ Program mcmc
              paramnames(2) = 'bw'
              latexname(2) = 'b_w'
 
+             paramnames(3) = 'log10sigma_int_MW'
+             latexname(3) = '\log_{10}\sigma_{int}^{MW}'
+
           Else
 
              paramnames(1) = 'A'
@@ -2934,6 +2945,8 @@ Program mcmc
              write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    -7.    -4.'
 
              write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    -20.    0.'
+
+             write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    -3.    -0.7'
              
           Else
 
@@ -3808,6 +3821,8 @@ Program mcmc
 
              plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
 
+             plausibility(3) = (x_new(3) .le. real(-3.d0)) .or. (x_new(3) .ge. real(-0.7d0))
+
           Else
 
              plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
@@ -4178,7 +4193,11 @@ Program mcmc
 
                    If (fit_MW_cepheids_alone) then
 
-                      current_loglikelihood = log_likelihood_W_MW_alone(current_point(1),current_point(2),prior_sigma_int_MW)
+                      current_point(3) = 10**(current_point(3))
+
+                      current_loglikelihood = log_likelihood_W_MW_alone(current_point(1),current_point(2),current_point(3))
+
+                      current_point(3) = log10(current_point(3))
 
                    Else
 

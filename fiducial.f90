@@ -9,10 +9,10 @@ Module fiducial
     !#############################
 
     Real*8,parameter    :: prior_A = 12.5d0
-    Real*8,parameter    :: prior_bw = -3.23d0
-    Real*8,parameter    :: prior_sigma_int = 0.0d0 !0.2d0 !0.d0 !0.1d0!0.20d0 SN Ia hosts
-    Real*8,parameter    :: prior_sigma_int_LMC = 0.0d0!0.113d0 ! SAME VALUE AS IN EQUATION (4a) OF EFSTATHIOU'S PAPER
-    Real*8,parameter    :: prior_sigma_int_MW = 0.d0 !0.10d0 ! SAME VALUE AS IN SUBSECTION 4.2 OF EFSTATHIOU'S PAPER
+    Real*8,parameter    :: prior_bw = -3.3d0
+    Real*8,parameter    :: prior_sigma_int = 0.1d0!0.20d0 SN Ia hosts
+    Real*8,parameter    :: prior_sigma_int_LMC = 0.113d0 ! SAME VALUE AS IN EQUATION (4a) OF EFSTATHIOU'S PAPER
+    Real*8,parameter    :: prior_sigma_int_MW = 0.10d0 ! SAME VALUE AS IN SUBSECTION 4.2 OF EFSTATHIOU'S PAPER
     Real*8,parameter    :: prior_alpha_j = 5.d-1
     Real*8,parameter    :: R = 0.410d0                  ! TAKEN FROM PAGE 7 IN R11
     Real*8,parameter    :: a_v = 0.697d0                ! TAKEN FROM PAGE 9 IN R11
@@ -41,7 +41,7 @@ Module fiducial
     Real*8,parameter    :: prior_Mw = -5.88d0
     Real*8,parameter    :: prior_Zw = 0.d0         ! CENTRAL VALUE FOR PRIOR ON Zw 
     Real*8,parameter    :: prior_H0 = 70.0d0
-    Real*8,parameter    :: prior_bw_from_LMC = -3.35d0 ! CENTRAL VALUE FOR PRIOR ON bw
+    Real*8,parameter    :: prior_bw_from_LMC = -3.3d0 ! CENTRAL VALUE FOR PRIOR ON bw
 
     !################################################
     ! 1-SIGMA VALUES FOR PARAMETERS IN FIDUCIAL MODEL
@@ -76,7 +76,7 @@ Module fiducial
     Real*8,parameter    :: sigma_Zw = 0.25d0
     Real*8,parameter    :: sigma_Zw_prior = 0.02d0
     Real*8,parameter    :: sigma_H0 = 1.0d-1
-    Real*8,parameter    :: sigma_bw_prior = 0.03d0
+    Real*8,parameter    :: sigma_bw_prior = 0.1d0
 
     !#####################
     ! OTHER SPECIFICATIONS
@@ -89,9 +89,9 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 15 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    Integer*4,parameter :: number_model_parameters = 3 ! NUMBER OF PARAMETERS IN MODEL : 3 FOR MW ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
-    ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 15 FOR ALL R11 CEPHEIDS +
+    ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 17 FOR ALL R11 CEPHEIDS +
     ! MW CEPHEIDS ANS USING MW AS ANCHOR, 16 FOR ALL R11 CEPHEIDS + NGC4258 AND LMC AS ANCHORS, 15 FOR ALL R11 CEPHEIDS + NGC4258 AND MW AS ANCHORS,
     ! 16 FOR ALL R11 CEPHEIDS + MW AND LMC AS ANCHORS, 16 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
@@ -135,13 +135,13 @@ Module fiducial
     Logical,parameter   :: use_HP_per_cepheid = .true.           ! USE HPs FOR EACH CEPHEID IN R11 IF SET IT TRUE
     Logical,parameter   :: use_HP_per_MW_cepheid = .true.!.false.       ! USE HPs FOR EACH CEPHEID IN MW IF SET IT TRUE
     Logical,parameter   :: use_HP_for_MW_dataset = .false.!.true.       ! USE HP FOR MW DATASET IF SET IT TRUE (JEFFREY'S PRIOR)
-    Logical,parameter   :: doing_R11_analysis = .false.!.true.           ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU'S SECTION 2 (LMC CEPHEIDS ALONE) OR FIT MW CEPHEIDS
+    Logical,parameter   :: doing_R11_analysis = .false.!.true.  ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU'S SECTION 2 (LMC CEPHEIDS ALONE) OR FIT MW CEPHEIDS
     Logical,parameter   :: fit_MW_cepheids_alone = .true.               ! FIT MW CEPHEIDS ALONE IF SET IT TRUE
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
     Logical,parameter   :: use_prior_on_Zw = .false.!.true.              ! USE PRIOR ON Zw IF SET IT TRUE 
-    Logical,parameter   :: use_prior_on_bw = .true.              ! USE PRIOR ON bw IF SET IT TRUE
+    Logical,parameter   :: use_prior_on_bw = .false.!true.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
