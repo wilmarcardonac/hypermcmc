@@ -34,7 +34,7 @@ Program mcmc
 
     Character(len=10) :: string ! STORES STRINGS FOR INTEGERS
     Character(len=12),dimension(number_hyperparameters) :: alpha_string
-    Character(len=12),dimension(number_of_parameters) :: paramnames,latexname
+    Character(len=25),dimension(number_of_parameters) :: paramnames,latexname
     Character(len=5) :: galaxy
 
 !##########################################################
@@ -654,8 +654,8 @@ Program mcmc
 
              old_point(1) = prior_A         ! A 
              old_point(2) = prior_bw        ! bw 
-             !old_point(3) = prior_sigma_int ! sigma_int 
- 
+             old_point(3) = log10(prior_sigma_int) ! log10(sigma_int) 
+                          
           End If
 
           If (hyperparameters_as_mcmc) then
@@ -684,7 +684,7 @@ Program mcmc
 
              else
 
-                x_old(m) = real(old_point(m))
+                x_old(m) = real(old_point(m))  ! log10(sigma_int)
 
              End If
 
@@ -1228,7 +1228,8 @@ Program mcmc
 
              x_old(1) = genunf(real(prior_A - sigma_A),real(prior_A + sigma_A))         ! A
              x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
-             !x_old(3) = genunf(real(-10.d0),real(0.d0)) ! log10(sigma_int)
+             x_old(3) = genunf(real(-3.d0),real(-0.7d0)) ! log10(sigma_int)
+!             x_old(3) = 10**(x_old(3))
 
           End If
 
@@ -1573,8 +1574,11 @@ Program mcmc
 
           Else
 
-!             old_loglikelihood = log_Efstathiou_likelihood_hyperparameters(old_point(1),old_point(2),prior_sigma_int)
-             old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),prior_sigma_int_LMC)
+             old_point(3) = 10**(old_point(3))   ! sigma_int
+
+             old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),old_point(3))
+
+             old_point(3) = log10(old_point(3))   ! log10(sigma_int)
 
           End If
 
@@ -2330,13 +2334,14 @@ Program mcmc
           paramnames(2) = 'bw'
           latexname(2) = 'b_w'
 
+          paramnames(3) = 'log10sigma_int'
+          latexname(3) = '\log_{10}\sigma_{int}'
+
           Do m=1,number_model_parameters
 
              write(UNIT_PARAMNAMES_FILE,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
 
           End Do
-
-          !write(16,*) 'sigma_int    \sigma_{int}'
 
        End If
 
@@ -2888,7 +2893,7 @@ Program mcmc
 
           write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    -20.    0.'
 
-          !    write(17,*) 'sigma_int    1.e-10    1 '
+          write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    -3.    -0.7'
 
        End If
 
@@ -2919,7 +2924,7 @@ Program mcmc
     End If
 
     ! OPEN TEMPORARY FILE TO SAVE CHAIN
-    open(UNIT_MCMC_FILE,file='./output/mcmc_output.txt')     
+    open(UNIT_MCMC_FILE,file='./output/mcmc_output.txt')  
 
     write(UNIT_EXE_FILE,*) '# NUMBER OF ITERATIONS IN MCMC : ', number_iterations - steps_taken_before_definite_run
 
@@ -3749,7 +3754,7 @@ Program mcmc
 
           plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
           plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
-          !plausibility(3) =  (x_new(3) .gt. real(0.d0)) .or. (x_new(3) .lt. real(-10.d0))    ! limit log10(sigma_int)
+          plausibility(3) =  (x_new(3) .lt. real(-3.d0)) .or. (x_new(3) .gt. real(-0.7d0))    ! limit log10(sigma_int)
 
        End If
 
@@ -4112,8 +4117,12 @@ Program mcmc
 !                   current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),&
  !                       current_point(2),prior_sigma_int)
 
-                   current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int_LMC)
+                   current_point(3) = 10**(current_point(3)) ! sigma_int
+
+                   current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),current_point(3))
               
+                   current_point(3) = log10(current_point(3)) ! log10(sigma_int)
+
                 End If
 
              Else

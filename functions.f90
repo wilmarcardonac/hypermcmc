@@ -3996,8 +3996,8 @@ subroutine set_covariance_matrix()
 
         Covguess(2,2) = sigma_bw**2
 
-        !Covguess(3,3) = sigma_sigma_int**2
- 
+        Covguess(3,3) = sigma_sigma_int**2
+
      End If ! OF R11 ANALYSIS
          
      If (hyperparameters_as_mcmc) then
