@@ -1176,13 +1176,13 @@ function log_R11_likelihood_W_LMC_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,si
 
 end function log_R11_likelihood_W_LMC_NGC4258
 
-function log_R11_likelihood_W_LMC_MW_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_LMC)    !    EQUATION (4) IN R09
+function log_R11_likelihood_W_LMC_MW_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_LMC,sigma_int_MW)    !    EQUATION (4) IN R09
 
     use arrays
     use fiducial
     Implicit none
 
-    Real*8 :: log_R11_likelihood_W_LMC_MW_NGC4258,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_LMC,normalizationA
+    Real*8 :: log_R11_likelihood_W_LMC_MW_NGC4258,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_LMC,normalizationA,sigma_int_MW
     Real*8 :: normalizationMW,chiMW
     Real*8,dimension(number_of_hosts_galaxies + 1) :: mu0j 
     Integer*4 :: m,index_host,number_cepheid
@@ -1334,8 +1334,8 @@ function log_R11_likelihood_W_LMC_MW_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int
                        
              If (10**(logP(m)) .lt. cepheid_Period_limit) then
 
-                log_R11_likelihood_W_LMC_MW_NGC4258 = log(new_chi2(chi2R11_W_MW(M_w,bw,Zw,prior_sigma_int_MW,m))) + &
-                     log(N_tilde_R11_W_MW(prior_sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW_NGC4258
+                log_R11_likelihood_W_LMC_MW_NGC4258 = log(new_chi2(chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m))) + &
+                     log(N_tilde_R11_W_MW(sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW_NGC4258
                       
              End If
 
@@ -1353,9 +1353,9 @@ function log_R11_likelihood_W_LMC_MW_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int
 
              Do m=1, size(FieldHipp)
 
-                normalizationMW = log( sigmaMw(m)**2 + prior_sigma_int_MW**2 ) + normalizationMW
+                normalizationMW = log( sigmaMw(m)**2 + sigma_int_MW**2 ) + normalizationMW
 
-                chiMW = chi2R11_W_MW(M_w,bw,Zw,prior_sigma_int_MW,m) + chiMW
+                chiMW = chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m) + chiMW
 
              End Do
              
@@ -1368,8 +1368,8 @@ function log_R11_likelihood_W_LMC_MW_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int
 
              If (10**(logP(m)) .lt. cepheid_Period_limit) then
 
-                log_R11_likelihood_W_LMC_MW_NGC4258 = -chi2R11_W_MW(M_w,bw,Zw,prior_sigma_int_MW,m)/2.d0 + &
-                     log(N_tilde_R11_W_MW(prior_sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW_NGC4258
+                log_R11_likelihood_W_LMC_MW_NGC4258 = -chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m)/2.d0 + &
+                     log(N_tilde_R11_W_MW(sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW_NGC4258
 
              End If
 
@@ -3466,6 +3466,12 @@ subroutine set_covariance_matrix()
                        Covguess(15,15) = sigma_a_v**2
 
                        Covguess(16,16) = sigma_a_cal**2
+
+                       Covguess(17,17) = sigma_sigma_int**2
+
+                       Covguess(18,18) = sigma_sigma_int**2
+
+                       Covguess(19,19) = sigma_sigma_int**2
 
                     Else
                         
