@@ -1444,13 +1444,13 @@ function log_R11_likelihood_W_LMC_MW_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int
 
 end function log_R11_likelihood_W_LMC_MW_NGC4258
 
-function log_R11_likelihood_W_LMC_MW(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_LMC)    !    EQUATION (4) IN R09
+function log_R11_likelihood_W_LMC_MW(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_LMC,sigma_int_MW)    !    EQUATION (4) IN R09
 
     use arrays
     use fiducial
     Implicit none
 
-    Real*8 :: log_R11_likelihood_W_LMC_MW,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_LMC,normalizationA
+    Real*8 :: log_R11_likelihood_W_LMC_MW,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_LMC,normalizationA,sigma_int_MW
     Real*8,dimension(number_of_hosts_galaxies + 1) :: mu0j 
     Integer*4 :: m,index_host,number_cepheid
 
@@ -1601,8 +1601,8 @@ function log_R11_likelihood_W_LMC_MW(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_i
                        
              If (10**(logP(m)) .lt. cepheid_Period_limit) then
 
-                log_R11_likelihood_W_LMC_MW = log(new_chi2(chi2R11_W_MW(M_w,bw,Zw,prior_sigma_int_MW,m))) + &
-                     log(N_tilde_R11_W_MW(prior_sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW
+                log_R11_likelihood_W_LMC_MW = log(new_chi2(chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m))) + &
+                     log(N_tilde_R11_W_MW(sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW
                       
              End If
 
@@ -1616,8 +1616,8 @@ function log_R11_likelihood_W_LMC_MW(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_i
 
           If (10**(logP(m)) .lt. cepheid_Period_limit) then
 
-             log_R11_likelihood_W_LMC_MW = -chi2R11_W_MW(M_w,bw,Zw,prior_sigma_int_MW,m)/2.d0 + &
-                  log(N_tilde_R11_W_MW(prior_sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW
+             log_R11_likelihood_W_LMC_MW = -chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m)/2.d0 + &
+                  log(N_tilde_R11_W_MW(sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW
 
           End If
 
@@ -3653,7 +3653,7 @@ subroutine set_covariance_matrix()
 
                  Else
 
-                    If (number_model_parameters .eq. 16) then
+                    If (number_model_parameters .eq. 19) then
 
                        Covguess(1,1) = sigma_mu1**2 
 
@@ -3686,6 +3686,12 @@ subroutine set_covariance_matrix()
                        Covguess(15,15) = sigma_a_v**2
 
                        Covguess(16,16) = sigma_a_cal**2
+
+                       Covguess(17,17) = sigma_sigma_int**2
+
+                       Covguess(18,18) = sigma_sigma_int**2
+
+                       Covguess(19,19) = sigma_sigma_int**2
 
                     Else
 
