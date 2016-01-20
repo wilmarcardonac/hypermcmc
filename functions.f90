@@ -3507,7 +3507,7 @@ subroutine set_covariance_matrix()
                      
                  Else
 
-                    If (number_model_parameters .eq. 16) then
+                    If (number_model_parameters .eq. 18) then
                           
                        Covguess(1,1) = sigma_mu1**2 
 
@@ -3540,6 +3540,10 @@ subroutine set_covariance_matrix()
                        Covguess(15,15) = sigma_a_v**2
 
                        Covguess(16,16) = sigma_a_cal**2
+
+                       Covguess(17,17) = sigma_sigma_int**2
+
+                       Covguess(18,18) = sigma_sigma_int**2
 
                     Else
                           

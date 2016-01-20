@@ -34,7 +34,7 @@ Program mcmc
 
     Character(len=10) :: string ! STORES STRINGS FOR INTEGERS
     Character(len=12),dimension(number_hyperparameters) :: alpha_string
-    Character(len=12),dimension(number_of_parameters) :: paramnames,latexname
+    Character(len=30),dimension(number_of_parameters) :: paramnames,latexname
     Character(len=5) :: galaxy
 
 !##########################################################
@@ -267,6 +267,10 @@ Program mcmc
                          old_point(15) = a_v
 
                          old_point(16) = a_cal
+
+                         old_point(17) = log10(prior_sigma_int_LMC)
+
+                         old_point(18) = log10(prior_sigma_int) 
                         
                       End If
 
@@ -842,6 +846,10 @@ Program mcmc
 
                          x_old(16) = genunf(real(a_cal - sigma_a_cal),real(a_cal + sigma_a_cal))
 
+                         x_old(17) = genunf(real(-3.d0),real(-0.7d0))
+
+                         x_old(18) = genunf(real(-3.d0),real(-0.7d0))
+
                       End If
 
                    Else
@@ -1351,12 +1359,20 @@ Program mcmc
                          stop
                      
                       Else
+
+                         old_point(17) = 10**(old_point(17))
+
+                         old_point(18) = 10**(old_point(18))
                           
-                         old_loglikelihood = log_R11_likelihood_W_LMC_NGC4258(old_point(1:number_model_parameters-6),&
+                         old_loglikelihood = log_R11_likelihood_W_LMC_NGC4258(old_point(1:number_model_parameters-8),&
+                              old_point(number_model_parameters-7),old_point(number_model_parameters-6),&
                               old_point(number_model_parameters-5),old_point(number_model_parameters-4),&
                               old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
-                              old_point(number_model_parameters-1),old_point(number_model_parameters),&
-                              prior_sigma_int,prior_sigma_int_LMC)
+                              old_point(18),old_point(17))
+
+                         old_point(17) = log10(old_point(17)) 
+
+                         old_point(18) = log10(old_point(18)) 
 
                       End If
 
@@ -1813,6 +1829,12 @@ Program mcmc
 
                       paramnames(16) = 'acal'
                       latexname(16) = 'a_{cal}'
+
+                      paramnames(17) = 'log10sigma_int_LMC'
+                      latexname(17) = '\log_{10}\sigma_{int}^{LMC}'
+
+                      paramnames(18) = 'log10sigma_int_R11'
+                      latexname(18) = '\log_{10}\sigma_{int}^{R11}'
 
                       Do m=1,number_model_parameters
 
@@ -2505,6 +2527,10 @@ Program mcmc
                       write(UNIT_RANGES_FILE,*) ''//trim(paramnames(15))//'    0.    1.'
 
                       write(UNIT_RANGES_FILE,*) ''//trim(paramnames(16))//'    -1.    1.'
+
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(17))//'    -3.    -0.7'
+
+                      write(UNIT_RANGES_FILE,*) ''//trim(paramnames(18))//'    -3.    -0.7'
 
                    End If
 
@@ -3363,6 +3389,10 @@ Program mcmc
 
                       plausibility(16) =  (x_new(16) .le. real(-1.d0)) .or. (x_new(16) .ge. real(1.d0)) 
 
+                      plausibility(17) =  (x_new(17) .le. real(-3.d0)) .or. (x_new(17) .ge. real(-0.7d0)) 
+
+                      plausibility(18) =  (x_new(18) .le. real(-3.d0)) .or. (x_new(18) .ge. real(-0.7d0)) 
+
                    End If
 
                 Else
@@ -3887,12 +3917,20 @@ Program mcmc
                                stop
                      
                             Else
+
+                               current_point(17) = 10**(current_point(17))
+
+                               current_point(18) = 10**(current_point(18))
                           
-                               current_loglikelihood = log_R11_likelihood_W_LMC_NGC4258(current_point(1:number_model_parameters-6),&
+                               current_loglikelihood = log_R11_likelihood_W_LMC_NGC4258(current_point(1:number_model_parameters-8),&
+                                    current_point(number_model_parameters-7),current_point(number_model_parameters-6),&
                                     current_point(number_model_parameters-5),current_point(number_model_parameters-4),&
                                     current_point(number_model_parameters-3),current_point(number_model_parameters-2),&
-                                    current_point(number_model_parameters-1),current_point(number_model_parameters),&
-                                    prior_sigma_int,prior_sigma_int_LMC)
+                                    current_point(18),current_point(17))
+
+                               current_point(17) = log10(current_point(17))
+
+                               current_point(18) = log10(current_point(18))
 
                             End If
 
