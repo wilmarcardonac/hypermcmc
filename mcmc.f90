@@ -5360,7 +5360,7 @@ Program mcmc
                     
                     Else
 
-                       If (chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,prior_sigma_int_MW,m) .le. 1.d0 ) then
+                       If (chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,10**(bestfit(3)),m) .le. 1.d0 ) then
 
                           write(UNIT_EXE_FILE,*) FieldHipp(m),' HAS HP = ', 1.d0
 
@@ -5371,11 +5371,11 @@ Program mcmc
                        Else
 
                           write(UNIT_EXE_FILE,*) FieldHipp(m),' HAS HP = ', &
-                               1.d0/chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,prior_sigma_int_MW,m)
+                               1.d0/chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,10**(bestfit(3)),m)
 
                           write(UNIT_HP_FILE,*) 10**logP(m), Mw(m),&
                                Mw(m) - P_L_relation_passband_W_E14(0.d0,bestfit(1),bestfit(2),0.0d0,meanOH_MW,10**(logP(m))),&                               
-                          SigmaMw(m), 1.d0/chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,prior_sigma_int_MW,m), 'MW'
+                          SigmaMw(m), 1.d0/chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,10**(bestfit(3)),m), 'MW'
 
                        End If
 
