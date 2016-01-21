@@ -1755,11 +1755,11 @@ Program mcmc
                       paramnames(17) = 'log10sigma_int_LMC'
                       latexname(17) = '\log_{10}\sigma_{int}^{LMC}'
 
-                      paramnames(1) = 'log10sigma_int_MW'
-                      latexname(1) = '\log_{10}\sigma_{int}^{MW}'
+                      paramnames(18) = 'log10sigma_int_MW'
+                      latexname(18) = '\log_{10}\sigma_{int}^{MW}'
 
-                      paramnames(1) = 'log10sigma_int_R11'
-                      latexname(1) = '\log_{10}\sigma_{int}^{R11}'
+                      paramnames(19) = 'log10sigma_int_R11'
+                      latexname(19) = '\log_{10}\sigma_{int}^{R11}'
 
                       Do m=1,number_model_parameters
 

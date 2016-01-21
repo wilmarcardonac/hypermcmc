@@ -3433,7 +3433,7 @@ subroutine set_covariance_matrix()
                      
                  Else
 
-                    If (number_model_parameters .eq. 16) then
+                    If (number_model_parameters .eq. 19) then
                           
                        Covguess(1,1) = sigma_mu1**2 
 
