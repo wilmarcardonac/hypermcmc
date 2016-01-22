@@ -5104,7 +5104,7 @@ Program mcmc
    
                           End If
                           
-                          call system('cd analyzer; python plot_HP_NGC4258_W.py')
+                          call system('cd analyzer; python plot_HP.py')
 
                        End If
 
