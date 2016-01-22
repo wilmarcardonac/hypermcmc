@@ -108,7 +108,7 @@ Module fiducial
     Integer*4,parameter :: UNIT_HP_FILE = 95           ! UNIT EFFECTIVE HPS FILE
 
     Real*8,parameter    :: step_size_changes = 1.d-2             ! CHANGES IN STEP SIZE
-    Real*8,parameter    :: cepheid_Period_limit = 205.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
+    Real*8,parameter    :: cepheid_Period_limit = 60.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
     Real*8,parameter    :: cepheid_lower_Period_limit = 0.d0                    ! DISREGARD CEPHEID VARIABLES WITH PERIOD SHORTER THAN cepheid_lower_Period_limit
 
     Logical,parameter   :: separate_dataA = .false.!.true.               ! INCLUDE DATA SET A AS SINGLE POINTS IF SET IT TRUE
@@ -136,12 +136,12 @@ Module fiducial
     Logical,parameter   :: use_HP_per_MW_cepheid = .true.!.false.       ! USE HPs FOR EACH CEPHEID IN MW IF SET IT TRUE
     Logical,parameter   :: use_HP_for_MW_dataset = .false.!.true.       ! USE HP FOR MW DATASET IF SET IT TRUE (JEFFREY'S PRIOR)
     Logical,parameter   :: doing_R11_analysis = .true.  ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU'S SECTION 2 (LMC CEPHEIDS ALONE) OR FIT MW CEPHEIDS
-    Logical,parameter   :: fit_MW_cepheids_alone = .true.               ! FIT MW CEPHEIDS ALONE IF SET IT TRUE
+    Logical,parameter   :: fit_MW_cepheids_alone = .false.               ! FIT MW CEPHEIDS ALONE IF SET IT TRUE
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
-    Logical,parameter   :: use_prior_on_Zw = .false.!.true.              ! USE PRIOR ON Zw IF SET IT TRUE 
-    Logical,parameter   :: use_prior_on_bw = .false.!true.              ! USE PRIOR ON bw IF SET IT TRUE
+    Logical,parameter   :: use_prior_on_Zw = .false.              ! USE PRIOR ON Zw IF SET IT TRUE 
+    Logical,parameter   :: use_prior_on_bw = .true.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A

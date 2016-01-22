@@ -119,7 +119,7 @@ py.ylabel(r'$M_W$ residual [mag]')
 #py.legend(loc=0,numpoints=1,ncol=4)
 
 
-py.savefig('../output/chains/effective_HP_cepheids.pdf')
+py.savefig('../output/chains/effective_HP_cepheids_MW.pdf')
 
 exit()
 
