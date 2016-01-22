@@ -89,9 +89,10 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 15 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    Integer*4,parameter :: number_model_parameters = 23 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE), 12 FOR ALL R11 CEPHEIDS, 15 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
-    ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 15 FOR ALL R11 CEPHEIDS +
+    ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 23 FOR R11 DATA USING NGC4258 AS ANCHOR INCLUDING METALLICITY AND sigma_int PER R11 HOST,
+    !16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 15 FOR ALL R11 CEPHEIDS +
     ! MW CEPHEIDS ANS USING MW AS ANCHOR, 16 FOR ALL R11 CEPHEIDS + NGC4258 AND LMC AS ANCHORS, 15 FOR ALL R11 CEPHEIDS + NGC4258 AND MW AS ANCHORS,
     ! 16 FOR ALL R11 CEPHEIDS + MW AND LMC AS ANCHORS, 16 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
@@ -108,7 +109,7 @@ Module fiducial
     Integer*4,parameter :: UNIT_HP_FILE = 95           ! UNIT EFFECTIVE HPS FILE
 
     Real*8,parameter    :: step_size_changes = 1.d-2             ! CHANGES IN STEP SIZE
-    Real*8,parameter    :: cepheid_Period_limit = 60.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
+    Real*8,parameter    :: cepheid_Period_limit = 205.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
     Real*8,parameter    :: cepheid_lower_Period_limit = 0.d0                    ! DISREGARD CEPHEID VARIABLES WITH PERIOD SHORTER THAN cepheid_lower_Period_limit
 
     Logical,parameter   :: separate_dataA = .false.!.true.               ! INCLUDE DATA SET A AS SINGLE POINTS IF SET IT TRUE
@@ -142,6 +143,7 @@ Module fiducial
     Logical,parameter   :: use_prior_on_Zw = .true.              ! USE PRIOR ON Zw IF SET IT TRUE 
     Logical,parameter   :: use_prior_on_bw = .true.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
+    Logical,parameter   :: sigma_int_per_R11_host = .true.        ! USE sigma_int PER R11 HOST (INCLUDING NGC4258) IF SET IT TRUE
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 

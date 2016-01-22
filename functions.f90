@@ -2288,6 +2288,199 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
 
 end function log_R11_likelihood_W
 
+function log_R11_likelihood_W_sigma_int(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATION (4) IN R09
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: log_R11_likelihood_W_sigma_int,zpw_ref,bw,H0,Zw,av,normalizationA
+    Real*8,dimension(number_of_hosts_galaxies) :: mu0j,sigma_int 
+    Integer*4 :: m,index_host,number_cepheid
+
+    log_R11_likelihood_W_sigma_int = 0.d0
+
+    If (use_HP_per_host) then
+ 
+       If (using_jeffreys_prior) then
+
+          Do index_host=1,number_of_hosts_galaxies
+
+             normalizationA = 0.d0
+
+             number_cepheid = 0
+
+             Do m=1, size(Field)
+
+                If (host(index_host) .eq. Field(m)) then
+                       
+                   number_cepheid = number_cepheid + 1
+
+                   normalizationA = log( eF160WR11(m)**2 + sigma_int(index_host)**2 ) + normalizationA
+
+                End If
+
+             End Do
+
+             log_R11_likelihood_W_sigma_int = - dble(number_cepheid)*log(chi2R11_W_host(mu0j(index_host),mu0j(9),&
+                  zpw_ref,bw,Zw,sigma_int(index_host),index_host))/2.d0 - normalizationA/2.d0 + log_R11_likelihood_W_sigma_int
+
+          End Do
+
+       Else
+
+          print *, 'UNIFORM PRIOR NOT IMPLEMENTED YET. NEED TO CODE EXPRESSION WITH GAMMA FUNCTIONS'
+
+          stop
+
+       End If
+
+    Else
+
+       If (use_HP_per_cepheid) then
+
+          Do m=1,size(Field)
+
+             Do index_host=1,number_of_hosts_galaxies
+ 
+                If (host(index_host) .eq. Field(m)) then
+    
+                   If (using_jeffreys_prior) then
+
+                      print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+                      stop
+
+                   Else
+                       
+                      If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                         log_R11_likelihood_W_sigma_int = log(new_chi2(chi2R11_W(mu0j(index_host),mu0j(9),&
+                              zpw_ref,bw,Zw,sigma_int(index_host),m))) + &
+                              log(N_tilde_R11_W(sigma_int(index_host),m)) + log_R11_likelihood_W_sigma_int
+
+                      End If
+
+                   End If
+
+                End If
+
+             End Do
+
+          End Do
+
+       Else
+
+          Do m=1,size(Field)
+
+             Do index_host=1,number_of_hosts_galaxies
+ 
+                If (host(index_host) .eq. Field(m)) then
+    
+                   If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                      log_R11_likelihood_W_sigma_int = -chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,&
+                           sigma_int(index_host),m)/2.d0 + &
+                           log(N_tilde_R11_W(sigma_int(index_host),m)) + log_R11_likelihood_W_sigma_int
+
+                   End If
+
+                End If
+
+             End Do
+
+          End Do
+
+       End If
+
+    End If
+
+    Do index_host=1,number_of_hosts_galaxies-1
+
+       If (use_HP_in_SNIa) then
+
+          log_R11_likelihood_W_sigma_int = log(new_chi2(chi2R11_SNIa(mu0j(index_host),H0,av,index_host))) + &
+               log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W_sigma_int  
+
+       Else
+
+          log_R11_likelihood_W_sigma_int = -chi2R11_SNIa(mu0j(index_host),H0,av,index_host)/2.d0 + &
+               log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W_sigma_int
+
+       End If
+              
+    End Do
+        
+    If (use_HP_in_av) then
+
+       log_R11_likelihood_W_sigma_int = log(new_chi2((a_v - av)**2/sigma_a_v**2)) - &
+            log(2.d0*Pi*sigma_a_v**2)/2.d0  + log_R11_likelihood_W_sigma_int
+
+    Else
+
+       log_R11_likelihood_W_sigma_int = -((a_v - av)**2/sigma_a_v**2 + log(2.d0*Pi*sigma_a_v**2) )/2.d0  + &
+            log_R11_likelihood_W_sigma_int
+
+    End If
+        
+    If (use_HP_in_anchor) then
+
+       log_R11_likelihood_W_sigma_int =  log(new_chi2(chi2R11_anchor_NGC4258(mu0j(9)))) - &
+            log(2.d0*Pi*sigma_mu_0_NGC4258**2)/2.d0 + &
+            log_R11_likelihood_W_sigma_int
+
+    Else
+
+       log_R11_likelihood_W_sigma_int =  -(chi2R11_anchor_NGC4258(mu0j(9)) + log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 + &
+            log_R11_likelihood_W_sigma_int
+
+    End If
+
+    If (use_prior_on_zpw4258) then
+
+       log_R11_likelihood_W_sigma_int = -((zpw_ref - prior_zpw4258)**2/sigma_zpw4258**2 + log(2.d0*Pi*sigma_zpw4258**2) )/2.d0  +&
+            log_R11_likelihood_W_sigma_int
+
+    Else 
+
+       continue
+
+    End If
+
+    If (use_prior_on_Zw) then
+
+       log_R11_likelihood_W_sigma_int = -((Zw - prior_Zw)**2/sigma_Zw_prior**2 + log(2.d0*Pi*sigma_Zw_prior**2) )/2.d0  +&
+            log_R11_likelihood_W_sigma_int
+
+    Else 
+
+       continue
+
+    End If
+
+    If (use_prior_on_bw) then
+
+       log_R11_likelihood_W_sigma_int = -((bw - prior_bw_from_LMC)**2/sigma_bw_prior**2 + log(2.d0*Pi*sigma_bw_prior**2) )/2.d0  +&
+            log_R11_likelihood_W_sigma_int
+
+    Else 
+
+       continue
+
+    End If
+        
+    If ( abs(log_R11_likelihood_W_sigma_int) .ge. 0.d0 ) then
+
+       continue
+
+    Else 
+
+       log_R11_likelihood_W_sigma_int = -1.d10
+
+    End If
+
+end function log_R11_likelihood_W_sigma_int
+
 function log_R11_likelihood_W_cepheids(mu0j,zpw_ref,bw,Zw,sigma_int)    !    EQUATION (4) IN R09
 
     use arrays
@@ -3896,43 +4089,105 @@ subroutine set_covariance_matrix()
 
                  Else
 
-                    If (number_model_parameters .eq. 15) then
+                    If (sigma_int_per_R11_host) then
 
-                       Covguess(1,1) = sigma_mu1**2 
+                       If (number_model_parameters .eq. 23) then
 
-                       Covguess(2,2) = sigma_mu2**2 
+                          Covguess(1,1) = sigma_mu1**2 
 
-                       Covguess(3,3) = sigma_mu3**2 
+                          Covguess(2,2) = sigma_mu2**2 
 
-                       Covguess(4,4) = sigma_mu4**2 
+                          Covguess(3,3) = sigma_mu3**2 
 
-                       Covguess(5,5) = sigma_mu5**2 
+                          Covguess(4,4) = sigma_mu4**2 
 
-                       Covguess(6,6) = sigma_mu6**2 
+                          Covguess(5,5) = sigma_mu5**2 
 
-                       Covguess(7,7) = sigma_mu7**2 
+                          Covguess(6,6) = sigma_mu6**2 
 
-                       Covguess(8,8) = sigma_mu8**2 
+                          Covguess(7,7) = sigma_mu7**2 
 
-                       Covguess(9,9) = sigma_mu9**2 
+                          Covguess(8,8) = sigma_mu8**2 
 
-                       Covguess(10,10) = sigma_zpw**2
+                          Covguess(9,9) = sigma_mu9**2 
 
-                       Covguess(11,11) = sigma_bw**2 
+                          Covguess(10,10) = sigma_zpw**2
 
-                       Covguess(12,12) = sigma_H0**2 
+                          Covguess(11,11) = sigma_bw**2 
 
-                       Covguess(13,13) = sigma_Zw**2 
+                          Covguess(12,12) = sigma_H0**2 
 
-                       Covguess(14,14) = sigma_a_v**2
+                          Covguess(13,13) = sigma_Zw**2 
 
-                       Covguess(15,15) = sigma_sigma_int**2
+                          Covguess(14,14) = sigma_a_v**2
+
+                          Covguess(15,15) = sigma_sigma_int**2 
+
+                          Covguess(16,16) = sigma_sigma_int**2 
+
+                          Covguess(17,17) = sigma_sigma_int**2 
+
+                          Covguess(18,18) = sigma_sigma_int**2 
+
+                          Covguess(19,19) = sigma_sigma_int**2 
+
+                          Covguess(20,20) = sigma_sigma_int**2 
+
+                          Covguess(21,21) = sigma_sigma_int**2 
+
+                          Covguess(22,22) = sigma_sigma_int**2 
+
+                          Covguess(23,23) = sigma_sigma_int**2 
+
+                       Else
+
+                          print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE, IT MUST BE 23 FOR THE CURRENT CASE'
+
+                          stop
+
+                       End If
 
                     Else
 
-                       print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE AND COMPARE WITH EQUATION (18) IN R09'
+                       If (number_model_parameters .eq. 15) then
 
-                       stop
+                          Covguess(1,1) = sigma_mu1**2 
+
+                          Covguess(2,2) = sigma_mu2**2 
+
+                          Covguess(3,3) = sigma_mu3**2 
+
+                          Covguess(4,4) = sigma_mu4**2 
+
+                          Covguess(5,5) = sigma_mu5**2 
+
+                          Covguess(6,6) = sigma_mu6**2 
+
+                          Covguess(7,7) = sigma_mu7**2 
+
+                          Covguess(8,8) = sigma_mu8**2 
+
+                          Covguess(9,9) = sigma_mu9**2 
+
+                          Covguess(10,10) = sigma_zpw**2
+
+                          Covguess(11,11) = sigma_bw**2 
+
+                          Covguess(12,12) = sigma_H0**2 
+
+                          Covguess(13,13) = sigma_Zw**2 
+
+                          Covguess(14,14) = sigma_a_v**2
+
+                          Covguess(15,15) = sigma_sigma_int**2
+
+                       Else
+
+                          print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE AND COMPARE WITH EQUATION (18) IN R09'
+
+                          stop
+
+                       End If
 
                     End If
 
