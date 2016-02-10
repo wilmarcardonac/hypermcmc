@@ -18,9 +18,13 @@ Module fiducial
     Real*8,parameter    :: a_v = 0.697d0                ! TAKEN FROM PAGE 9 IN R11
     Real*8,parameter    :: a_cal = 0.d0                 ! AUXILIAR PARAMETER TO HAVE DIAGNONAL COVARIANCE MATRIX FOR LMC CEPHEID VARIABLES
     Real*8,parameter    :: NGC4258_distance = 7.60d0    ! TAKEN FROM PAGE 1 IN H13. UNITS : MPC
+    Real*8,parameter    :: NGC4258_distance_2015 = 7.08d0    ! TAKEN FROM PAGE 1 IN J. POLSHAW. UNITS : MPC
     Real*8,parameter    :: mu_0_NGC4258 = 5.d0*log10(NGC4258_distance) + 25.d0 ! DEFINITION OF DISTANCE MODULUS
+    Real*8,parameter    :: mu_0_NGC4258_2015 = 5.d0*log10(NGC4258_distance_2015) + 25.d0 ! DEFINITION OF DISTANCE MODULUS
     Real*8,parameter    :: LMC_distance = 49.97d-3       ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : MPC
     Real*8,parameter    :: mu_0_LMC = 5.d0*log10(LMC_distance) + 25.d0 
+    Real*8,parameter    :: LMC_distance_2015 = 51.82d-3  ! FROM ABSTRACT IN M. M. FAUSNAUGH (2015). UNITS : MPC
+    Real*8,parameter    :: mu_0_LMC_2015 = 5.d0*log10(LMC_distance_2015) + 25.d0 
     Real*8,parameter    :: meanOH_LMC = 8.5d0           ! MEAN METALLICITY FOR LMC CEPHEID VARIABLES ASSUMED BY EFSTATHIOU
     Real*8,parameter    :: meanOH_MW = 8.9d0           ! MEAN METALLICITY FOR MW CEPHEID VARIABLES ASSUMED BY EFSTATHIOU
     Real*8,parameter    :: prior_zpH = 28.d0
@@ -54,8 +58,12 @@ Module fiducial
     Real*8,parameter    :: sigma_a_v = 0.00201d0        ! TAKEN FROM PAGE 9 IN R11
     Real*8,parameter    :: sigma_a_cal = 0.04d0         ! TAKEN FROM PAGE 10 IN EFSTATHIOU'S PAPER
     Real*8,parameter    :: sigma_NGC4258_quadrature =  0.23d0    ! TAKEN FROM PAGE 1 IN H13. UNITS : MPC
+    Real*8,parameter    :: sigma_NGC4258_2015 =  0.86d0    ! TAKEN FROM PAGE 1 IN J. POLSHAW. UNITS : MPC
     Real*8,parameter    :: sigma_mu_0_NGC4258 = 5.d0/log(10.d0)/NGC4258_distance*sigma_NGC4258_quadrature ! ERROR ON DISTANCE MODULUS
+    Real*8,parameter    :: sigma_mu_0_NGC4258_2015 = 5.d0/log(10.d0)/NGC4258_distance_2015*sigma_NGC4258_2015 ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_LMC_quadrature = 1.13d-3 ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : MPC
+    Real*8,parameter    :: sigma_LMC_2015 = 3.23d-3  ! FROM ABSTRACT IN M. M. FAUSNAUGH (2015). UNITS : MPC
+    Real*8,parameter    :: sigma_mu_0_LMC_2015 = 5.d0/log(10.d0)/LMC_distance_2015*sigma_LMC_2015
     Real*8,parameter    :: sigma_mu_0_LMC = 5.d0/log(10.d0)/LMC_distance*sigma_LMC_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_zpH = 0.2d0
     Real*8,parameter    :: sigma_bH = 0.1d0
@@ -89,11 +97,12 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 19 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    Integer*4,parameter :: number_model_parameters = 27 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
     ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 15 FOR ALL R11 CEPHEIDS +
     ! MW CEPHEIDS ANS USING MW AS ANCHOR, 16 FOR ALL R11 CEPHEIDS + NGC4258 AND LMC AS ANCHORS, 15 FOR ALL R11 CEPHEIDS + NGC4258 AND MW AS ANCHORS,
-    ! 16 FOR ALL R11 CEPHEIDS + MW AND LMC AS ANCHORS, 16 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS
+    ! 16 FOR ALL R11 CEPHEIDS + MW AND LMC AS ANCHORS, 16 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS, 
+    ! 27 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS AND SIGMA INT PER HOST GALAXY
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
     Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
     Integer*4,parameter :: jumping_factor_update = 100           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)
@@ -142,6 +151,7 @@ Module fiducial
     Logical,parameter   :: use_prior_on_Zw = .false.!.true.              ! USE PRIOR ON Zw IF SET IT TRUE 
     Logical,parameter   :: use_prior_on_bw = .false.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
+    Logical,parameter   :: sigma_int_per_R11_host = .true.        ! TRUE FOR MAIN ANALYSIS: IT INCLUDES SIGMA INT PER R11 HOST 
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 
