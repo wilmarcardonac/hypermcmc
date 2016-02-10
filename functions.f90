@@ -1700,8 +1700,8 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
 
        log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  log(new_chi2(chi2R11_anchor_LMC(mu0j(10)))) - &
             log(2.d0*Pi*sigma_mu_0_LMC**2)/2.d0 + &
-            log(new_chi2(chi2R11_anchor_LMC_2015(mu0j(10)))) - &
-            log(2.d0*Pi*sigma_mu_0_LMC_2015**2)/2.d0 + &
+            !log(new_chi2(chi2R11_anchor_LMC_2015(mu0j(10)))) - &
+            !log(2.d0*Pi*sigma_mu_0_LMC_2015**2)/2.d0 + &
             log(new_chi2(chi2R11_anchor_NGC4258(mu0j(9)))) - log(2.d0*Pi*sigma_mu_0_NGC4258**2)/2.d0 + &
             log(new_chi2(chi2R11_anchor_NGC4258_2015(mu0j(9)))) - log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2)/2.d0 + &
             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
@@ -1709,14 +1709,14 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
     Else
 
        log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  -(chi2R11_anchor_LMC(mu0j(10)) + log(2.d0*Pi*sigma_mu_0_LMC**2))/2.d0 - &
-            (chi2R11_anchor_LMC_2015(mu0j(10)) + log(2.d0*Pi*sigma_mu_0_LMC_2015**2))/2.d0 - &
+            !(chi2R11_anchor_LMC_2015(mu0j(10)) + log(2.d0*Pi*sigma_mu_0_LMC_2015**2))/2.d0 - &
             (chi2R11_anchor_NGC4258(mu0j(9)) + log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 - &
             (chi2R11_anchor_NGC4258_2015(mu0j(9)) + log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2))/2.d0 + &
             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
 
     End If
 
-    If (use_prior_on_Zw) then
+    If (use_prior_on_Zw .and. use_metallicity) then
 
        log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = -((Zw - prior_Zw)**2/sigma_Zw_prior**2 + &
             log(2.d0*Pi*sigma_Zw_prior**2) )/2.d0  +&
@@ -3871,7 +3871,7 @@ subroutine set_covariance_matrix()
 
                     End If
 
-                 End If
+                 End If  ! H BAND
 
               Else
 
@@ -3883,9 +3883,77 @@ subroutine set_covariance_matrix()
 
                  Else
 
-                    print *,'W BAND NOT IMPLEMENTED WITHOUT METALLICITY DEPENDENCE FOR LMC+NGC4258+MW AS ANCHORS'
-                     
-                    stop
+                    If (sigma_int_per_R11_host) then
+
+                       If (number_model_parameters .eq. 26) then
+
+                          Covguess(1,1) = sigma_mu1**2 
+
+                          Covguess(2,2) = sigma_mu2**2 
+
+                          Covguess(3,3) = sigma_mu3**2 
+
+                          Covguess(4,4) = sigma_mu4**2 
+
+                          Covguess(5,5) = sigma_mu5**2 
+
+                          Covguess(6,6) = sigma_mu6**2 
+
+                          Covguess(7,7) = sigma_mu7**2 
+
+                          Covguess(8,8) = sigma_mu8**2 
+
+                          Covguess(9,9) = sigma_mu9**2 
+
+                          Covguess(10,10) = sigma_mu10**2 
+
+                          Covguess(11,11) = sigma_Mw**2
+
+                          Covguess(12,12) = sigma_bw**2 
+
+                          Covguess(13,13) = sigma_H0**2 
+
+                          Covguess(14,14) = sigma_a_v**2
+
+                          Covguess(15,15) = sigma_a_cal**2
+
+                          Covguess(16,16) = sigma_sigma_int**2
+
+                          Covguess(17,17) = sigma_sigma_int**2
+
+                          Covguess(18,18) = sigma_sigma_int**2
+
+                          Covguess(19,19) = sigma_sigma_int**2
+
+                          Covguess(20,20) = sigma_sigma_int**2
+
+                          Covguess(21,21) = sigma_sigma_int**2
+
+                          Covguess(22,22) = sigma_sigma_int**2
+
+                          Covguess(23,23) = sigma_sigma_int**2
+
+                          Covguess(24,24) = sigma_sigma_int**2
+
+                          Covguess(25,25) = sigma_sigma_int**2
+
+                          Covguess(26,26) = sigma_sigma_int**2
+
+                       Else
+
+                          print *,'WRONG NUMBER OF MODEL PARAMETERS (MUST BE 27 FOR CURRENT CASE). CHECK FIDUCIAL MODULE'
+
+                          stop
+
+                       End If
+
+                    Else
+
+                       print *,'ONLY SIGMA INT PER GALAXY IMPLEMENTED WITHOUT METALLICITY'
+
+                       stop
+
+                    End If
 
                  End If
 
