@@ -6,13 +6,13 @@ number_of_parameters = 26 # 14 NGC4258 AS ANCHOR, 16 LMC AS ANCHOR, 15 MW AS ANC
 
 samples = loadMCSamples('../output/chains/mcmc_final_output_HP',settings={'ignore_rows': 0.2 }) 
 
-#g = plots.getSinglePlotter()
+g = plots.getSinglePlotter()
 
-#g.settings.rcSizes(axes_fontsize = 2,lab_fontsize = 7)
+g.settings.rcSizes(axes_fontsize = 2,lab_fontsize = 7)
 
-#g.triangle_plot(samples,filled=True)
+g.triangle_plot(samples,['mu04258','muLMC','Mw','bw','H0','log10sigma_int_LMC','log10sigma_int_MW'],filled=True)
 
-#g.export('../output/chains/triangle_figure_HP_R11_W.pdf')
+g.export('../output/chains/triangle_figure_HP_R11_W.pdf')
 
 p = samples.getParams()
 

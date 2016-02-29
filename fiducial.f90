@@ -82,7 +82,7 @@ Module fiducial
     Real*8,parameter    :: sigma_zpwLMC = 0.78d0
     Real*8,parameter    :: sigma_Mw = 0.05d0
     Real*8,parameter    :: sigma_Zw = 0.25d0
-    Real*8,parameter    :: sigma_Zw_prior = 0.02d0
+    Real*8,parameter    :: sigma_Zw_prior = 0.02d0 ! 0.02d0 STRONG PRIOR; 0.25d0 WEAK PRIOR
     Real*8,parameter    :: sigma_H0 = 1.0d-1
     Real*8,parameter    :: sigma_bw_prior = 0.1d0
 
@@ -135,7 +135,7 @@ Module fiducial
     Logical,parameter   :: use_NGC4258_as_anchor = .true.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_LMC_as_anchor = .true.           ! USE LMC AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_MW_as_anchor = .true.            ! USE MW AS ANCHOR IF SET IT TRUE
-    Logical,parameter   :: use_metallicity = .false.!.true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
+    Logical,parameter   :: use_metallicity = .false.!true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
     Logical,parameter   :: use_H_band = .false.!.true.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
     Logical,parameter   :: use_HP_in_SNIa = .true.!.false.               ! USE HPs WHEN COMPUTING SNIa CHI2
     Logical,parameter   :: use_HP_in_av = .false.                ! USE HPs WHEN COMPUTINNG av CHI2
@@ -148,7 +148,7 @@ Module fiducial
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
-    Logical,parameter   :: use_prior_on_Zw = .true.              ! USE PRIOR ON Zw IF SET IT TRUE 
+    Logical,parameter   :: use_prior_on_Zw = .false.              ! USE PRIOR ON Zw IF SET IT TRUE 
     Logical,parameter   :: use_prior_on_bw = .false.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
     Logical,parameter   :: sigma_int_per_R11_host = .true.        ! TRUE FOR MAIN ANALYSIS: IT INCLUDES SIGMA INT PER R11 HOST 

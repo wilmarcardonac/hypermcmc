@@ -40,6 +40,8 @@ Program mcmc
 !##########################################################
 ! ASSIGNMENTS AND INITIALIZATION OF RANDOM NUMBER GENERATOR
 !##########################################################
+!    print *, 'Efstathiou :', mu_0_NGC4258, '2015 :', mu_0_NGC4258_2015,' LMC :', mu_0_LMC
+ !   stop
 
     galaxy = host(1)
 
@@ -282,57 +284,77 @@ Program mcmc
 
                       Else
 
-                         old_point(1) = prior_mu1
+                         If (sigma_int_per_R11_host) then
 
-                         old_point(2) = prior_mu2
+                            If (number_model_parameters .eq. 26) then
 
-                         old_point(3) = prior_mu3 
+                               old_point(1) = prior_mu1
 
-                         old_point(4) = prior_mu4
+                               old_point(2) = prior_mu2
 
-                         old_point(5) = prior_mu5
+                               old_point(3) = prior_mu3 
 
-                         old_point(6) = prior_mu6
+                               old_point(4) = prior_mu4
 
-                         old_point(7) = prior_mu7
+                               old_point(5) = prior_mu5
 
-                         old_point(8) = prior_mu8
+                               old_point(6) = prior_mu6
 
-                         old_point(9) = prior_mu9
+                               old_point(7) = prior_mu7
 
-                         old_point(10) = prior_mu10
+                               old_point(8) = prior_mu8
 
-                         old_point(11) = prior_Mw
+                               old_point(9) = prior_mu9
 
-                         old_point(12) = prior_bw
+                               old_point(10) = prior_mu10
 
-                         old_point(13) = prior_H0
+                               old_point(11) = prior_Mw
 
-                         old_point(14) = a_v
+                               old_point(12) = prior_bw
 
-                         old_point(15) = a_cal
+                               old_point(13) = prior_H0
 
-                         old_point(16) = log10(prior_sigma_int_LMC)
+                               old_point(14) = a_v
 
-                         old_point(17) = log10(prior_sigma_int_MW)
+                               old_point(15) = a_cal
 
-                         old_point(18) = log10(prior_sigma_int)
+                               old_point(16) = log10(prior_sigma_int_LMC)
 
-                         old_point(19) = log10(prior_sigma_int)
+                               old_point(17) = log10(prior_sigma_int_MW)
 
-                         old_point(20) = log10(prior_sigma_int)
+                               old_point(18) = log10(prior_sigma_int)
 
-                         old_point(21) = log10(prior_sigma_int)
+                               old_point(19) = log10(prior_sigma_int)
 
-                         old_point(22) = log10(prior_sigma_int)
+                               old_point(20) = log10(prior_sigma_int)
 
-                         old_point(23) = log10(prior_sigma_int)
+                               old_point(21) = log10(prior_sigma_int)
 
-                         old_point(24) = log10(prior_sigma_int)
+                               old_point(22) = log10(prior_sigma_int)
 
-                         old_point(25) = log10(prior_sigma_int)
+                               old_point(23) = log10(prior_sigma_int)
 
-                         old_point(26) = log10(prior_sigma_int)
+                               old_point(24) = log10(prior_sigma_int)
+
+                               old_point(25) = log10(prior_sigma_int)
+
+                               old_point(26) = log10(prior_sigma_int)
+
+                            Else
+
+                               print *, 'THERE MUST BE 26 PARAMETERS'
+
+                               stop
+
+                            End If
+
+                         Else
+
+                            print *, 'ONLY SIGMA INT PER GALAXY WITHOUT METALLICITY IMPLEMENTED'
+
+                            stop
+
+                         End If
 
                       End If
 
@@ -1665,7 +1687,7 @@ Program mcmc
                                  number_model_parameters-16),&
                                  old_point(number_model_parameters-15),old_point(number_model_parameters-14),&
                                  old_point(number_model_parameters-13),0.d0,&
-                                 old_point(number_model_parameters-11),old_point(number_model_parameters-10),&
+                                 old_point(number_model_parameters-12),old_point(number_model_parameters-11),&
                                  old_point(18:26),old_point(16),old_point(17))
 
                             old_point(16) = log10(old_point(16))
@@ -4725,7 +4747,7 @@ Program mcmc
                                     number_model_parameters-16),&
                                     current_point(number_model_parameters-15),current_point(number_model_parameters-14),&
                                     current_point(number_model_parameters-13),0.d0,&
-                                    current_point(number_model_parameters-11),current_point(number_model_parameters-10),&
+                                    current_point(number_model_parameters-12),current_point(number_model_parameters-11),&
                                     current_point(18:26),current_point(16),current_point(17))
 
                                current_point(16) = log10(current_point(16))

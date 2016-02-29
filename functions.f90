@@ -3941,7 +3941,7 @@ subroutine set_covariance_matrix()
 
                        Else
 
-                          print *,'WRONG NUMBER OF MODEL PARAMETERS (MUST BE 27 FOR CURRENT CASE). CHECK FIDUCIAL MODULE'
+                          print *,'WRONG NUMBER OF MODEL PARAMETERS (MUST BE 26 FOR CURRENT CASE). CHECK FIDUCIAL MODULE'
 
                           stop
 
