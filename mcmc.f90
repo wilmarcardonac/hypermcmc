@@ -5735,9 +5735,112 @@ Program mcmc
 
               If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. use_MW_as_anchor) then
     
-                 print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
+                 If (use_HP_in_SNIa) then
 
-                 stop
+                    open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_SNIa.txt')
+
+                    write(UNIT_HP_FILE,*) 'n4258', bestfit(9)-bestfit(9),&
+                         bestfit(9)+5.d0*log10(bestfit(13))-25.d0,0.d0,&
+                         bestfit(9)+5.d0*log10(bestfit(13))-25.d0,1.d0
+
+                    Do m=1,number_of_hosts_galaxies-1
+
+                       If ( chi2R11_SNIa(bestfit(m),bestfit(13),bestfit(15),m) .le. 1.d0) then
+
+                          write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                               bestfit(m)+5.d0*log10(bestfit(13))-25.d0,1.d0
+
+                       Else
+
+                          write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                               bestfit(m)+5.d0*log10(bestfit(13))-25.d0,&
+                               1.d0/chi2R11_SNIa(bestfit(m),bestfit(13),bestfit(15),m)
+
+                       End If
+
+                    End Do
+
+                    close(UNIT_HP_FILE)
+
+                 Else
+
+                    continue
+
+                 End If
+
+                 If (use_HP_in_anchor) then
+
+                    If ( chi2R11_anchor_LMC(bestfit(10)) .le. 1.d0) then
+
+                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR LMC IS: ',1.d0
+
+                    Else
+
+                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR LMC IS: ',1.d0/chi2R11_anchor_LMC(bestfit(10))
+
+                    End If
+
+                    If ( chi2R11_anchor_NGC4258(bestfit(9)) .le. 1.d0) then
+
+                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2013) IS: ',1.d0
+
+                    Else
+
+                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2013) IS: ',1.d0/chi2R11_anchor_NGC4258(bestfit(9))
+
+                    End If
+
+                    If ( chi2R11_anchor_NGC4258_2015(bestfit(9)) .le. 1.d0) then
+
+                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2015) IS: ',1.d0
+
+                    Else
+
+                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2015) IS: ',1.d0/chi2R11_anchor_NGC4258_2015(bestfit(9))
+
+                    End If
+
+                 Else
+
+                    continue
+
+                 End If
+
+                 open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids.txt')
+
+                 Do m=1,size(Field)
+
+                    Do n=1,number_of_hosts_galaxies
+
+                       If (host(n) .eq. Field(m)) then
+
+                          If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                             If ( chi2R11_W_E14(bestfit(n),bestfit(11),bestfit(12),bestfit(14),bestfit(16+n),m)&
+                                  .le. 1.d0 ) then
+
+                                write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
+                                     P_L_relation_passband_W_E14(bestfit(n),bestfit(11),bestfit(12),bestfit(14),&
+                                     OHR11(m),PeriodR11(m)),eF160WR11(m), 1.d0, Field(m)
+
+                             Else
+
+                                write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
+                                     P_L_relation_passband_W_E14(bestfit(n),bestfit(11),bestfit(12),bestfit(14),&
+                                     OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W_E14(bestfit(n),bestfit(11),&
+                                     bestfit(12),bestfit(14),bestfit(16+n),m), Field(m)
+
+                             End If
+
+                          End If
+
+                       End If
+
+                    End Do
+
+                 End Do
+
+                 close(UNIT_HP_FILE)
 
               Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
