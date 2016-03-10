@@ -469,7 +469,7 @@ function log_Efstathiou_likelihood(A,bw,sigma_int)    !    It computes equation 
              chi2 = ( observed_wesenheit_magnitude(H(m),V(m),II(m)) - wesenheit_magnitude(A,bw,Period(m)) )**2/&
                   ( Sigma_m(m)**2 + sigma_int**2 ) + chi2
 
-             normalization = log(Sigma_m(m)**2 + sigma_int**2) + normalization 
+             normalization = log(2.d0*Pi*(Sigma_m(m)**2 + sigma_int**2)) + normalization 
 
           End If
 

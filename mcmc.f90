@@ -1611,7 +1611,12 @@ Program mcmc
           write(UNIT_EXE_FILE,*) 'COMPUTING LOG_LIKELIHOOD FOR INITIAL POINT'
 
           ! COMPUTE INITIAL LIKELIHOOD
-          old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),prior_sigma_int_LMC) 
+
+          old_point(3) = 10**(old_point(3))   ! sigma_int
+
+          old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),old_point(3)) 
+
+          old_point(3) = log10(old_point(3))   ! log10(sigma_int)
 
           open(UNIT_PARAMNAMES_FILE,file='./output/chains/mcmc_final_output.paramnames')    !    OPEN FILE WITH PARAMETER NAMES NEEDED BY GETDIST
 
@@ -4165,7 +4170,11 @@ Program mcmc
 
              Else
 
-                current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int_LMC)
+                current_point(3) = 10**(current_point(3)) ! sigma_int
+
+                current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),current_point(3))
+
+                current_point(3) = log10(current_point(3)) ! log10(sigma_int)
 
              End If
 
