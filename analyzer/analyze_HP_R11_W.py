@@ -14,6 +14,14 @@ g.triangle_plot(samples,['mu04258','muLMC','Mw','bw','H0','log10sigma_int_LMC','
 
 g.export('../output/chains/triangle_figure_HP_R11_W.pdf')
 
+f = plots.getSinglePlotter()
+
+f.settings.rcSizes(axes_fontsize = 2,lab_fontsize = 7)
+
+f.triangle_plot(samples,['mu01','mu02','mu03','mu04','mu05','mu06','mu07','mu08','Mw','bw','H0'],filled=True)
+
+f.export('../output/chains/triangle_figure_HP_R11_W_2.pdf')
+
 p = samples.getParams()
 
 samples.addDerived(p.mu01 - p.mu04258, name='mu01_mu04258', label='\mu_{0,1}-\mu_{0,4258}')
@@ -33,6 +41,28 @@ samples.addDerived(p.mu07 - p.mu04258, name='mu07_mu04258', label='\mu_{0,7}-\mu
 samples.addDerived(p.mu08 - p.mu04258, name='mu08_mu04258', label='\mu_{0,8}-\mu_{0,4258}')
 
 samples.addDerived(p.mu04258 + 5.*np.log10(p.H0) - 25., name='mu04258_5av', label='m^0_{v,4258}+5a_v')
+
+samples.addDerived(np.power(10,p.log10sigma_int_LMC),name='sigma_int_LMC',label='\sigma_{int}^{LMC}')
+
+samples.addDerived(np.power(10,p.log10sigma_int_MW),name='sigma_int_MW',label='\sigma_{int}^{MW}')
+
+samples.addDerived(np.power(10,p.log10sigma_int_1),name='sigma_int_1',label='\sigma_{int,1}')
+
+samples.addDerived(np.power(10,p.log10sigma_int_2),name='sigma_int_2',label='\sigma_{int,2}')
+
+samples.addDerived(np.power(10,p.log10sigma_int_3),name='sigma_int_3',label='\sigma_{int,3}')
+
+samples.addDerived(np.power(10,p.log10sigma_int_4),name='sigma_int_4',label='\sigma_{int,4}')
+
+samples.addDerived(np.power(10,p.log10sigma_int_5),name='sigma_int_5',label='\sigma_{int,5}')
+
+samples.addDerived(np.power(10,p.log10sigma_int_6),name='sigma_int_6',label='\sigma_{int,6}')
+
+samples.addDerived(np.power(10,p.log10sigma_int_7),name='sigma_int_7',label='\sigma_{int,7}')
+
+samples.addDerived(np.power(10,p.log10sigma_int_8),name='sigma_int_8',label='\sigma_{int,8}')
+
+samples.addDerived(np.power(10,p.log10sigma_int_9),name='sigma_int_9',label='\sigma_{int,9}')
 
 #samples.addDerived(p.mu01 + 5.*np.log10(p.H0) - 25. - 5.*p.av, name='mv1', label='m_{v,1}')
 
@@ -79,6 +109,14 @@ covariance_matrix = samples.getCov(nparam=number_of_parameters)
 covariance_matrix_2 = covmat.CovMat(matrix=covariance_matrix)
 
 covariance_matrix_2.saveToFile('../output/chains/covariance_matrix.txt')
+
+h = plots.getSubplotPlotter()
+
+h.settings.rcSizes(axes_fontsize = 2, lab_fontsize = 7)
+
+h.plots_1d(samples,['sigma_int_LMC','sigma_int_MW','sigma_int_1','sigma_int_2','sigma_int_3','sigma_int_4','sigma_int_5','sigma_int_6','sigma_int_7','sigma_int_8','sigma_int_9'],nx=3)
+
+h.export('../output/chains/1D_sigma_int_plots.pdf')
 
 print 'ANALYZE SCRIPT ENDED'
 
