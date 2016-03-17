@@ -708,7 +708,7 @@ Program mcmc
 
              old_point(1) = prior_A         ! A 
              old_point(2) = prior_bw        ! bw 
-             !old_point(3) = prior_sigma_int ! sigma_int 
+             old_point(3) = log10(prior_sigma_int) ! log10(sigma_int) 
  
           End If
 
@@ -1336,7 +1336,7 @@ Program mcmc
 
              x_old(1) = genunf(real(prior_A - sigma_A),real(prior_A + sigma_A))         ! A
              x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
-             !x_old(3) = genunf(real(-10.d0),real(0.d0)) ! log10(sigma_int)
+             x_old(3) = genunf(real(-3.d0),real(-0.7d0)) ! log10(sigma_int)
 
           End If
 
@@ -1732,8 +1732,12 @@ Program mcmc
 
           Else
 
+             old_point(3) = 10**(old_point(3))
+
 !             old_loglikelihood = log_Efstathiou_likelihood_hyperparameters(old_point(1),old_point(2),prior_sigma_int)
-             old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),prior_sigma_int_LMC)
+             old_loglikelihood = log_likelihood_ngc4258(old_point(1),old_point(2),old_point(3))
+
+             old_point(3) = log10(old_point(3))
 
           End If
 
@@ -2567,6 +2571,9 @@ Program mcmc
           paramnames(2) = 'bw'
           latexname(2) = 'b_w'
 
+          paramnames(3) = 'log10sigma_int'
+          latexname(3) = '\log_{10}\sigma_{int}'
+
           Do m=1,number_model_parameters
 
              write(UNIT_PARAMNAMES_FILE,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
@@ -3178,6 +3185,8 @@ Program mcmc
           write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    0.    50.'
 
           write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    -20.    0.'
+
+          write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    -3.    -0.7'
 
           !    write(17,*) 'sigma_int    1.e-10    1 '
 
@@ -4094,7 +4103,7 @@ Program mcmc
 
           plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
           plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
-          !plausibility(3) =  (x_new(3) .gt. real(0.d0)) .or. (x_new(3) .lt. real(-10.d0))    ! limit log10(sigma_int)
+          plausibility(3) =  (x_new(3) .lt. real(-3.d0)) .or. (x_new(3) .gt. real(-0.7d0))    ! limit log10(sigma_int)
 
        End If
 
@@ -4508,8 +4517,11 @@ Program mcmc
 
 !                   current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),&
  !                       current_point(2),prior_sigma_int)
+                   current_point(3) = 10**(current_point(3))
 
-                   current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),prior_sigma_int_LMC)
+                   current_loglikelihood = log_likelihood_ngc4258(current_point(1),current_point(2),current_point(3))
+
+                   current_point(3) = log10(current_point(3))
               
                 End If
 
@@ -5615,35 +5627,35 @@ Program mcmc
 
               open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids.txt')
 
-              Do m=1,size(Name)
+              Do m=1,size(Field)
+
+                 If (host(9) .eq. Field(m)) then
                  
-                 If ( (Period(m) .gt. cepheid_lower_Period_limit) .and. (Period(m) .lt. cepheid_Period_limit)) then
+                    If ( (PeriodR11(m) .gt. cepheid_lower_Period_limit) .and. (PeriodR11(m) .lt. cepheid_Period_limit)) then
 
-                    If (using_jeffreys_prior) then
-
-                       write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
-                            1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int,m)
-                    
-                    Else
-
-                       If (chi2_i(bestfit(1),bestfit(2),prior_sigma_int_LMC,m) .le. 1.d0 ) then
-
-                          write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', 1.d0
-
-                          write(UNIT_HP_FILE,*) Period(m), observed_wesenheit_magnitude(H(m),V(m),II(m)),&
-                               observed_wesenheit_magnitude(H(m),V(m),II(m)) - &
-                               wesenheit_magnitude(bestfit(1),bestfit(2),Period(m)),Sigma_m(m), 1.d0, 'LMC'
-
+                       If (using_jeffreys_prior) then
+                          
+                          continue
+!                          write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
+ !                              1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
                        Else
 
-                          write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
-                               1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int_LMC,m)
+                          If (chi2R11_W_3(bestfit(1),bestfit(2),10**(bestfit(3)),m) .le. 1.d0 ) then
 
-                          write(UNIT_HP_FILE,*) Period(m), observed_wesenheit_magnitude(H(m),V(m),II(m)),&
-                               observed_wesenheit_magnitude(H(m),V(m),II(m)) - &
-                               wesenheit_magnitude(bestfit(1),bestfit(2),Period(m)), Sigma_m(m), &
-                               1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int_LMC,m), 'LMC'
+                             write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)),&
+                                  observed_m_W(F160WR11(m),VIR11(m)) - &
+                                  wesenheit_magnitude(bestfit(1),bestfit(2),PeriodR11(m)),eF160WR11(m), 1.d0, host(9)
+
+
+                          Else
+
+                             write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)),&
+                                  observed_m_W(F160WR11(m),VIR11(m)) - &
+                                  wesenheit_magnitude(bestfit(1),bestfit(2),PeriodR11(m)), eF160WR11(m), &
+                                  1.d0/chi2R11_W_3(bestfit(1),bestfit(2),10**(bestfit(3)),m), host(9)
+
+                          End If
 
                        End If
 
@@ -5657,7 +5669,7 @@ Program mcmc
 
               write(UNIT_EXE_FILE,*) '\ln P(\vec{w},D) at the bestfit is ', &
                    ! log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),prior_sigma_int)
-                   log_Efstathiou_likelihood(bestfit(1),bestfit(2),prior_sigma_int_LMC)
+                   log_likelihood_ngc4258(bestfit(1),bestfit(2),10**(bestfit(3)))
            
            End If
 
