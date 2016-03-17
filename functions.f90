@@ -1703,8 +1703,18 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
             !log(new_chi2(chi2R11_anchor_LMC_2015(mu0j(10)))) - &
             !log(2.d0*Pi*sigma_mu_0_LMC_2015**2)/2.d0 + &
             log(new_chi2(chi2R11_anchor_NGC4258(mu0j(9)))) - log(2.d0*Pi*sigma_mu_0_NGC4258**2)/2.d0 + &
-            log(new_chi2(chi2R11_anchor_NGC4258_2015(mu0j(9)))) - log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2)/2.d0 + &
+!            log(new_chi2(chi2R11_anchor_NGC4258_2015(mu0j(9)))) - log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2)/2.d0 + &
             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
+       If (include_mu_0_NGC4258_2015) then
+
+          log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_anchor_NGC4258_2015(mu0j(9)))) &
+               - log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2)/2.d0 + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+       Else
+
+          continue
+
+       End If
 
     Else
 

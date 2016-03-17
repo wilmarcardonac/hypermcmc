@@ -97,7 +97,7 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 16 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    Integer*4,parameter :: number_model_parameters = 27 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
     ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 15 FOR ALL R11 CEPHEIDS +
     ! MW CEPHEIDS ANS USING MW AS ANCHOR, 16 FOR ALL R11 CEPHEIDS + NGC4258 AND LMC AS ANCHORS, 15 FOR ALL R11 CEPHEIDS + NGC4258 AND MW AS ANCHORS,
@@ -152,8 +152,9 @@ Module fiducial
     Logical,parameter   :: use_prior_on_Zw = .true.              ! USE PRIOR ON Zw IF SET IT TRUE 
     Logical,parameter   :: use_prior_on_bw = .false.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
-    Logical,parameter   :: sigma_int_per_R11_host = .false.        ! TRUE FOR MAIN ANALYSIS: IT INCLUDES SIGMA INT PER R11 HOST 
     Logical,parameter   :: varying_sigma_int = .false.            ! TRUE IF VARYING sigma_int IN MCMC WHEN NO sigma_int_per_R11_host, SET TO FALSE OTHERWISE
+    Logical,parameter   :: sigma_int_per_R11_host = .true.        ! TRUE FOR MAIN ANALYSIS: IT INCLUDES SIGMA INT PER R11 HOST 
+    Logical,parameter   :: include_mu_0_NGC4258_2015 = .false.    ! TRUE TO INCLUDE DISTANCE TO NGC4258 FROM 2015, FALSE TO INCLUDE ONLY MEASUREMENT FROM 2013
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 

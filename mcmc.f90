@@ -6022,13 +6022,21 @@ Program mcmc
 
                     End If
 
-                    If ( chi2R11_anchor_NGC4258_2015(bestfit(9)) .le. 1.d0) then
+                    If (include_mu_0_NGC4258_2015) then
 
-                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2015) IS: ',1.d0
+                       If ( chi2R11_anchor_NGC4258_2015(bestfit(9)) .le. 1.d0) then
+
+                          write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2015) IS: ',1.d0
+
+                       Else
+
+                          write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2015) IS: ',1.d0/chi2R11_anchor_NGC4258_2015(bestfit(9))
+
+                       End If
 
                     Else
 
-                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2015) IS: ',1.d0/chi2R11_anchor_NGC4258_2015(bestfit(9))
+                       continue 
 
                     End If
 
@@ -6038,7 +6046,7 @@ Program mcmc
 
                  End If
 
-                 open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids.txt')
+                 open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_R11.txt')
 
                  Do m=1,size(Field)
 
@@ -6048,7 +6056,7 @@ Program mcmc
 
                           If (PeriodR11(m) .lt. cepheid_Period_limit) then
 
-                             If ( chi2R11_W_E14(bestfit(n),bestfit(11),bestfit(12),bestfit(14),bestfit(16+n),m)&
+                             If ( chi2R11_W_E14(bestfit(n),bestfit(11),bestfit(12),bestfit(14),10**(bestfit(18+n)),m)&
                                   .le. 1.d0 ) then
 
                                 write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
@@ -6060,7 +6068,7 @@ Program mcmc
                                 write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
                                      P_L_relation_passband_W_E14(bestfit(n),bestfit(11),bestfit(12),bestfit(14),&
                                      OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W_E14(bestfit(n),bestfit(11),&
-                                     bestfit(12),bestfit(14),bestfit(16+n),m), Field(m)
+                                     bestfit(12),bestfit(14),10**(bestfit(18+n)),m), Field(m)
 
                              End If
 
@@ -6069,6 +6077,62 @@ Program mcmc
                        End If
 
                     End Do
+
+                 End Do
+
+                 close(UNIT_HP_FILE)
+
+                 open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_LMC.txt')
+
+                 Do m=1,size(Name)
+
+                    If (Period(m) .lt. cepheid_Period_limit) then
+
+                       If ( chi2R11_W_LMC_E14(bestfit(10),bestfit(11),bestfit(12),bestfit(14),10**(bestfit(17)),m)&
+                            .le. 1.d0 ) then
+
+                          write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)-II(m)) - &
+                               P_L_relation_passband_W_E14(bestfit(10),bestfit(11),bestfit(12),bestfit(14),&
+                               meanOH_LMC,Period(m)),Sigma_m(m), 1.d0, 'LMC'
+
+                       Else
+
+                          write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)-II(m)) - &
+                               P_L_relation_passband_W_E14(bestfit(10),bestfit(11),bestfit(12),bestfit(14),&
+                               meanOH_LMC,Period(m)), Sigma_m(m), 1.d0/chi2R11_W_LMC_E14(bestfit(10),bestfit(11),&
+                               bestfit(12),bestfit(14),10**(bestfit(17)),m), 'LMC'
+
+                       End If
+
+                    End If
+
+                 End Do
+
+                 close(UNIT_HP_FILE)
+
+                 open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_MW.txt')
+
+                 Do m=1,size(FieldHipp)
+
+                    If (10**(logP(m)) .lt. cepheid_Period_limit) then
+
+                       If ( chi2R11_W_MW(bestfit(11),bestfit(12),bestfit(14),10**(bestfit(18)),m)&
+                            .le. 1.d0 ) then
+
+                          write(UNIT_HP_FILE,*) 10**(logP(m)), Mw(m) - &
+                               P_L_relation_passband_W_E14(0.d0,bestfit(11),bestfit(12),bestfit(14),&
+                               meanOH_MW,10**(logP(m))),SigmaMw(m), 1.d0, 'MW'
+
+                       Else
+
+                          write(UNIT_HP_FILE,*) 10**(logP(m)), Mw(m) - &
+                               P_L_relation_passband_W_E14(0.d0,bestfit(11),bestfit(12),bestfit(14),&
+                               meanOH_MW,10**(logP(m))), SigmaMw(m), 1.d0/chi2R11_W_MW(bestfit(11),&
+                               bestfit(12),bestfit(14),10**(bestfit(18)),m), 'MW'
+
+                       End If
+
+                    End If
 
                  End Do
 
