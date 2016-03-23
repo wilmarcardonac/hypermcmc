@@ -658,11 +658,25 @@ Program mcmc
 
              If (fit_MW_cepheids_alone) then
 
-                old_point(1) = prior_Mw         ! Mw
+                If (use_metallicity) then
 
-                old_point(2) = prior_bw        ! bw 
+                   old_point(1) = prior_Mw         ! Mw
 
-                old_point(3) = log10(prior_sigma_int_MW) ! log10(sigma_int_MW)
+                   old_point(2) = prior_bw        ! bw 
+
+                   old_point(3) = prior_Zw
+
+                   old_point(4) = log10(prior_sigma_int_MW) ! log10(sigma_int_MW)
+
+                Else
+
+                   old_point(1) = prior_Mw         ! Mw
+
+                   old_point(2) = prior_bw        ! bw 
+
+                   old_point(3) = log10(prior_sigma_int_MW) ! log10(sigma_int_MW)
+
+                End If
 
              Else
 
@@ -1250,11 +1264,25 @@ Program mcmc
 
              If (fit_MW_cepheids_alone) then
 
-                x_old(1) = genunf(real(prior_Mw - sigma_Mw),real(prior_Mw + sigma_Mw))         ! Mw
+                If (use_metallicity) then
 
-                x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
+                   x_old(1) = genunf(real(prior_Mw - sigma_Mw),real(prior_Mw + sigma_Mw))         ! Mw
 
-                x_old(3) = genunf(real(-3.d0),real(-0.7d0)) ! log10(sigma_int_MW)
+                   x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
+
+                   x_old(3) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+
+                   x_old(4) = genunf(real(-3.d0),real(-0.7d0)) ! log10(sigma_int_MW)
+
+                Else
+
+                   x_old(1) = genunf(real(prior_Mw - sigma_Mw),real(prior_Mw + sigma_Mw))         ! Mw
+
+                   x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
+
+                   x_old(3) = genunf(real(-3.d0),real(-0.7d0)) ! log10(sigma_int_MW)
+
+                End If
 
              Else
 
@@ -1619,11 +1647,24 @@ Program mcmc
 
              If (fit_MW_cepheids_alone) then 
 
-                old_point(3) = 10**(old_point(3))
+                If (use_metallicity) then
 
-                old_loglikelihood = log_likelihood_W_MW_alone(old_point(1),old_point(2),old_point(3))
+                   old_point(4) = 10**(old_point(4))
 
-                old_point(3) = log10(old_point(3))
+                   old_loglikelihood = log_likelihood_W_MW_alone_2(old_point(1),old_point(2),old_point(3),&
+                        old_point(4))
+
+                   old_point(4) = log10(old_point(4))
+
+                Else
+
+                   old_point(3) = 10**(old_point(3))
+
+                   old_loglikelihood = log_likelihood_W_MW_alone(old_point(1),old_point(2),old_point(3))
+
+                   old_point(3) = log10(old_point(3))
+
+                End If
 
              Else
 
@@ -2389,14 +2430,32 @@ Program mcmc
 
           If (fit_MW_cepheids_alone) then
              
-             paramnames(1) = 'Mw'
-             latexname(1) = 'M_w'
+             If (use_metallicity) then
 
-             paramnames(2) = 'bw'
-             latexname(2) = 'b_w'
+                paramnames(1) = 'Mw'
+                latexname(1) = 'M_w'
 
-             paramnames(3) = 'log10sigma_int_MW'
-             latexname(3) = '\log_{10}\sigma_{int}^{MW}'
+                paramnames(2) = 'bw'
+                latexname(2) = 'b_w'
+
+                paramnames(3) = 'Zw'
+                latexname(3) = 'Z_w'
+
+                paramnames(4) = 'log10sigma_int_MW'
+                latexname(4) = '\log_{10}\sigma_{int}^{MW}'
+
+             Else
+
+                paramnames(1) = 'Mw'
+                latexname(1) = 'M_w'
+
+                paramnames(2) = 'bw'
+                latexname(2) = 'b_w'
+
+                paramnames(3) = 'log10sigma_int_MW'
+                latexname(3) = '\log_{10}\sigma_{int}^{MW}'
+
+             End If
 
           Else
 
@@ -2408,13 +2467,13 @@ Program mcmc
 
           End If
 
-             Do m=1,number_model_parameters
+          Do m=1,number_model_parameters
 
-                write(UNIT_PARAMNAMES_FILE,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
+             write(UNIT_PARAMNAMES_FILE,*) ''//trim(paramnames(m))//'    '//trim(latexname(m))//''
 
-             End Do
+          End Do
 
-             !write(16,*) 'sigma_int    \sigma_{int}'
+          !write(16,*) 'sigma_int    \sigma_{int}'
 
        End If
 
@@ -2968,11 +3027,25 @@ Program mcmc
 
           If (fit_MW_cepheids_alone) then
 
-             write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    -7.    -4.'
+             If (use_metallicity) then
 
-             write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    -20.    0.'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    -20.    20.'
 
-             write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    -3.    -0.7'
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    -20.    0.'
+
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    -1.    1.'
+
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(4))//'    -3.    -0.7'
+
+             Else
+
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    -7.    -4.'
+
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    -20.    0.'
+
+                write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    -3.    -0.7'
+
+             End If
              
           Else
 
@@ -3847,11 +3920,25 @@ Program mcmc
 
           If (fit_MW_cepheids_alone) then
 
-             plausibility(1) = (x_new(1) .le. real(-7.d0)) .or. (x_new(1) .ge. real(-4.d0))
+             If (use_metallicity) then
 
-             plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
+                plausibility(1) = (x_new(1) .le. real(-20.d0)) .or. (x_new(1) .ge. real(20.d0))
 
-             plausibility(3) = (x_new(3) .le. real(-3.d0)) .or. (x_new(3) .ge. real(-0.7d0))
+                plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
+
+                plausibility(3) =  (x_new(3) .le. real(-1.d0)) .or. (x_new(3) .ge. real(1.d0)) 
+
+                plausibility(4) = (x_new(4) .le. real(-3.d0)) .or. (x_new(4) .ge. real(-0.7d0))
+
+             Else
+
+                plausibility(1) = (x_new(1) .le. real(-7.d0)) .or. (x_new(1) .ge. real(-4.d0))
+
+                plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
+
+                plausibility(3) = (x_new(3) .le. real(-3.d0)) .or. (x_new(3) .ge. real(-0.7d0))
+
+             End If
 
           Else
 
@@ -4231,11 +4318,24 @@ Program mcmc
 
                    If (fit_MW_cepheids_alone) then
 
-                      current_point(3) = 10**(current_point(3))
+                      If (use_metallicity) then
 
-                      current_loglikelihood = log_likelihood_W_MW_alone(current_point(1),current_point(2),current_point(3))
+                         current_point(4) = 10**(current_point(4))
 
-                      current_point(3) = log10(current_point(3))
+                         current_loglikelihood = log_likelihood_W_MW_alone_2(current_point(1),current_point(2),current_point(3),&
+                              current_point(4))
+
+                         current_point(4) = log10(current_point(4))
+
+                      Else
+
+                         current_point(3) = 10**(current_point(3))
+
+                         current_loglikelihood = log_likelihood_W_MW_alone(current_point(1),current_point(2),current_point(3))
+
+                         current_point(3) = log10(current_point(3))
+
+                      End If
 
                    Else
 
@@ -5385,43 +5485,91 @@ Program mcmc
 
               open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids.txt')
 
-              Do m=1,size(FieldHipp)
-                 
-                 If ( ( 10**(logP(m)) .gt. cepheid_lower_Period_limit) .and. ( 10**(logP(m))  .lt. cepheid_Period_limit)) then
+              If (use_metallicity) then
 
-                    If (using_jeffreys_prior) then
+                 Do m=1,size(FieldHipp)
 
-                       write(UNIT_EXE_FILE,*) 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+                    If ( ( 10**(logP(m)) .gt. cepheid_lower_Period_limit) .and. ( 10**(logP(m))  .lt. cepheid_Period_limit)) then
 
-!                       write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
- !                           1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int,m)
-                    
-                    Else
+                       If (using_jeffreys_prior) then
 
-                       If (chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,10**(bestfit(3)),m) .le. 1.d0 ) then
+                          write(UNIT_EXE_FILE,*) 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
 
-                          write(UNIT_EXE_FILE,*) FieldHipp(m),' HAS HP = ', 1.d0
-
-                          write(UNIT_HP_FILE,*) 10**logP(m), Mw(m),&
-                               Mw(m) - P_L_relation_passband_W_E14(0.d0,bestfit(1),bestfit(2),0.0d0,meanOH_MW,10**(logP(m))), &
-                               SigmaMw(m), 1.d0, 'MW'
+                          !                       write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
+                          !                           1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int,m)
 
                        Else
 
-                          write(UNIT_EXE_FILE,*) FieldHipp(m),' HAS HP = ', &
-                               1.d0/chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,10**(bestfit(3)),m)
+                          If (chi2R11_W_MW(bestfit(1),bestfit(2),bestfit(3),10**(bestfit(4)),m) .le. 1.d0 ) then
 
-                          write(UNIT_HP_FILE,*) 10**logP(m), Mw(m),&
-                               Mw(m) - P_L_relation_passband_W_E14(0.d0,bestfit(1),bestfit(2),0.0d0,meanOH_MW,10**(logP(m))),&                               
-                          SigmaMw(m), 1.d0/chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,10**(bestfit(3)),m), 'MW'
+                             write(UNIT_EXE_FILE,*) FieldHipp(m),' HAS HP = ', 1.d0
+
+                             write(UNIT_HP_FILE,*) 10**logP(m), Mw(m),&
+                                  Mw(m) - P_L_relation_passband_W_E14(0.d0,bestfit(1),bestfit(2),bestfit(3),&
+                                  meanOH_MW,10**(logP(m))), &
+                                  SigmaMw(m), 1.d0, 'MW'
+
+                          Else
+
+                             write(UNIT_EXE_FILE,*) FieldHipp(m),' HAS HP = ', &
+                                  1.d0/chi2R11_W_MW(bestfit(1),bestfit(2),bestfit(3),10**(bestfit(4)),m)
+
+                             write(UNIT_HP_FILE,*) 10**logP(m), Mw(m),&
+                                  Mw(m) - P_L_relation_passband_W_E14(0.d0,bestfit(1),bestfit(2),bestfit(3),&
+                                  meanOH_MW,10**(logP(m))),&                               
+                                  SigmaMw(m), 1.d0/chi2R11_W_MW(bestfit(1),bestfit(2),bestfit(3),10**(bestfit(4)),m), 'MW'
+
+                          End If
 
                        End If
 
                     End If
 
-                 End If
+                 End Do
 
-              End Do
+              Else
+
+                 Do m=1,size(FieldHipp)
+
+                    If ( ( 10**(logP(m)) .gt. cepheid_lower_Period_limit) .and. ( 10**(logP(m))  .lt. cepheid_Period_limit)) then
+
+                       If (using_jeffreys_prior) then
+
+                          write(UNIT_EXE_FILE,*) 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+                          !                       write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
+                          !                           1.d0/chi2_i(bestfit(1),bestfit(2),prior_sigma_int,m)
+
+                       Else
+
+                          If (chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,10**(bestfit(3)),m) .le. 1.d0 ) then
+
+                             write(UNIT_EXE_FILE,*) FieldHipp(m),' HAS HP = ', 1.d0
+
+                             write(UNIT_HP_FILE,*) 10**logP(m), Mw(m),&
+                                  Mw(m) - P_L_relation_passband_W_E14(0.d0,bestfit(1),bestfit(2),0.0d0,meanOH_MW,&
+                                  10**(logP(m))), &
+                                  SigmaMw(m), 1.d0, 'MW'
+
+                          Else
+
+                             write(UNIT_EXE_FILE,*) FieldHipp(m),' HAS HP = ', &
+                                  1.d0/chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,10**(bestfit(3)),m)
+
+                             write(UNIT_HP_FILE,*) 10**logP(m), Mw(m),&
+                                  Mw(m) - P_L_relation_passband_W_E14(0.d0,bestfit(1),bestfit(2),0.0d0,meanOH_MW,&
+                                  10**(logP(m))),&                               
+                                  SigmaMw(m), 1.d0/chi2R11_W_MW(bestfit(1),bestfit(2),0.d0,10**(bestfit(3)),m), 'MW'
+
+                          End If
+
+                       End If
+
+                    End If
+
+                 End Do
+
+              End If
 
               close(UNIT_HP_FILE)
 
