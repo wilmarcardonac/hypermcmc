@@ -40,8 +40,6 @@ Program mcmc
 !##########################################################
 ! ASSIGNMENTS AND INITIALIZATION OF RANDOM NUMBER GENERATOR
 !##########################################################
-    print *, 'Efstathiou :', mu_0_NGC4258, '2015 :', mu_0_NGC4258_2015,' LMC :', mu_0_LMC
-    stop
 
     galaxy = host(1)
 
@@ -69,6 +67,14 @@ Program mcmc
 !##################################
 ! MARKOV CHAIN MONTE CARLO ANALYSIS
 !##################################
+
+    write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS (2013) : ', mu_0_NGC4258, '\pm ', sigma_mu_0_NGC4258
+
+    write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS (2015) : ', mu_0_NGC4258_2015, '\pm ', sigma_mu_0_NGC4258_2015
+
+    write(UNIT_EXE_FILE,*) 'LMC DISTANCE MODULUS (2013) : ', mu_0_LMC, '\pm ', sigma_mu_0_LMC
+
+    stop
 
     write(UNIT_EXE_FILE,*) 'STARTING MCMC ANALYSIS'
 
