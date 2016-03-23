@@ -506,37 +506,48 @@ function log_Efstathiou_likelihood_2(A,bw,Zw,sigma_int)    !    It computes equa
 
     If (using_hyperparameters .and. use_HP_per_cepheid) then
 
-        log_Efstathiou_likelihood_2 = 0.d0
+       log_Efstathiou_likelihood_2 = 0.d0
 
-        Do m=1,size(Name)
+       Do m=1,size(Name)
  
-           If ( (Period(m) .gt. cepheid_lower_Period_limit) .and. (Period(m) .lt. cepheid_Period_limit)) then
+          If ( (Period(m) .gt. cepheid_lower_Period_limit) .and. (Period(m) .lt. cepheid_Period_limit)) then
 
-              If (using_jeffreys_prior) then
+             If (using_jeffreys_prior) then
 
-                 log_Efstathiou_likelihood_2 = -log(chi2_i2(A,bw,Zw,meanOH_LMC,sigma_int,m))/2.d0 + log(N_tilde_i(sigma_int,m))&
-                      + log_Efstathiou_likelihood_2
+                log_Efstathiou_likelihood_2 = -log(chi2_i2(A,bw,Zw,meanOH_LMC,sigma_int,m))/2.d0 + log(N_tilde_i(sigma_int,m))&
+                     + log_Efstathiou_likelihood_2
 
-              Else
-               
-                 log_Efstathiou_likelihood_2 = log(new_chi2(chi2_i2(A,bw,Zw,meanOH_LMC,sigma_int,m))) + log(N_tilde_i(sigma_int,m))&
-                      + log_Efstathiou_likelihood_2
+             Else
 
-              End If
+                log_Efstathiou_likelihood_2 = log(new_chi2(chi2_i2(A,bw,Zw,meanOH_LMC,sigma_int,m))) + log(N_tilde_i(sigma_int,m))&
+                     + log_Efstathiou_likelihood_2
 
-            End If
+             End If
 
-         End Do
+          End If
 
-        If ( abs(log_Efstathiou_likelihood_2) .ge. 0.d0 ) then
+       End Do
 
-           continue
+       If (use_prior_on_Zw) then
 
-        Else 
+          log_Efstathiou_likelihood_2 = -((Zw - prior_Zw)**2/sigma_Zw_prior**2 + log(2.d0*Pi*sigma_Zw_prior**2) )/2.d0  +&
+               log_Efstathiou_likelihood_2
 
-           log_Efstathiou_likelihood_2 = -1.d10
+       Else 
 
-        End If
+          continue
+
+       End If
+       
+       If ( abs(log_Efstathiou_likelihood_2) .ge. 0.d0 ) then
+
+          continue
+
+       Else 
+
+          log_Efstathiou_likelihood_2 = -1.d10
+
+       End If
 
     Else
 

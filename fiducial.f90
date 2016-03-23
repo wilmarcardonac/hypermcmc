@@ -74,7 +74,7 @@ Module fiducial
     Real*8,parameter    :: sigma_zpwLMC = 0.78d0
     Real*8,parameter    :: sigma_Mw = 0.05d0
     Real*8,parameter    :: sigma_Zw = 0.25d0
-    Real*8,parameter    :: sigma_Zw_prior = 0.02d0
+    Real*8,parameter    :: sigma_Zw_prior = 0.25d0 ! 0.02 STRONG PRIOR; 0.25 WEAK PRIOR
     Real*8,parameter    :: sigma_H0 = 1.0d-1
     Real*8,parameter    :: sigma_bw_prior = 0.03d0
 
@@ -140,7 +140,7 @@ Module fiducial
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
-    Logical,parameter   :: use_prior_on_Zw = .false.!.true.              ! USE PRIOR ON Zw IF SET IT TRUE 
+    Logical,parameter   :: use_prior_on_Zw = .true.              ! USE PRIOR ON Zw IF SET IT TRUE 
     Logical,parameter   :: use_prior_on_bw = .false.!.true.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
 
