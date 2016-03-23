@@ -361,6 +361,14 @@ function wesenheit_magnitude(A,bw,P)    !    It computes equation (2) in publish
 
 end function wesenheit_magnitude
 
+function wesenheit_magnitude_2(A,bw,Zw,OH_ij,P)    !    It computes equation (2) in published version of 1311.3461
+    Implicit none
+    Real*8 :: wesenheit_magnitude_2,A,bw,Zw,OH_ij,P
+
+    wesenheit_magnitude_2 = A + bw*(log10(P) - 1.d0) + Zw*OH_ij 
+
+end function wesenheit_magnitude_2
+
 function P_L_relation_passband_H(zpH_j,zpH_ref,bH,P_ij) ! EQUATION (2) IN R09
 
     Implicit none
@@ -488,6 +496,80 @@ function log_Efstathiou_likelihood(A,bw,sigma_int)    !    It computes equation 
     End If
 
 end function log_Efstathiou_likelihood
+
+function log_Efstathiou_likelihood_2(A,bw,Zw,sigma_int)    !    It computes equation (3) in published version of 1311.3461
+    use arrays
+    use fiducial
+    Implicit none
+    Real*8 :: log_Efstathiou_likelihood_2,A,bw,Zw,sigma_int,chi2,normalization
+    Integer*4 :: m
+
+    If (using_hyperparameters .and. use_HP_per_cepheid) then
+
+        log_Efstathiou_likelihood_2 = 0.d0
+
+        Do m=1,size(Name)
+ 
+           If ( (Period(m) .gt. cepheid_lower_Period_limit) .and. (Period(m) .lt. cepheid_Period_limit)) then
+
+              If (using_jeffreys_prior) then
+
+                 log_Efstathiou_likelihood_2 = -log(chi2_i2(A,bw,Zw,meanOH_LMC,sigma_int,m))/2.d0 + log(N_tilde_i(sigma_int,m))&
+                      + log_Efstathiou_likelihood_2
+
+              Else
+               
+                 log_Efstathiou_likelihood_2 = log(new_chi2(chi2_i2(A,bw,Zw,meanOH_LMC,sigma_int,m))) + log(N_tilde_i(sigma_int,m))&
+                      + log_Efstathiou_likelihood_2
+
+              End If
+
+            End If
+
+         End Do
+
+        If ( abs(log_Efstathiou_likelihood_2) .ge. 0.d0 ) then
+
+           continue
+
+        Else 
+
+           log_Efstathiou_likelihood_2 = -1.d10
+
+        End If
+
+    Else
+
+       chi2 = 0.d0
+
+       normalization = 0.d0
+
+       Do m=1, size(Name)
+
+          If ( (Period(m) .gt. cepheid_lower_Period_limit) .and. (Period(m) .lt. cepheid_Period_limit)) then
+
+             chi2 = ( observed_wesenheit_magnitude(H(m),V(m),II(m)) - wesenheit_magnitude_2(A,bw,Zw,meanOH_LMC,Period(m)) )**2/&
+                  ( Sigma_m(m)**2 + sigma_int**2 ) + chi2
+
+             normalization = log(2.d0*Pi*(Sigma_m(m)**2 + sigma_int**2)) + normalization 
+
+          End If
+
+       End Do
+
+       If ((abs(chi2) .ge. 0.d0) .and. (normalization**2 .ge. 0.d0 )) then
+
+          log_Efstathiou_likelihood_2 = - chi2/2.d0 - normalization/2.d0
+
+       Else
+
+          log_Efstathiou_likelihood_2 = -1.d10
+   
+       End If
+
+    End If
+
+end function log_Efstathiou_likelihood_2
 
 function log_R11_likelihood_H_NGC4258(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATION (4) IN R09
 
@@ -2833,6 +2915,18 @@ function chi2_i(A,bw,sigma_int,m)    !    It computes equation (3) in published 
 
 end function chi2_i
 
+function chi2_i2(A,bw,Zw,OH_ij,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+    use arrays
+    use fiducial
+    Implicit none
+    Real*8 :: A,bw,Zw,OH_ij,sigma_int,chi2_i2
+    Integer*4 :: m
+
+    chi2_i2 = ( observed_wesenheit_magnitude(H(m),V(m),II(m)) - wesenheit_magnitude_2(A,bw,Zw,OH_ij,Period(m)) )**2/&
+    ( Sigma_m(m)**2 + sigma_int**2 ) 
+
+end function chi2_i2
+
 function N_tilde_A_i(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
     use arrays
     use fiducial
@@ -3996,11 +4090,25 @@ subroutine set_covariance_matrix()
     
      Else
 
-        Covguess(1,1) = sigma_A**2 
+        If (use_metallicity) then
 
-        Covguess(2,2) = sigma_bw**2
+           Covguess(1,1) = sigma_A**2 
 
-        Covguess(3,3) = sigma_sigma_int**2
+           Covguess(2,2) = sigma_bw**2
+
+           Covguess(3,3) = sigma_Zw**2 
+
+           Covguess(4,4) = sigma_sigma_int**2
+
+        Else
+
+           Covguess(1,1) = sigma_A**2 
+
+           Covguess(2,2) = sigma_bw**2
+
+           Covguess(3,3) = sigma_sigma_int**2
+
+        End If
 
      End If ! OF R11 ANALYSIS
          

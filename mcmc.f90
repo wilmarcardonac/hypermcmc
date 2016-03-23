@@ -68,6 +68,12 @@ Program mcmc
 ! MARKOV CHAIN MONTE CARLO ANALYSIS
 !##################################
 
+    write(UNIT_EXE_FILE,*) 'LMC MEASURED DISTANCE MODULUS (2013) IS ', mu_0_LMC, ' \pm ', sigma_mu_0_LMC
+
+    write(UNIT_EXE_FILE,*) 'MEAN METALLICITY FOR LMC CEPHEID VARIABLES ASSUMED BY EFSTATHIOU IS ', meanOH_LMC 
+
+    write(UNIT_EXE_FILE,*) 'NGC4258 MEASURED DISTANCE MODULUS (2013) IS ', mu_0_NGC4258, ' \pm ', sigma_mu_0_NGC4258
+
     write(UNIT_EXE_FILE,*) 'STARTING MCMC ANALYSIS'
 
     If (testing_Gaussian_likelihood) then
@@ -656,9 +662,20 @@ Program mcmc
 
           Else
 
-             old_point(1) = prior_A         ! A 
-             old_point(2) = prior_bw        ! bw 
-             old_point(3) = log10(prior_sigma_int) ! log10(sigma_int) 
+             If (use_metallicity) then
+
+                   old_point(1) = prior_A         ! A 
+                   old_point(2) = prior_bw        ! bw 
+                   old_point(3) = prior_Zw        ! Zw
+                   old_point(4) = log10(prior_sigma_int) ! log10(sigma_int) 
+
+                Else
+                   
+                   old_point(1) = prior_A         ! A 
+                   old_point(2) = prior_bw        ! bw 
+                   old_point(3) = log10(prior_sigma_int) ! log10(sigma_int) 
+
+             End If
                           
           End If
 
@@ -1234,10 +1251,21 @@ Program mcmc
     
           Else
 
-             x_old(1) = genunf(real(prior_A - sigma_A),real(prior_A + sigma_A))         ! A
-             x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
-             x_old(3) = genunf(real(-3.d0),real(-0.7d0)) ! log10(sigma_int)
-!             x_old(3) = 10**(x_old(3))
+             If (use_metallicity) then
+                
+                x_old(1) = genunf(real(prior_A - sigma_A),real(prior_A + sigma_A))      ! A
+                x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))  ! bw
+                x_old(3) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))  ! Zw
+                x_old(4) = genunf(real(-3.d0),real(-0.7d0))                             ! log10(sigma_int)
+
+             Else
+
+                x_old(1) = genunf(real(prior_A - sigma_A),real(prior_A + sigma_A))     ! A
+                x_old(2) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw)) ! bw
+                x_old(3) = genunf(real(-3.d0),real(-0.7d0))                            ! log10(sigma_int)
+                !             x_old(3) = 10**(x_old(3))
+
+             End If
 
           End If
 
@@ -1590,11 +1618,24 @@ Program mcmc
 
           Else
 
-             old_point(3) = 10**(old_point(3))   ! sigma_int
+             If (use_metallicity) then
 
-             old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),old_point(3))
+                old_point(4) = 10**(old_point(4))   ! sigma_int
 
-             old_point(3) = log10(old_point(3))   ! log10(sigma_int)
+                old_loglikelihood = log_Efstathiou_likelihood_2(old_point(1),old_point(2),old_point(3),&
+                     old_point(4))
+
+                old_point(4) = log10(old_point(4))   ! log10(sigma_int)
+
+             Else
+
+                old_point(3) = 10**(old_point(3))   ! sigma_int
+
+                old_loglikelihood = log_Efstathiou_likelihood(old_point(1),old_point(2),old_point(3))
+
+                old_point(3) = log10(old_point(3))   ! log10(sigma_int)
+
+             End If
 
           End If
 
@@ -2355,14 +2396,32 @@ Program mcmc
     
        Else
 
-          paramnames(1) = 'A'
-          latexname(1) = 'A'
+          If (use_metallicity) then
 
-          paramnames(2) = 'bw'
-          latexname(2) = 'b_w'
+             paramnames(1) = 'A'
+             latexname(1) = 'A'
 
-          paramnames(3) = 'log10sigma_int'
-          latexname(3) = '\log_{10}\sigma_{int}'
+             paramnames(2) = 'bw'
+             latexname(2) = 'b_w'
+
+             paramnames(3) = 'Zw'
+             latexname(3) = 'Z_w'
+
+             paramnames(4) = 'log10sigma_int'
+             latexname(4) = '\log_{10}\sigma_{int}'
+
+          Else
+
+             paramnames(1) = 'A'
+             latexname(1) = 'A'
+
+             paramnames(2) = 'bw'
+             latexname(2) = 'b_w'
+
+             paramnames(3) = 'log10sigma_int'
+             latexname(3) = '\log_{10}\sigma_{int}'
+
+          End If
 
           Do m=1,number_model_parameters
 
@@ -2920,11 +2979,25 @@ Program mcmc
     
        Else
 
-          write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    0.    50.'
+          If (use_metallicity) then
 
-          write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    -20.    0.'
+             write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    0.    50.'
 
-          write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    -3.    -0.7'
+             write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    -20.    0.'
+
+             write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    -1.    1.'
+
+             write(UNIT_RANGES_FILE,*) ''//trim(paramnames(4))//'    -3.    -0.7'
+
+          Else
+
+             write(UNIT_RANGES_FILE,*) ''//trim(paramnames(1))//'    0.    50.'
+
+             write(UNIT_RANGES_FILE,*) ''//trim(paramnames(2))//'    -20.    0.'
+
+             write(UNIT_RANGES_FILE,*) ''//trim(paramnames(3))//'    -3.    -0.7'
+
+          End If
 
        End If
 
@@ -3787,9 +3860,20 @@ Program mcmc
     
        Else
 
-          plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
-          plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
-          plausibility(3) =  (x_new(3) .lt. real(-3.d0)) .or. (x_new(3) .gt. real(-0.7d0))    ! limit log10(sigma_int)
+          If (use_metallicity) then
+
+             plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
+             plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
+             plausibility(3) =  (x_new(3) .le. real(-1.d0)) .or. (x_new(3) .ge. real(1.d0)) 
+             plausibility(4) =  (x_new(4) .lt. real(-3.d0)) .or. (x_new(4) .gt. real(-0.7d0))    ! limit log10(sigma_int)
+
+          Else
+
+             plausibility(1) = (x_new(1) .le. real(0.d0)) .or. (x_new(1) .ge. real(5.d1))
+             plausibility(2) = (x_new(2) .le. real(-2.d1)) .or. (x_new(2) .ge. real(0.d0))
+             plausibility(3) =  (x_new(3) .lt. real(-3.d0)) .or. (x_new(3) .gt. real(-0.7d0))    ! limit log10(sigma_int)
+
+          End If
 
        End If
 
@@ -4157,14 +4241,28 @@ Program mcmc
 
                 Else
 
-!                   current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),&
- !                       current_point(2),prior_sigma_int)
+                   If (use_metallicity) then
 
-                   current_point(3) = 10**(current_point(3)) ! sigma_int
+                      current_point(4) = 10**(current_point(4)) ! sigma_int
 
-                   current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),current_point(3))
-              
-                   current_point(3) = log10(current_point(3)) ! log10(sigma_int)
+                      current_loglikelihood = log_Efstathiou_likelihood_2(current_point(1),current_point(2),&
+                           current_point(3),current_point(4))
+
+                      current_point(4) = log10(current_point(4)) ! log10(sigma_int)
+
+                   Else
+
+                      !                   current_loglikelihood = log_Efstathiou_likelihood_hyperparameters(current_point(1),&
+                      !                       current_point(2),prior_sigma_int)
+                      
+                      current_point(3) = 10**(current_point(3)) ! sigma_int
+
+                      current_loglikelihood = log_Efstathiou_likelihood(current_point(1),current_point(2),&
+                           current_point(3))
+
+                      current_point(3) = log10(current_point(3)) ! log10(sigma_int)
+
+                   End If
 
                 End If
 
@@ -4476,11 +4574,11 @@ Program mcmc
 
             End If
 
-        Else
+         Else
 
             call system('cd analyzer; python analyze.py')
 
-        End If    
+         End If
 
     End If
     
@@ -5275,34 +5373,72 @@ Program mcmc
               open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids.txt')
 
               Do m=1,size(Name)
-                 
+              
                  If ( (Period(m) .gt. cepheid_lower_Period_limit) .and. (Period(m) .lt. cepheid_Period_limit)) then
 
-                    If (using_jeffreys_prior) then
+                    If (use_metallicity) then
 
-                       write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
-                            1.d0/chi2_i(bestfit(1),bestfit(2),10**(bestfit(3)),m)
-                    
-                    Else
+                       If (using_jeffreys_prior) then
 
-                       If (chi2_i(bestfit(1),bestfit(2),10**(bestfit(3)),m) .le. 1.d0 ) then
-
-                          write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', 1.d0
-
-                          write(UNIT_HP_FILE,*) Period(m), observed_wesenheit_magnitude(H(m),V(m),II(m)),&
-                               observed_wesenheit_magnitude(H(m),V(m),II(m)) - &
-                               wesenheit_magnitude(bestfit(1),bestfit(2),Period(m)),Sigma_m(m), 1.d0, 'LMC'
-
+                          write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
+                               1.d0/chi2_i2(bestfit(1),bestfit(2),bestfit(3),meanOH_LMC,10**(bestfit(4)),m)
 
                        Else
+
+                          If (chi2_i2(bestfit(1),bestfit(2),bestfit(3),meanOH_LMC,10**(bestfit(4)),m) .le. 1.d0 ) then
+
+                             write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', 1.d0
+
+                             write(UNIT_HP_FILE,*) Period(m), observed_wesenheit_magnitude(H(m),V(m),II(m)),&
+                                  observed_wesenheit_magnitude(H(m),V(m),II(m)) - &
+                                  wesenheit_magnitude_2(bestfit(1),bestfit(2),bestfit(3),meanOH_LMC,Period(m)),&
+                                  Sigma_m(m), 1.d0, 'LMC'
+
+
+                          Else
+
+                             write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
+                                  1.d0/chi2_i2(bestfit(1),bestfit(2),bestfit(3),meanOH_LMC,10**(bestfit(4)),m)
+
+                             write(UNIT_HP_FILE,*) Period(m), observed_wesenheit_magnitude(H(m),V(m),II(m)),&
+                                  observed_wesenheit_magnitude(H(m),V(m),II(m)) - &
+                                  wesenheit_magnitude_2(bestfit(1),bestfit(2),bestfit(3),meanOH_LMC,Period(m)), &
+                                  Sigma_m(m), 1.d0/chi2_i2(bestfit(1),bestfit(2),bestfit(3),meanOH_LMC,&
+                                  10**(bestfit(4)),m), 'LMC'
+
+                          End If
+
+                       End If
+
+                    Else
+                          
+                       If (using_jeffreys_prior) then
 
                           write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
                                1.d0/chi2_i(bestfit(1),bestfit(2),10**(bestfit(3)),m)
 
-                          write(UNIT_HP_FILE,*) Period(m), observed_wesenheit_magnitude(H(m),V(m),II(m)),&
-                               observed_wesenheit_magnitude(H(m),V(m),II(m)) - &
-                               wesenheit_magnitude(bestfit(1),bestfit(2),Period(m)), Sigma_m(m), &
-                               1.d0/chi2_i(bestfit(1),bestfit(2),10**(bestfit(3)),m), 'LMC'
+                       Else
+
+                          If (chi2_i(bestfit(1),bestfit(2),10**(bestfit(3)),m) .le. 1.d0 ) then
+
+                             write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', 1.d0
+
+                             write(UNIT_HP_FILE,*) Period(m), observed_wesenheit_magnitude(H(m),V(m),II(m)),&
+                                  observed_wesenheit_magnitude(H(m),V(m),II(m)) - &
+                                  wesenheit_magnitude(bestfit(1),bestfit(2),Period(m)),Sigma_m(m), 1.d0, 'LMC'
+
+
+                          Else
+
+                             write(UNIT_EXE_FILE,*) 'Point ', Name(m),' in data set = ', &
+                                  1.d0/chi2_i(bestfit(1),bestfit(2),10**(bestfit(3)),m)
+
+                             write(UNIT_HP_FILE,*) Period(m), observed_wesenheit_magnitude(H(m),V(m),II(m)),&
+                                  observed_wesenheit_magnitude(H(m),V(m),II(m)) - &
+                                  wesenheit_magnitude(bestfit(1),bestfit(2),Period(m)), Sigma_m(m), &
+                                  1.d0/chi2_i(bestfit(1),bestfit(2),10**(bestfit(3)),m), 'LMC'
+
+                          End If
 
                        End If
 
@@ -5314,10 +5450,20 @@ Program mcmc
 
               close(UNIT_HP_FILE)
 
-              write(UNIT_EXE_FILE,*) '\ln P(\vec{w},D) at the bestfit is ', &
-                   ! log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),prior_sigma_int)
-                   log_Efstathiou_likelihood(bestfit(1),bestfit(2),10**(bestfit(3)))
+              If (use_metallicity) then
+
+                 write(UNIT_EXE_FILE,*) '\ln P(\vec{w},D) at the bestfit is ', &
+                                ! log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),prior_sigma_int)
+                      log_Efstathiou_likelihood_2(bestfit(1),bestfit(2),bestfit(3),10**(bestfit(4)))
+
+              Else
+
+                 write(UNIT_EXE_FILE,*) '\ln P(\vec{w},D) at the bestfit is ', &
+                                ! log_Efstathiou_likelihood_hyperparameters(bestfit(1),bestfit(2),prior_sigma_int)
+                      log_Efstathiou_likelihood(bestfit(1),bestfit(2),10**(bestfit(3)))
            
+              End If
+
            End If
 
         End If
