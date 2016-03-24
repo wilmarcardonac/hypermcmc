@@ -2709,6 +2709,71 @@ function log_likelihood_only_cepheids(galaxy,zpw,bw,Zw,sigma_int)    !    EQUATI
 
 end function log_likelihood_only_cepheids
 
+function log_likelihood_only_cepheids_2(galaxy,zpw,bw,Zw,sigma_int)    !    EQUATION (4) IN R09
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Character(len=5) :: galaxy
+    Real*8 :: log_likelihood_only_cepheids_2,zpw,bw,Zw,sigma_int
+    Integer*4 :: m,index_host
+
+
+    log_likelihood_only_cepheids_2 = 0.d0
+
+    Do m=1,size(Field)
+
+       If (galaxy .eq. Field(m)) then
+
+          Do index_host=1,number_of_hosts_galaxies
+ 
+             If (host(index_host) .eq. Field(m)) then
+    
+                If (using_jeffreys_prior) then
+
+                   print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+                   stop
+
+                Else
+                       
+                   log_likelihood_only_cepheids_2 = log(new_chi2(chi2R11_W_2b(zpw,bw,Zw,sigma_int,m))) + &
+                     log(N_tilde_R11_W(sigma_int,m)) + log_likelihood_only_cepheids_2
+
+                End If
+
+             End If
+
+          End Do
+          
+       End If
+
+    End Do
+
+    If (use_prior_on_Zw) then
+
+       log_likelihood_only_cepheids_2 = -((Zw - prior_Zw)**2/sigma_Zw_prior**2 + log(2.d0*Pi*sigma_Zw_prior**2) )/2.d0  +&
+            log_likelihood_only_cepheids_2
+
+    Else 
+
+       continue
+
+    End If
+
+    If ( abs(log_likelihood_only_cepheids_2) .ge. 0.d0 ) then
+
+       continue
+
+    Else 
+
+       log_likelihood_only_cepheids_2 = -1.d10
+
+    End If
+
+end function log_likelihood_only_cepheids_2
+
 function chi2R11_W(mu0_j,mu0_ref,zpw_ref,bw,Zw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
 
     use arrays
@@ -2856,6 +2921,20 @@ function chi2R11_W_2(zpw,bw,Zw,sigma_int,m)    !    It computes equation (3) in 
          P_L_relation_passband_W_2(zpw,bw,Zw,OHR11(m),PeriodR11(m)) )**2/( eF160WR11(m)**2 + sigma_int**2 ) 
 
 end function chi2R11_W_2
+
+function chi2R11_W_2b(zpw,bw,Zw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: zpw,bw,Zw,sigma_int,chi2R11_W_2b
+    Integer*4 :: m
+
+    chi2R11_W_2b = ( observed_m_W(F160WR11(m),VIR11(m)) - &
+         P_L_relation_passband_W_E14(0.d0,zpw,bw,Zw,OHR11(m),PeriodR11(m)) )**2/( eF160WR11(m)**2 + sigma_int**2 ) 
+
+end function chi2R11_W_2b
 
 function chi2R11_SNIa(mu0_j,H0,av,snia)    !    It computes equation (3) in published version of 1311.3461
 
@@ -4525,11 +4604,25 @@ subroutine set_covariance_matrix()
     
      Else
 
-        Covguess(1,1) = sigma_A**2 
+        If (use_metallicity) then
 
-        Covguess(2,2) = sigma_bw**2
+           Covguess(1,1) = sigma_A**2 
 
-        !Covguess(3,3) = sigma_sigma_int**2
+           Covguess(2,2) = sigma_bw**2
+
+           Covguess(3,3) = sigma_Zw**2 
+
+           Covguess(4,4) = sigma_sigma_int**2
+
+        Else
+
+           Covguess(1,1) = sigma_A**2 
+
+           Covguess(2,2) = sigma_bw**2
+
+           !Covguess(3,3) = sigma_sigma_int**2
+
+        End If
  
      End If ! OF R11 ANALYSIS
          
