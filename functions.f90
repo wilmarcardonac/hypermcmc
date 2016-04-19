@@ -3736,6 +3736,8 @@ subroutine set_covariance_matrix()
 
   Integer*4 :: m,n
 
+  Logical :: cov_file, out_file
+
   If (testing_Gaussian_likelihood) then
 
      ! SETTING COVARIANCE MATRIX
@@ -3846,23 +3848,23 @@ subroutine set_covariance_matrix()
 
                        If (number_model_parameters .eq. 27) then
 
-                          Covguess(1,1) = sigma_mu1**2 
+                          Covguess(1,1) = sigma_mu1**2    ! n4536
 
-                          Covguess(2,2) = sigma_mu2**2 
+                          Covguess(2,2) = sigma_mu2**2    ! n4639 
 
-                          Covguess(3,3) = sigma_mu3**2 
+                          Covguess(3,3) = sigma_mu3**2    ! n3982
 
-                          Covguess(4,4) = sigma_mu4**2 
+                          Covguess(4,4) = sigma_mu4**2    ! n3370
 
-                          Covguess(5,5) = sigma_mu5**2 
+                          Covguess(5,5) = sigma_mu5**2    ! n3021
 
-                          Covguess(6,6) = sigma_mu6**2 
+                          Covguess(6,6) = sigma_mu6**2    ! n1309
 
-                          Covguess(7,7) = sigma_mu7**2 
+                          Covguess(7,7) = sigma_mu7**2    ! n4038
 
-                          Covguess(8,8) = sigma_mu8**2 
+                          Covguess(8,8) = sigma_mu8**2    ! n5584
 
-                          Covguess(9,9) = sigma_mu9**2 
+                          Covguess(9,9) = sigma_mu9**2    ! n4258
 
                           Covguess(10,10) = sigma_mu10**2 
 
@@ -4645,6 +4647,30 @@ subroutine set_covariance_matrix()
 
   End If
 
+  inquire(file='./output/covariance_matrix.txt',exist=cov_file)  
+
+  inquire(file='./output/mcmc_output.txt',exist=out_file)  
+  
+  If (cov_file) then
+
+     call system('rm  ./output/covariance_matrix.txt')
+
+  Else
+
+     continue
+
+  End If
+
+  If (out_file) then
+
+     call system('rm  ./output/mcmc_output.txt')
+
+  Else
+
+     continue
+
+  End If
+  
 end subroutine set_covariance_matrix
 
 subroutine read_data()

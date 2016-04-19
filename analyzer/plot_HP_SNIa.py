@@ -3,33 +3,64 @@ mpl.use('Agg')
 import numpy as np
 import matplotlib.pyplot as py
 
-#host = ['LMC']
+def y(m,b,x):
+    y = m*x - b
+    return y
 
 marker = ['o']#'o','v','^','<','>','D','+','x','*']
 
 alpha_eff = np.dtype([('name',np.str_,5),('mu0_i',np.float32),('observed_mvi5av',np.float32),('error',np.float32),('theory',np.float32),('alpha',np.float32)])
 
-snia,mui,mvi,er,th,HP = np.loadtxt('../output/chains/effective_hyperparameters_SNIa.txt',unpack=True,usecols=[0,1,2,3,4,5],dtype=alpha_eff)
+snia,mui,mvi,er,th,HP = np.loadtxt('../output/chains/previous_runs/fit_M1a/effective_hyperparameters_SNIa.txt',unpack=True,usecols=[0,1,2,3,4,5],dtype=alpha_eff)
 
-mean,error = np.loadtxt('../output/chains/1Dstatistics_HP_R11_W.txt',unpack=True,usecols=[1,2],skiprows=17)
+mean,error = np.loadtxt('../output/chains/previous_runs/fit_M1a/1Dstatistics_HP_R11_W.txt',unpack=True,usecols=[1,2],skiprows=30)
+
+A = mean[2] 
+
+B = error[2]
+
+mean[2] = mean[3]
+
+error[2] = error[3]
+
+mean[3] = A
+
+error[3] = B
+
+A = mean[6] 
+
+B = error[6]
+
+mean[6] = mean[7]
+
+error[6] = error[7]
+
+mean[7] = A
+
+error[7] = B
 
 fig = py.figure()
 
-#fig.subplots_adjust(bottom=0.1, left=0.06, top=0.85, right=0.97,hspace=0.3)
+xe =  np.linspace(13.5,17.5)
 
-py.plot(mvi,mui,markersize='small',color='k')
+ye = np.ones(len(xe))
 
-#py.xscale('log')
+for index in range(len(xe)):
+    ye[index] = y(1.,th[0],xe[index])
 
-py.xlim(13.4,17.5)
+py.plot(xe,ye,color='k')
+
+#py.plot(mvi,mui,markersize='small',color='k')
+
+py.xlim(13.5,17.2)
 
 py.ylim(-0.3,3.5)
 
-#py.title('LMC Cepheid variables')
+py.title('Relative distances from Cepheid variables and SNe Ia')
 
-#py.xlabel('Period [days]')
+py.xlabel(r'$\mathrm{SN\, Ia} \,m_v^0+5a_v \,\mathrm{[mag]}$')
 
-#py.ylabel('W [mag]')
+py.ylabel(r'$\mathrm{Cepheid}\, (\mu_0 - \mu_{0,4258})\, \mathrm{[mag]}$')
 
 #exit()
 #py.subplot(2,1,1)
@@ -47,6 +78,8 @@ py.ylim(-0.3,3.5)
 py.errorbar(mean[8],0.,xerr=error[8],yerr=None,ecolor='k',marker=marker[0],mfc='k',fmt='',ls='None')
 
 for index in range(1,len(snia)):
+
+    print snia[index], mvi[index], 'deltamu ', mean[index-1], 'error', error[index-1], 'HP ', HP[index]
 
     if HP[index] == 1.:
 
@@ -68,9 +101,7 @@ for index in range(1,len(snia)):
 
         py.errorbar(mvi[index],mean[index-1],xerr=er[index]/np.sqrt(HP[index]),yerr=error[index-1],ecolor='k',mfc='y',marker=marker[0],fmt='',ls='None')
 
-#py.scatter(P,mw)
-
-py.savefig('../output/chains/effective_HP_SNIa.pdf')
+py.savefig('../output/chains/previous_runs/fit_M1a/effective_HP_SNIa.pdf')
 
 exit()
 py.plot(P,mw-re,markersize='small',color='k')

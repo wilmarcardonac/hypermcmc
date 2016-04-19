@@ -2,7 +2,7 @@ from getdist import loadMCSamples,plots,covmat
 import numpy as np
 
 number_of_parameters = 27 # 14 NGC4258 AS ANCHOR, 16 LMC AS ANCHOR, 15 MW AS ANCHOR, 16 NGC4258+LMC AS ANCHORS, 15 NGC4258+MW AS ANCHORS, 
-# 16 LMC+MW AS ANCHORS, 19 NGC4258+LMC+MW AS ANCHORS, 27 NGC4258+LMC+MW AS ANCHORS AND SIGMA INT PER GALAXY, 26 NGC4258+LMC+MW AS ANCHORS AND SIGMA INT PER GALAXY WITHOUT METALLICITY
+# 16 LMC+MW AS ANCHORS, 16 NGC4258+LMC+MW AS ANCHORS, 19 NGC4258+LMC+MW AS ANCHORS (VARYING sigma_int), 27 NGC4258+LMC+MW AS ANCHORS AND SIGMA INT PER GALAXY, 26 NGC4258+LMC+MW AS ANCHORS AND SIGMA INT PER GALAXY WITHOUT METALLICITY
 
 samples = loadMCSamples('../output/chains/mcmc_final_output_HP',settings={'ignore_rows': 0.2 }) 
 
@@ -10,9 +10,31 @@ g = plots.getSinglePlotter()
 
 g.settings.rcSizes(axes_fontsize = 2,lab_fontsize = 7)
 
-g.triangle_plot(samples,['mu04258','muLMC','Mw','Zw','bw','H0','log10sigma_int_LMC','log10sigma_int_MW'],filled=True)
+if number_of_parameters == 26 :
 
-g.export('../output/chains/triangle_figure_HP_R11_W.pdf')
+    pass
+
+else:
+
+    g.triangle_plot(samples,['mu04258','muLMC','Mw','Zw','bw','H0'],filled=True)
+
+    for ax in g.subplots[:,0]:
+        ax.axvline(29.25,color='green',ls='--')
+        ax.axvline(29.40,color='black',ls='--')
+        ax.axvline(29.387,color='red',ls='--')
+
+    
+    for ax in g.subplots[1:,1]:
+        ax.axvline(18.49,color='black',ls='--')
+
+    for ax in g.subplots[5:,5]:
+        ax.axvline(67.81,color='black',ls='--')
+        ax.axvline(70.6,color='green',ls='--')
+        ax.axvline(73.8,color='red',ls='--')
+        ax.axvline(73.02,color='red',ls='dotted')
+
+
+    g.export('../output/chains/triangle_plot.pdf')
 
 f = plots.getSinglePlotter()
 
@@ -46,23 +68,26 @@ samples.addDerived(np.power(10,p.log10sigma_int_LMC),name='sigma_int_LMC',label=
 
 samples.addDerived(np.power(10,p.log10sigma_int_MW),name='sigma_int_MW',label='\sigma_{int}^{MW}')
 
-samples.addDerived(np.power(10,p.log10sigma_int_1),name='sigma_int_1',label='\sigma_{int,1}')
+if number_of_parameters == 27 :
 
-samples.addDerived(np.power(10,p.log10sigma_int_2),name='sigma_int_2',label='\sigma_{int,2}')
 
-samples.addDerived(np.power(10,p.log10sigma_int_3),name='sigma_int_3',label='\sigma_{int,3}')
+    samples.addDerived(np.power(10,p.log10sigma_int_1),name='sigma_int_1',label='\sigma_{int,1}')
 
-samples.addDerived(np.power(10,p.log10sigma_int_4),name='sigma_int_4',label='\sigma_{int,4}')
+    samples.addDerived(np.power(10,p.log10sigma_int_2),name='sigma_int_2',label='\sigma_{int,2}')
 
-samples.addDerived(np.power(10,p.log10sigma_int_5),name='sigma_int_5',label='\sigma_{int,5}')
+    samples.addDerived(np.power(10,p.log10sigma_int_3),name='sigma_int_3',label='\sigma_{int,3}')
 
-samples.addDerived(np.power(10,p.log10sigma_int_6),name='sigma_int_6',label='\sigma_{int,6}')
+    samples.addDerived(np.power(10,p.log10sigma_int_4),name='sigma_int_4',label='\sigma_{int,4}')
 
-samples.addDerived(np.power(10,p.log10sigma_int_7),name='sigma_int_7',label='\sigma_{int,7}')
+    samples.addDerived(np.power(10,p.log10sigma_int_5),name='sigma_int_5',label='\sigma_{int,5}')
 
-samples.addDerived(np.power(10,p.log10sigma_int_8),name='sigma_int_8',label='\sigma_{int,8}')
+    samples.addDerived(np.power(10,p.log10sigma_int_6),name='sigma_int_6',label='\sigma_{int,6}')
 
-samples.addDerived(np.power(10,p.log10sigma_int_9),name='sigma_int_9',label='\sigma_{int,9}')
+    samples.addDerived(np.power(10,p.log10sigma_int_7),name='sigma_int_7',label='\sigma_{int,7}')
+
+    samples.addDerived(np.power(10,p.log10sigma_int_8),name='sigma_int_8',label='\sigma_{int,8}')
+
+    samples.addDerived(np.power(10,p.log10sigma_int_9),name='sigma_int_9',label='\sigma_{int,9}')
 
 #samples.addDerived(p.mu01 + 5.*np.log10(p.H0) - 25. - 5.*p.av, name='mv1', label='m_{v,1}')
 
@@ -110,14 +135,20 @@ covariance_matrix_2 = covmat.CovMat(matrix=covariance_matrix)
 
 covariance_matrix_2.saveToFile('../output/chains/covariance_matrix.txt')
 
-h = plots.getSubplotPlotter()
+if number_of_parameters == 27 :
 
-h.settings.rcSizes(axes_fontsize = 2, lab_fontsize = 7)
+    h = plots.getSubplotPlotter()
 
-h.plots_1d(samples,['sigma_int_LMC','sigma_int_MW','sigma_int_1','sigma_int_2','sigma_int_3','sigma_int_4','sigma_int_5','sigma_int_6','sigma_int_7','sigma_int_8','sigma_int_9'],nx=3)
+    h.settings.rcSizes(axes_fontsize = 2, lab_fontsize = 7)
 
-h.export('../output/chains/1D_sigma_int_plots.pdf')
+    h.plots_1d(samples,['sigma_int_LMC','sigma_int_MW','sigma_int_1','sigma_int_2','sigma_int_3','sigma_int_4','sigma_int_5','sigma_int_6','sigma_int_7','sigma_int_8','sigma_int_9'],nx=3)
 
-print 'ANALYZE SCRIPT ENDED'
+    h.export('../output/chains/1D_sigma_int_plots.pdf')
+
+    print 'ANALYZE SCRIPT ENDED'
+
+else:
+
+    print 'ANALYZE SCRIPT ENDED'
 
 exit()
