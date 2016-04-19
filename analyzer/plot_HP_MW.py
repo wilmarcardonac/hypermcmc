@@ -2,14 +2,32 @@ import matplotlib as mpl
 mpl.use('Agg')
 import numpy as np
 import matplotlib.pyplot as py
+import math
+
+def Mwt(A,b,Pe):
+    Mwt = A + b*(math.log10(Pe)-1.) 
+    return Mwt
 
 host = ['MW']
+
+Pe = np.linspace(2.5,40.,num=50.)
 
 marker = ['o']#'o','v','^','<','>','D','+','x','*']
 
 alpha_eff = np.dtype([('Period',np.float32),('observed_w',np.float32),('residual',np.float32),('error',np.float32),('alpha',np.float32),('name',np.str_,5)])
 
-P,mw,re,er,HP,galaxy = np.loadtxt('../output/chains/effective_hyperparameters_cepheids.txt',unpack=True,usecols=[0,1,2,3,4,5],dtype=alpha_eff)
+P,mw,re,er,HP,galaxy = np.loadtxt('../output/chains/previous_runs/fit_MW_alone/effective_hyperparameters_cepheids.txt',unpack=True,usecols=[0,1,2,3,4,5],dtype=alpha_eff)
+
+si = np.loadtxt('../output/chains/previous_runs/fit_MW_alone/means.txt')
+
+bi = np.loadtxt('../output/chains/previous_runs/fit_MW_alone/bestfit.txt')
+
+be = np.ones(len(Pe))
+
+for index in range(len(Pe)):
+    be[index] = Mwt(bi[0],bi[1],Pe[index])
+
+er = np.sqrt(er**2 + (10.**(si[2]))**2)
 
 fig = py.figure()
 
@@ -51,11 +69,11 @@ for index in range(indexs,indexf+1):
 
 #py.scatter(P,mw)
 
-py.plot(P,mw-re,markersize='small',color='k')
+py.plot(Pe,be,markersize='small',color='k')
 
 py.xscale('log')
 
-py.xlim(2.,4.e1)
+py.xlim(2.5,4.e1)
 
 py.title('MW Cepheid variables')
 
@@ -104,11 +122,11 @@ py.xscale('log')
 
 py.yscale('linear')
 
-py.hlines(0.,2.,4.e1,color='k',linestyles='dotted')
+py.hlines(0.,2.5,4.e1,color='k',linestyles='dotted')
 
 #py.ylim(5.e-3,1.e1)
 
-py.xlim(2.,4.e1)
+py.xlim(2.5,4.e1)
 
 py.xlabel('Period [days]')
 
@@ -119,7 +137,7 @@ py.ylabel(r'$M_W$ residual [mag]')
 #py.legend(loc=0,numpoints=1,ncol=4)
 
 
-py.savefig('../output/chains/effective_HP_cepheids_MW.pdf')
+py.savefig('../output/chains/previous_runs/fit_MW_alone/effective_HP_cepheids_MW.pdf')
 
 exit()
 

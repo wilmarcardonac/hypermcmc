@@ -74,7 +74,7 @@ Module fiducial
     Real*8,parameter    :: sigma_zpwLMC = 0.78d0
     Real*8,parameter    :: sigma_Mw = 0.05d0
     Real*8,parameter    :: sigma_Zw = 0.25d0
-    Real*8,parameter    :: sigma_Zw_prior = 0.25d0 ! STRONG PRIOR 0.02; WEAK PRIOR 0.25
+    Real*8,parameter    :: sigma_Zw_prior = 0.02d0 ! STRONG PRIOR 0.02; WEAK PRIOR 0.25
     Real*8,parameter    :: sigma_H0 = 1.0d-1
     Real*8,parameter    :: sigma_bw_prior = 0.1d0
 
