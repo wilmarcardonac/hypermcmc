@@ -2081,10 +2081,50 @@ function log_R11_likelihood_W_MW_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,s
     Implicit none
 
     Real*8 :: log_R11_likelihood_W_MW_sigma_int,M_w,bw,H0,Zw,av,acal,sigma_int_MW,normalizationA
-    Real*8,dimension(number_of_hosts_galaxies) :: mu0j, sigma_int
+    Real*8,dimension(number_of_hosts_galaxies + 1) :: mu0j,sigma_int
+!    Real*8,dimension(number_of_hosts_galaxies) :: sigma_int
     Integer*4 :: m,index_host,number_cepheid
 
     log_R11_likelihood_W_MW_sigma_int = 0.d0
+
+    If (use_HP_per_cepheid) then ! LMC CEPHEID VARIABLES
+
+       Do m=1,size(Name)
+
+          If (using_jeffreys_prior) then
+
+             print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+             stop
+
+          Else
+                       
+             If (Period(m) .lt. cepheid_Period_limit) then
+
+                log_R11_likelihood_W_MW_sigma_int = log(new_chi2(chi2R11_W_LMC_E14(mu0j(10),M_w,bw,&
+                     Zw,sigma_int(10),m))) + &
+                     log(N_tilde_R11_W_LMC(sigma_int(10),m)) + log_R11_likelihood_W_MW_sigma_int
+                      
+             End If
+
+          End If
+
+       End Do
+
+    Else
+
+       Do m=1,size(Name)
+
+          If (Period(m) .lt. cepheid_Period_limit) then
+
+             log_R11_likelihood_W_MW_sigma_int = -chi2R11_W_LMC_E14(mu0j(10),M_w,bw,Zw,sigma_int(10),m)/2.d0 + &
+                  log(N_tilde_R11_W_LMC(sigma_int(10),m)) + log_R11_likelihood_W_MW_sigma_int
+
+          End If
+
+       End Do
+
+    End If
 
     If (use_HP_per_host) then  ! R11 SAMPLE
  
@@ -4107,7 +4147,7 @@ subroutine set_covariance_matrix()
 
                     If (sigma_int_per_R11_host) then
 
-                       If (number_model_parameters .eq. 25) then
+                       If (number_model_parameters .eq. 27) then
 
                           Covguess(1,1) = sigma_mu1**2 ! n4536
 
@@ -4127,19 +4167,19 @@ subroutine set_covariance_matrix()
 
                           Covguess(9,9) = sigma_mu9**2 ! n4258
 
-                          Covguess(10,10) = sigma_Mw**2 
+                          Covguess(10,10) = sigma_mu10**2 ! LMC
 
-                          Covguess(11,11) = sigma_bw**2 
+                          Covguess(11,11) = sigma_Mw**2 
 
-                          Covguess(12,12) = sigma_H0**2 
+                          Covguess(12,12) = sigma_bw**2 
 
-                          Covguess(13,13) = sigma_Zw**2 
+                          Covguess(13,13) = sigma_H0**2 
 
-                          Covguess(14,14) = sigma_a_v**2
+                          Covguess(14,14) = sigma_Zw**2 
 
-                          Covguess(15,15) = sigma_a_cal**2
+                          Covguess(15,15) = sigma_a_v**2
 
-                          Covguess(16,16) = sigma_sigma_int**2
+                          Covguess(16,16) = sigma_a_cal**2
 
                           Covguess(17,17) = sigma_sigma_int**2
 
@@ -4159,9 +4199,13 @@ subroutine set_covariance_matrix()
 
                           Covguess(25,25) = sigma_sigma_int**2
 
+                          Covguess(26,26) = sigma_sigma_int**2
+
+                          Covguess(27,27) = sigma_sigma_int**2
+
                        Else
 
-                          print *,'WRONG NUMBER OF MODEL PARAMETERS (MUST BE 25). CHECK FIDUCIAL MODULE'
+                          print *,'WRONG NUMBER OF MODEL PARAMETERS (MUST BE 26). CHECK FIDUCIAL MODULE'
 
                           stop
 
