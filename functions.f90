@@ -3330,6 +3330,8 @@ subroutine set_covariance_matrix()
 
   Integer*4 :: m,n
 
+  Logical :: cov_file, out_file
+
   If (testing_Gaussian_likelihood) then
 
      ! SETTING COVARIANCE MATRIX
@@ -3584,50 +3586,130 @@ subroutine set_covariance_matrix()
 
                  Else
 
-                    If (number_model_parameters .eq. 17) then
+                    If (sigma_int_per_R11_host) then
 
-                       Covguess(1,1) = sigma_mu1**2 
+                       If (number_model_parameters .eq. 27) then
 
-                       Covguess(2,2) = sigma_mu2**2 
+                          Covguess(1,1) = sigma_mu1**2 
 
-                       Covguess(3,3) = sigma_mu3**2 
+                          Covguess(2,2) = sigma_mu2**2 
 
-                       Covguess(4,4) = sigma_mu4**2 
+                          Covguess(3,3) = sigma_mu3**2 
 
-                       Covguess(5,5) = sigma_mu5**2 
+                          Covguess(4,4) = sigma_mu4**2 
 
-                       Covguess(6,6) = sigma_mu6**2 
+                          Covguess(5,5) = sigma_mu5**2 
 
-                       Covguess(7,7) = sigma_mu7**2 
+                          Covguess(6,6) = sigma_mu6**2 
 
-                       Covguess(8,8) = sigma_mu8**2 
+                          Covguess(7,7) = sigma_mu7**2 
 
-                       Covguess(9,9) = sigma_mu9**2 
+                          Covguess(8,8) = sigma_mu8**2 
 
-                       Covguess(10,10) = sigma_Mw**2 
+                          Covguess(9,9) = sigma_mu9**2 
 
-                       Covguess(11,11) = sigma_bw**2 
+                          Covguess(10,10) = sigma_mu10**2
 
-                       Covguess(12,12) = sigma_H0**2 
+                          Covguess(11,11) = sigma_Mw**2 
 
-                       Covguess(13,13) = sigma_Zw**2 
+                          Covguess(12,12) = sigma_bw**2 
 
-                       Covguess(14,14) = sigma_a_v**2
+                          Covguess(13,13) = sigma_H0**2 
 
-                       Covguess(15,15) = sigma_a_cal**2
+                          Covguess(14,14) = sigma_Zw**2 
 
-                       Covguess(16,16) = sigma_sigma_int**2
+                          Covguess(15,15) = sigma_a_v**2
 
-                       Covguess(17,17) = sigma_sigma_int**2
+                          Covguess(16,16) = sigma_a_cal**2
+
+                          Covguess(17,17) = sigma_sigma_int**2
+
+                          Covguess(18,18) = sigma_sigma_int**2
+
+                          Covguess(19,19) = sigma_sigma_int**2
+
+                          Covguess(20,20) = sigma_sigma_int**2
+
+                          Covguess(21,21) = sigma_sigma_int**2
+
+                          Covguess(22,22) = sigma_sigma_int**2
+
+                          Covguess(23,23) = sigma_sigma_int**2
+
+                          Covguess(24,24) = sigma_sigma_int**2
+
+                          Covguess(25,25) = sigma_sigma_int**2
+
+                          Covguess(26,26) = sigma_sigma_int**2
+
+                          Covguess(27,27) = sigma_sigma_int**2
+
+                       Else
+
+                          print *,'WRONG NUMBER OF MODEL PARAMETERS (MUST BE 27). CHECK FIDUCIAL MODULE'
+
+                          stop
+
+                       End If
 
                     Else
 
-                       print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE'
+                       If (varying_sigma_int) then
+                          
+                          If (number_model_parameters .eq. 17) then
 
-                       stop
+                             Covguess(1,1) = sigma_mu1**2 
+
+                             Covguess(2,2) = sigma_mu2**2 
+
+                             Covguess(3,3) = sigma_mu3**2 
+
+                             Covguess(4,4) = sigma_mu4**2 
+
+                             Covguess(5,5) = sigma_mu5**2 
+
+                             Covguess(6,6) = sigma_mu6**2 
+
+                             Covguess(7,7) = sigma_mu7**2 
+
+                             Covguess(8,8) = sigma_mu8**2 
+
+                             Covguess(9,9) = sigma_mu9**2 
+
+                             Covguess(10,10) = sigma_Mw**2 
+
+                             Covguess(11,11) = sigma_bw**2 
+
+                             Covguess(12,12) = sigma_H0**2 
+
+                             Covguess(13,13) = sigma_Zw**2 
+
+                             Covguess(14,14) = sigma_a_v**2
+
+                             Covguess(15,15) = sigma_a_cal**2
+
+                             Covguess(16,16) = sigma_sigma_int**2
+
+                             Covguess(17,17) = sigma_sigma_int**2
+
+                          Else
+
+                             print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE'
+
+                             stop
+
+                          End If
+
+                       Else
+
+                          print *, 'NO VARYING SIGMA INT NEEDS IMPLEMENTATION'
+
+                          stop
+
+                       End If
 
                     End If
-
+                          
                  End If
 
               Else
@@ -4034,6 +4116,30 @@ subroutine set_covariance_matrix()
 
      ! COVARIANCE MATRIX ADJUSTED 
      Covguess = jumping_factor*Covguess
+
+  End If
+
+  inquire(file='./output/covariance_matrix.txt',exist=cov_file)
+
+  inquire(file='./output/mcmc_output.txt',exist=out_file)
+
+  If (cov_file) then
+
+     call system('rm ./output/covariance_matrix.txt')
+
+  Else
+
+     continue
+
+  End If
+
+  If (out_file) then
+
+     call system('rm ./output/mcmc_output.txt')
+
+  Else
+
+     continue
 
   End If
 

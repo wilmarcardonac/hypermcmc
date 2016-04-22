@@ -300,40 +300,114 @@ Program mcmc
 
                       Else
 
-                         old_point(1) = prior_mu1
+                         If (sigma_int_per_R11_host)  then
 
-                         old_point(2) = prior_mu2
+                            old_point(1) = prior_mu1
 
-                         old_point(3) = prior_mu3 
+                            old_point(2) = prior_mu2
 
-                         old_point(4) = prior_mu4
+                            old_point(3) = prior_mu3 
 
-                         old_point(5) = prior_mu5
+                            old_point(4) = prior_mu4
 
-                         old_point(6) = prior_mu6
+                            old_point(5) = prior_mu5
 
-                         old_point(7) = prior_mu7
+                            old_point(6) = prior_mu6
 
-                         old_point(8) = prior_mu8
+                            old_point(7) = prior_mu7
 
-                         old_point(9) = prior_mu9
+                            old_point(8) = prior_mu8
 
-                         old_point(10) = prior_Mw
+                            old_point(9) = prior_mu9
 
-                         old_point(11) = prior_bw
+                            old_point(10) = prior_mu10
 
-                         old_point(12) = prior_H0
+                            old_point(11) = prior_Mw
 
-                         old_point(13) = prior_Zw
+                            old_point(12) = prior_bw
 
-                         old_point(14) = a_v
+                            old_point(13) = prior_H0
 
-                         old_point(15) = a_cal
+                            old_point(14) = prior_Zw
 
-                         old_point(16) = log10(prior_sigma_int_MW)
+                            old_point(15) = a_v
 
-                         old_point(17) = log10(prior_sigma_int)
-                        
+                            old_point(16) = a_cal
+
+                            old_point(17) = log10(prior_sigma_int_LMC)
+
+                            old_point(18) = log10(prior_sigma_int_MW)
+
+                            old_point(19) = log10(prior_sigma_int)
+
+                            old_point(20) = log10(prior_sigma_int)
+
+                            old_point(21) = log10(prior_sigma_int)
+
+                            old_point(22) = log10(prior_sigma_int)
+
+                            old_point(23) = log10(prior_sigma_int)
+
+                            old_point(24) = log10(prior_sigma_int)
+
+                            old_point(25) = log10(prior_sigma_int)
+
+                            old_point(26) = log10(prior_sigma_int)
+
+                            old_point(27) = log10(prior_sigma_int)
+
+                         Else
+
+                            If (varying_sigma_int) then
+
+                               old_point(1) = prior_mu1
+
+                               old_point(2) = prior_mu2
+
+                               old_point(3) = prior_mu3 
+
+                               old_point(4) = prior_mu4
+
+                               old_point(5) = prior_mu5
+
+                               old_point(6) = prior_mu6
+
+                               old_point(7) = prior_mu7
+
+                               old_point(8) = prior_mu8
+
+                               old_point(9) = prior_mu9
+
+                               old_point(10) = prior_Mw
+
+                               old_point(11) = prior_bw
+
+                               old_point(12) = prior_H0
+
+                               old_point(13) = prior_Zw
+
+                               old_point(14) = a_v
+
+                               old_point(15) = a_cal
+
+                               old_point(16) = log10(prior_sigma_int_MW)
+
+                               old_point(17) = log10(prior_sigma_int)
+
+                               print *,'MUST ADD TWO PARAMETERS FOR THIS CASE: LMC DISTANCE MODULUS AND SIGMA INT FOR LMC'
+
+                               stop
+
+                            Else
+
+                               print *, 'NO VARYING SIGMA INT NEEDS IMPLEMENTATION'
+
+                               stop
+
+                            End If
+
+                         End If
+
                       End If
 
                    Else
@@ -877,40 +951,110 @@ Program mcmc
                          stop
 
                       Else
-                     
-                         x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
 
-                         x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
+                         If (sigma_int_R11_host) then
 
-                         x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
+                            x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
 
-                         x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
+                            x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
 
-                         x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
+                            x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
 
-                         x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
+                            x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
 
-                         x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
+                            x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
 
-                         x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
+                            x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
 
-                         x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
+                            x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
 
-                         x_old(10) = genunf(real(prior_Mw - sigma_Mw),real(prior_Mw + sigma_Mw))
+                            x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
 
-                         x_old(11) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
+                            x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
 
-                         x_old(12) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
+                            x_old(10) = genunf(real(prior_mu10 - sigma_mu10),real(prior_mu10 + sigma_mu10))
 
-                         x_old(13) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+                            x_old(11) = genunf(real(prior_Mw - sigma_Mw),real(prior_Mw + sigma_Mw))
 
-                         x_old(14) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
+                            x_old(12) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
 
-                         x_old(15) = genunf(real(a_cal - sigma_a_cal),real(a_cal + sigma_a_cal))
+                            x_old(13) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
 
-                         x_old(16) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(14) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
 
-                         x_old(17) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(15) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
+
+                            x_old(16) = genunf(real(a_cal - sigma_a_cal),real(a_cal + sigma_a_cal))
+
+                            x_old(17) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(18) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(19) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(20) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(21) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(22) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(23) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(24) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(25) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(26) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(27) = genunf(real(-3.d0),real(-0.7d0))
+
+                         Else
+
+                            If (varying_sigma_int) then
+
+                               x_old(1) = genunf(real(prior_mu1 - sigma_mu1),real(prior_mu1 + sigma_mu1))
+
+                               x_old(2) = genunf(real(prior_mu2 - sigma_mu2),real(prior_mu2 + sigma_mu2))
+
+                               x_old(3) = genunf(real(prior_mu3 - sigma_mu3),real(prior_mu3 + sigma_mu3))
+
+                               x_old(4) = genunf(real(prior_mu4 - sigma_mu4),real(prior_mu4 + sigma_mu4))
+
+                               x_old(5) = genunf(real(prior_mu5 - sigma_mu5),real(prior_mu5 + sigma_mu5))
+
+                               x_old(6) = genunf(real(prior_mu6 - sigma_mu6),real(prior_mu6 + sigma_mu6))
+
+                               x_old(7) = genunf(real(prior_mu7 - sigma_mu7),real(prior_mu7 + sigma_mu7))
+
+                               x_old(8) = genunf(real(prior_mu8 - sigma_mu8),real(prior_mu8 + sigma_mu8))
+
+                               x_old(9) = genunf(real(prior_mu9 - sigma_mu9),real(prior_mu9 + sigma_mu9))
+
+                               x_old(10) = genunf(real(prior_Mw - sigma_Mw),real(prior_Mw + sigma_Mw))
+
+                               x_old(11) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
+
+                               x_old(12) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
+
+                               x_old(13) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+
+                               x_old(14) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
+
+                               x_old(15) = genunf(real(a_cal - sigma_a_cal),real(a_cal + sigma_a_cal))
+
+                               x_old(16) = genunf(real(-3.d0),real(-0.7d0))
+
+                               x_old(17) = genunf(real(-3.d0),real(-0.7d0))
+
+                            Else
+
+                               print *,'NO VARYING SIGMA INT NEEDS IMPLEMENTATION'
+
+                               stop
+
+                            End If
+
+                         End If
 
                       End If
 
@@ -1398,19 +1542,53 @@ Program mcmc
                      
                       Else
 
-                         old_point(16) = 10**(old_point(16))
+                         If (sigma_int_per_R11_host) then
 
-                         old_point(17) = 10**(old_point(17))
-                          
-                         old_loglikelihood = log_R11_likelihood_W_MW_NGC4258(old_point(1:number_model_parameters-8),&
-                              old_point(number_model_parameters-7),old_point(number_model_parameters-6),&
-                              old_point(number_model_parameters-5),old_point(number_model_parameters-4),&
-                              old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
-                              old_point(17),old_point(16))
+                            print *,'IMPLEMENTING!!'
 
-                         old_point(16) = log10(old_point(16))
+                            stop
 
-                         old_point(17) = log10(old_point(17))
+                            old_point(16) = 10**(old_point(16))
+
+                            old_point(17) = 10**(old_point(17))
+
+                            old_loglikelihood = log_R11_likelihood_W_MW_NGC4258(old_point(1:number_model_parameters-8),&
+                                 old_point(number_model_parameters-7),old_point(number_model_parameters-6),&
+                                 old_point(number_model_parameters-5),old_point(number_model_parameters-4),&
+                                 old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
+                                 old_point(17),old_point(16))
+
+                            old_point(16) = log10(old_point(16))
+
+                            old_point(17) = log10(old_point(17))
+
+                         Else
+                            
+                            If (varying_sigma_int) then
+
+                               old_point(16) = 10**(old_point(16))
+
+                               old_point(17) = 10**(old_point(17))
+
+                               old_loglikelihood = log_R11_likelihood_W_MW_NGC4258(old_point(1:number_model_parameters-8),&
+                                    old_point(number_model_parameters-7),old_point(number_model_parameters-6),&
+                                    old_point(number_model_parameters-5),old_point(number_model_parameters-4),&
+                                    old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
+                                    old_point(17),old_point(16))
+
+                               old_point(16) = log10(old_point(16))
+
+                               old_point(17) = log10(old_point(17))
+
+                            Else
+
+                               print *, 'NO VARYING SIGMA INT NEEDS IMPLEMENTATION'
+
+                               stop
+
+                            End If
+
+                         End If
 
                       End If
 
