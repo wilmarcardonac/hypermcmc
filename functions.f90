@@ -2114,6 +2114,266 @@ function log_R11_likelihood_W_MW_NGC4258(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sig
 
 end function log_R11_likelihood_W_MW_NGC4258
 
+function log_R11_likelihood_W_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int,sigma_int_MW)    !    EQUATION (4) IN R09
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: log_R11_likelihood_W_MW_NGC4258_sigma_int,M_w,bw,H0,Zw,av,acal,sigma_int_MW,normalizationA
+    Real*8,dimension(number_of_hosts_galaxies + 1) :: mu0j,sigma_int
+    Integer*4 :: m,index_host,number_cepheid
+
+    log_R11_likelihood_W_MW_NGC4258_sigma_int = 0.d0
+
+    If (use_HP_per_cepheid) then ! LMC CEPHEID VARIABLES
+
+       Do m=1,size(Name)
+
+          If (using_jeffreys_prior) then
+
+             print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+             stop
+
+          Else
+                       
+             If (Period(m) .lt. cepheid_Period_limit) then
+
+                log_R11_likelihood_W_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_W_LMC_E14(mu0j(10),M_w,bw,&
+                     Zw,sigma_int(10),m))) + &
+                     log(N_tilde_R11_W_LMC(sigma_int(10),m)) + log_R11_likelihood_W_MW_NGC4258_sigma_int
+                      
+             End If
+
+          End If
+
+       End Do
+
+    Else
+
+       Do m=1,size(Name)
+
+          If (Period(m) .lt. cepheid_Period_limit) then
+
+             log_R11_likelihood_W_MW_NGC4258_sigma_int = -chi2R11_W_LMC_E14(mu0j(10),M_w,bw,Zw,sigma_int(10),m)/2.d0 + &
+                  log(N_tilde_R11_W_LMC(sigma_int(10),m)) + log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+          End If
+
+       End Do
+
+    End If
+
+    If (use_HP_per_host) then  ! R11 SAMPLE
+ 
+       If (using_jeffreys_prior) then
+
+          Do index_host=1,number_of_hosts_galaxies
+
+             normalizationA = 0.d0
+
+             number_cepheid = 0
+
+             Do m=1, size(Field)
+
+                If (host(index_host) .eq. Field(m)) then
+                       
+                   number_cepheid = number_cepheid + 1
+
+                   normalizationA = log( eF160WR11(m)**2 + sigma_int(index_host)**2 ) + normalizationA
+
+                End If
+
+             End Do
+
+             log_R11_likelihood_W_MW_NGC4258_sigma_int = - dble(number_cepheid)*log(chi2R11_W_host_E14(mu0j(index_host),&
+                  M_w,bw,Zw,sigma_int(index_host),index_host))/2.d0 - normalizationA/2.d0 + &
+                  log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+          End Do
+
+       Else
+
+          print *, 'UNIFORM PRIOR NOT IMPLEMENTED YET. NEED TO CODE EXPRESSION WITH GAMMA FUNCTIONS'
+
+          stop
+
+       End If
+
+    Else
+
+       If (use_HP_per_cepheid) then
+
+          Do m=1,size(Field)
+
+             Do index_host=1,number_of_hosts_galaxies
+ 
+                If (host(index_host) .eq. Field(m)) then
+    
+                   If (using_jeffreys_prior) then
+
+                      print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+                      stop
+
+                   Else
+                       
+                      If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                         log_R11_likelihood_W_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_W_E14(mu0j(index_host),M_w,bw,&
+                              Zw,sigma_int(index_host),m))) + log(N_tilde_R11_W(sigma_int(index_host),m)) + &
+                              log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+                      End If
+
+                   End If
+
+                End If
+
+             End Do
+
+          End Do
+
+       Else
+
+          Do m=1,size(Field)
+
+             Do index_host=1,number_of_hosts_galaxies
+ 
+                If (host(index_host) .eq. Field(m)) then
+    
+                   If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                      log_R11_likelihood_W_MW_NGC4258_sigma_int = -chi2R11_W_E14(mu0j(index_host),&
+                           M_w,bw,Zw,sigma_int(index_host),m)/2.d0 + &
+                           log(N_tilde_R11_W(sigma_int(index_host),m)) + log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+                   End If
+
+                End If
+
+             End Do
+
+          End Do
+
+       End If
+
+    End If
+
+    If (use_HP_per_cepheid) then ! MW CEPHEID VARIABLES
+
+       Do m=1,size(FieldHipp)
+
+          If (using_jeffreys_prior) then
+
+             print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+             stop
+
+          Else
+                       
+             If (10**(logP(m)) .lt. cepheid_Period_limit) then
+
+                log_R11_likelihood_W_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m))) + &
+                     log(N_tilde_R11_W_MW(sigma_int_MW,m)) + log_R11_likelihood_W_MW_NGC4258_sigma_int
+                      
+             End If
+
+          End If
+
+       End Do
+
+    Else
+
+       Do m=1,size(FieldHipp)
+
+          If (10**(logP(m)) .lt. cepheid_Period_limit) then
+
+             log_R11_likelihood_W_MW_NGC4258_sigma_int = -chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m)/2.d0 + &
+                  log(N_tilde_R11_W_MW(sigma_int_MW,m)) + log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+          End If
+
+       End Do
+
+    End If
+
+    Do index_host=1,number_of_hosts_galaxies-1 ! SN Ia
+
+       If (use_HP_in_SNIa) then
+
+          log_R11_likelihood_W_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_SNIa(mu0j(index_host),H0,av,index_host))) + &
+               log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+       Else
+
+          log_R11_likelihood_W_MW_NGC4258_sigma_int = -chi2R11_SNIa(mu0j(index_host),H0,av,index_host)/2.d0 + &
+               log(N_tilde_R11_SNIa(index_host)) + log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+       End If
+              
+    End Do
+        
+    If (use_HP_in_av) then ! a_v AND a_cal PARAMETERS
+
+       log_R11_likelihood_W_MW_NGC4258_sigma_int = log(new_chi2((a_v - av)**2/sigma_a_v**2)) - log(2.d0*Pi*sigma_a_v**2)/2.d0  + &
+            log(new_chi2((a_cal - acal)**2/sigma_a_cal**2)) - log(2.d0*Pi*sigma_a_cal**2)/2.d0 + &
+            log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+    Else
+
+       log_R11_likelihood_W_MW_NGC4258_sigma_int = -((a_v - av)**2/sigma_a_v**2 + log(2.d0*Pi*sigma_a_v**2) )/2.d0  - &
+            ((a_cal - acal)**2/sigma_a_cal**2 + log(2.d0*Pi*sigma_a_cal**2) )/2.d0 + log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+    End If
+
+    If (use_HP_in_anchor) then
+
+       log_R11_likelihood_W_MW_NGC4258_sigma_int =  log(new_chi2(chi2R11_anchor_NGC4258(mu0j(9)))) - &
+            log(2.d0*Pi*sigma_mu_0_NGC4258**2)/2.d0 + log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+    Else
+
+       log_R11_likelihood_W_MW_NGC4258_sigma_int =  -(chi2R11_anchor_NGC4258(mu0j(9)) + log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 + &
+            log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+    End If
+        
+    If (use_prior_on_Zw) then
+
+       log_R11_likelihood_W_MW_NGC4258_sigma_int = -((Zw - prior_Zw)**2/sigma_Zw_prior**2 + &
+            log(2.d0*Pi*sigma_Zw_prior**2) )/2.d0  + log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+    Else 
+
+       continue
+
+    End If
+
+    If (use_prior_on_bw) then
+
+       log_R11_likelihood_W_MW_NGC4258_sigma_int = -((bw - prior_bw_from_LMC)**2/sigma_bw_prior**2 + &
+            log(2.d0*Pi*sigma_bw_prior**2) )/2.d0  + log_R11_likelihood_W_MW_NGC4258_sigma_int
+
+    Else 
+
+       continue
+
+    End If
+        
+    If ( abs(log_R11_likelihood_W_MW_NGC4258_sigma_int) .ge. 0.d0 ) then
+
+       continue
+
+    Else 
+
+       log_R11_likelihood_W_MW_NGC4258_sigma_int = -1.d10
+
+    End If
+
+end function log_R11_likelihood_W_MW_NGC4258_sigma_int
+
 function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATION (4) IN R09
 
     use arrays
