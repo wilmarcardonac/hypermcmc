@@ -3577,6 +3577,8 @@ subroutine set_covariance_matrix()
 
   Integer*4 :: m,n
 
+  Logical :: cov_file, out_file
+
   If (testing_Gaussian_likelihood) then
 
      ! SETTING COVARIANCE MATRIX
@@ -4341,6 +4343,30 @@ subroutine set_covariance_matrix()
 
      ! COVARIANCE MATRIX ADJUSTED 
      Covguess = jumping_factor*Covguess
+
+  End If
+
+  inquire(file='./output/covariance_matrix.txt',exist=cov_file)  
+
+  inquire(file='./output/mcmc_output.txt',exist=out_file)  
+  
+  If (cov_file) then
+
+     call system('rm  ./output/covariance_matrix.txt')
+
+  Else
+
+     continue
+
+  End If
+
+  If (out_file) then
+
+     call system('rm  ./output/mcmc_output.txt')
+
+  Else
+
+     continue
 
   End If
 

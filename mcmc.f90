@@ -5451,16 +5451,80 @@ Program mcmc
 
                              Do m=1,number_of_hosts_galaxies-1
 
-                                If ( chi2R11_SNIa(bestfit(m),bestfit(12),bestfit(14),m) .le. 1.d0) then
+                                If (m .eq. 3) then
 
-                                   write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                        bestfit(m)+5.d0*log10(bestfit(12))-25.d0,1.d0
+                                   If ( chi2R11_SNIa(bestfit(4),bestfit(12),bestfit(14),m) .le. 1.d0) then
+
+                                      write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(4)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                                           bestfit(4)+5.d0*log10(bestfit(12))-25.d0,1.d0
+
+                                   Else
+                                      
+                                      write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(4)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                                           bestfit(4)+5.d0*log10(bestfit(12))-25.d0,&
+                                           1.d0/chi2R11_SNIa(bestfit(4),bestfit(12),bestfit(14),m)
+                             
+                                   End If
+
+                                Else if (m .eq. 4) then
+
+                                   If ( chi2R11_SNIa(bestfit(3),bestfit(12),bestfit(14),m) .le. 1.d0) then
+
+                                      write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(3)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                                           bestfit(3)+5.d0*log10(bestfit(12))-25.d0,1.d0
+
+                                   Else
+
+                                      write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(3)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                                           bestfit(3)+5.d0*log10(bestfit(12))-25.d0,&
+                                           1.d0/chi2R11_SNIa(bestfit(3),bestfit(12),bestfit(14),m)
+                             
+                                   End If
+
+                                Else if (m .eq. 7) then
+
+                                   If ( chi2R11_SNIa(bestfit(8),bestfit(12),bestfit(14),m) .le. 1.d0) then
+
+                                      write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(8)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                                           bestfit(8)+5.d0*log10(bestfit(12))-25.d0,1.d0
+
+                                   Else
+
+                                      write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(8)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                                           bestfit(8)+5.d0*log10(bestfit(12))-25.d0,&
+                                           1.d0/chi2R11_SNIa(bestfit(8),bestfit(12),bestfit(14),m)
+                             
+                                   End If
+
+                                Else if (m .eq. 8) then
+
+                                   If ( chi2R11_SNIa(bestfit(7),bestfit(12),bestfit(14),m) .le. 1.d0) then
+
+                                      write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(7)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                                           bestfit(7)+5.d0*log10(bestfit(12))-25.d0,1.d0
+
+                                   Else
+
+                                      write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(7)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                                           bestfit(7)+5.d0*log10(bestfit(12))-25.d0,&
+                                           1.d0/chi2R11_SNIa(bestfit(7),bestfit(12),bestfit(14),m)
+                             
+                                   End If
 
                                 Else
 
-                                   write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                        bestfit(m)+5.d0*log10(bestfit(12))-25.d0,&
-                                        1.d0/chi2R11_SNIa(bestfit(m),bestfit(12),bestfit(14),m)
+                                   If ( chi2R11_SNIa(bestfit(m),bestfit(12),bestfit(14),m) .le. 1.d0) then
+
+                                      write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                                           bestfit(m)+5.d0*log10(bestfit(12))-25.d0,1.d0
+
+                                   Else
+
+                                      write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+                                           bestfit(m)+5.d0*log10(bestfit(12))-25.d0,&
+                                           1.d0/chi2R11_SNIa(bestfit(m),bestfit(12),bestfit(14),m)
+
+                                   End If
 
                                 End If
 
