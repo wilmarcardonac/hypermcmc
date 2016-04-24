@@ -25,16 +25,16 @@ Module fiducial
     Real*8,parameter    :: meanOH_MW = 8.9d0           ! MEAN METALLICITY FOR MW CEPHEID VARIABLES ASSUMED BY EFSTATHIOU
     Real*8,parameter    :: prior_zpH = 28.d0
     Real*8,parameter    :: prior_bH = -2.7d0
-    Real*8,parameter    :: prior_mu1 = 30.91d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu2 = 31.67d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu3 = 32.13d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu4 = 31.70d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu5 = 32.27d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu6 = 32.59d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu7 = 31.72d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu8 = 31.66d0 ! FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu9 = 24.8d0
-    Real*8,parameter    :: prior_mu10 = 18.5d0
+    Real*8,parameter    :: prior_mu1 = 30.91d0 ! n4536 FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu2 = 31.67d0 ! n4639 FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu3 = 31.70d0 ! n3982 FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu4 = 32.13d0 ! n3370 FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu5 = 32.27d0 ! n3021 FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu6 = 32.59d0 ! n1309 FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu7 = 31.66d0 ! n4038 FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu8 = 31.72d0 ! n5584 FROM TABLE 3 IN R11 
+    Real*8,parameter    :: prior_mu9 = 24.3d0  ! n4258 
+    Real*8,parameter    :: prior_mu10 = 18.5d0 ! LMC
     Real*8,parameter    :: prior_zpw = 29.d0
     Real*8,parameter    :: prior_zpw4258 = 30.5d0  ! CENTRAL VALUE OF PRIOR ON zp_{w,4258} 
     Real*8,parameter    :: prior_zpwLMC = 20.98d0
@@ -49,7 +49,7 @@ Module fiducial
 
     Real*8,parameter    :: sigma_A = 1.8d-2
     Real*8,parameter    :: sigma_bw = 1.d-1
-    Real*8,parameter    :: sigma_sigma_int = 1.d-2
+    Real*8,parameter    :: sigma_sigma_int = 1.d-1
     Real*8,parameter    :: sigma_alpha_j = 1.d-3
     Real*8,parameter    :: sigma_a_v = 0.00201d0        ! TAKEN FROM PAGE 9 IN R11
     Real*8,parameter    :: sigma_a_cal = 0.04d0         ! TAKEN FROM PAGE 10 IN EFSTATHIOU'S PAPER
@@ -59,24 +59,24 @@ Module fiducial
     Real*8,parameter    :: sigma_mu_0_LMC = 5.d0/log(10.d0)/LMC_distance*sigma_LMC_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_zpH = 0.2d0
     Real*8,parameter    :: sigma_bH = 0.1d0
-    Real*8,parameter    :: sigma_mu1 = sigma_mu_0_NGC4258/2.d0
-    Real*8,parameter    :: sigma_mu2 = sigma_mu_0_NGC4258/2.d0
-    Real*8,parameter    :: sigma_mu3 = sigma_mu_0_NGC4258/2.d0
-    Real*8,parameter    :: sigma_mu4 = sigma_mu_0_NGC4258/2.d0
-    Real*8,parameter    :: sigma_mu5 = sigma_mu_0_NGC4258/2.d0
-    Real*8,parameter    :: sigma_mu6 = sigma_mu_0_NGC4258/2.d0
-    Real*8,parameter    :: sigma_mu7 = sigma_mu_0_NGC4258/2.d0
-    Real*8,parameter    :: sigma_mu8 = sigma_mu_0_NGC4258/2.d0
-    Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258/2.d0
-    Real*8,parameter    :: sigma_mu10 = sigma_mu_0_LMC/2.d0
+    Real*8,parameter    :: sigma_mu1 = sigma_mu_0_NGC4258!/2.d0
+    Real*8,parameter    :: sigma_mu2 = sigma_mu_0_NGC4258!/2.d0
+    Real*8,parameter    :: sigma_mu3 = sigma_mu_0_NGC4258!/2.d0
+    Real*8,parameter    :: sigma_mu4 = sigma_mu_0_NGC4258!/2.d0
+    Real*8,parameter    :: sigma_mu5 = sigma_mu_0_NGC4258!/2.d0
+    Real*8,parameter    :: sigma_mu6 = sigma_mu_0_NGC4258!/2.d0
+    Real*8,parameter    :: sigma_mu7 = sigma_mu_0_NGC4258!/2.d0
+    Real*8,parameter    :: sigma_mu8 = sigma_mu_0_NGC4258!/2.d0
+    Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258!/2.d0
+    Real*8,parameter    :: sigma_mu10 = sigma_mu_0_LMC!/2.d0
     Real*8,parameter    :: sigma_zpw = 1.d-1
     Real*8,parameter    :: sigma_zpw4258 = 0.1d0 
     Real*8,parameter    :: sigma_zpwLMC = 0.78d0
     Real*8,parameter    :: sigma_Mw = 0.05d0
     Real*8,parameter    :: sigma_Zw = 0.25d0
     Real*8,parameter    :: sigma_Zw_prior = 0.02d0
-    Real*8,parameter    :: sigma_H0 = 1.0d-1
-    Real*8,parameter    :: sigma_bw_prior = 0.1d0
+    Real*8,parameter    :: sigma_H0 = 2.4d0
+    Real*8,parameter    :: sigma_bw_prior = 0.05d0
 
     !#####################
     ! OTHER SPECIFICATIONS
@@ -89,11 +89,12 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 19 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    Integer*4,parameter :: number_model_parameters = 27 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
     ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 15 FOR ALL R11 CEPHEIDS +
     ! MW CEPHEIDS ANS USING MW AS ANCHOR, 16 FOR ALL R11 CEPHEIDS + NGC4258 AND LMC AS ANCHORS, 15 FOR ALL R11 CEPHEIDS + NGC4258 AND MW AS ANCHORS,
-    ! 16 FOR ALL R11 CEPHEIDS + MW AND LMC AS ANCHORS, 16 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS
+    ! 16 FOR ALL R11 CEPHEIDS + MW AND LMC AS ANCHORS, 27 FOR ALL R11 CEPHEIDS + MW AND LMC AS ANCHORS VARYING SIGMA INT, 
+    ! 16 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
     Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
     Integer*4,parameter :: jumping_factor_update = 100           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)
@@ -142,6 +143,8 @@ Module fiducial
     Logical,parameter   :: use_prior_on_Zw = .false.!.true.              ! USE PRIOR ON Zw IF SET IT TRUE 
     Logical,parameter   :: use_prior_on_bw = .false.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
+    Logical,parameter   :: varying_sigma_int = .true.            ! TRUE IF VARYING sigma_int IN MCMC WHEN NO sigma_int_per_R11_host, SET TO FALSE OTHERWISE
+    Logical,parameter   :: sigma_int_per_R11_host = .true.        ! TRUE FOR MAIN ANALYSIS: IT INCLUDES SIGMA INT PER R11 HOST     
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 
