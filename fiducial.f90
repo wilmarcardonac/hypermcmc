@@ -89,12 +89,13 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 27 ! NUMBER OF PARAMETERS IN MODEL : 3 FOR MW ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    Integer*4,parameter :: number_model_parameters = 17 ! NUMBER OF PARAMETERS IN MODEL : 3 FOR MW ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
     ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 17 FOR ALL R11 CEPHEIDS +
     ! MW CEPHEIDS ANS USING MW AS ANCHOR, 16 FOR ALL R11 CEPHEIDS + NGC4258 AND LMC AS ANCHORS, 15 FOR ALL R11 CEPHEIDS + NGC4258 AND MW AS ANCHORS,
     ! 16 FOR ALL R11 CEPHEIDS + MW AND LMC AS ANCHORS, 16 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS, 27 FOR ALL R11 CEPHEIDS +
-    ! MW CEPHEIDS AND USING MW AS ANCHOR (WITH VARYING sigma_int)
+    ! MW CEPHEIDS AND USING MW AS ANCHOR (WITH VARYING sigma_int), 17 FOR R11 SN Ia HOSTS WITH LOW bw (AND THEIR CEPHEIDS) +
+    ! MW CEPHEIDS AND USING MW AS ANCHOR (WITH VARYING sigma_int) 
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
     Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
     Integer*4,parameter :: jumping_factor_update = 100           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)
@@ -141,11 +142,12 @@ Module fiducial
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
-    Logical,parameter   :: use_prior_on_Zw = .true.              ! USE PRIOR ON Zw IF SET IT TRUE 
+    Logical,parameter   :: use_prior_on_Zw = .false.              ! USE PRIOR ON Zw IF SET IT TRUE 
     Logical,parameter   :: use_prior_on_bw = .false.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
     Logical,parameter   :: varying_sigma_int = .true.            ! TRUE IF VARYING sigma_int IN MCMC WHEN NO sigma_int_per_R11_host, SET TO FALSE OTHERWISE
     Logical,parameter   :: sigma_int_per_R11_host = .true.       ! TRUE FOR MAIN ANALYSIS: IT INCLUDES SIGMA INT PER R11 HOST
+    Logical,parameter   :: include_all_R11_hosts = .false.       ! TRUE INCLUDES 9 GALAXIES IN THE ANALYSIS, FALSE INCLUDES ONLY 4
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 
@@ -158,6 +160,7 @@ Module fiducial
     character(len=*),parameter :: path_to_table2_LEEUWEN = './data/table2_Leeuwen.txt' ! PATH TO DATA OF TABLE 2 IN LEEUWEN
     Character(len=5),dimension(number_of_hosts_galaxies), parameter :: host = ['n4536','n4639','n3982','n3370','n3021','n1309',&
     'n4038','n5584','n4258'] ! HOST GALAXIES IN SAME ORDER LISTED IN TABLE 2 OF R11
+    Character(len=5),dimension(number_of_hosts_galaxies - 5), parameter :: host_low_bw = ['n3982','n3370','n3021','n4258'] ! HOST GALAXIES WITH LOWEST bw
     Character(len=*),parameter :: EXECUTION_INFORMATION = './output/chains/execution_information.txt' ! PATH TO EXECUTION INFORMATION FILE
 
 End Module fiducial
