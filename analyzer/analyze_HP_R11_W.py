@@ -64,30 +64,36 @@ samples.addDerived(p.mu08 - p.mu04258, name='mu08_mu04258', label='\mu_{0,8}-\mu
 
 samples.addDerived(p.mu04258 + 5.*np.log10(p.H0) - 25., name='mu04258_5av', label='m^0_{v,4258}+5a_v')
 
-samples.addDerived(np.power(10,p.log10sigma_int_LMC),name='sigma_int_LMC',label='\sigma_{int}^{LMC}')
+if number_of_parameters == 16 :
 
-samples.addDerived(np.power(10,p.log10sigma_int_MW),name='sigma_int_MW',label='\sigma_{int}^{MW}')
+    pass
 
-if number_of_parameters == 27 :
+else:
+
+    samples.addDerived(np.power(10,p.log10sigma_int_LMC),name='sigma_int_LMC',label='\sigma_{int}^{LMC}')
+
+    samples.addDerived(np.power(10,p.log10sigma_int_MW),name='sigma_int_MW',label='\sigma_{int}^{MW}')
+
+#if number_of_parameters == 27 :
 
 
-    samples.addDerived(np.power(10,p.log10sigma_int_1),name='sigma_int_1',label='\sigma_{int,1}')
+#    samples.addDerived(np.power(10,p.log10sigma_int_1),name='sigma_int_1',label='\sigma_{int,1}')
 
-    samples.addDerived(np.power(10,p.log10sigma_int_2),name='sigma_int_2',label='\sigma_{int,2}')
+#    samples.addDerived(np.power(10,p.log10sigma_int_2),name='sigma_int_2',label='\sigma_{int,2}')
 
-    samples.addDerived(np.power(10,p.log10sigma_int_3),name='sigma_int_3',label='\sigma_{int,3}')
+#    samples.addDerived(np.power(10,p.log10sigma_int_3),name='sigma_int_3',label='\sigma_{int,3}')
 
-    samples.addDerived(np.power(10,p.log10sigma_int_4),name='sigma_int_4',label='\sigma_{int,4}')
+#    samples.addDerived(np.power(10,p.log10sigma_int_4),name='sigma_int_4',label='\sigma_{int,4}')
 
-    samples.addDerived(np.power(10,p.log10sigma_int_5),name='sigma_int_5',label='\sigma_{int,5}')
+#    samples.addDerived(np.power(10,p.log10sigma_int_5),name='sigma_int_5',label='\sigma_{int,5}')
 
-    samples.addDerived(np.power(10,p.log10sigma_int_6),name='sigma_int_6',label='\sigma_{int,6}')
+#    samples.addDerived(np.power(10,p.log10sigma_int_6),name='sigma_int_6',label='\sigma_{int,6}')
 
-    samples.addDerived(np.power(10,p.log10sigma_int_7),name='sigma_int_7',label='\sigma_{int,7}')
+#    samples.addDerived(np.power(10,p.log10sigma_int_7),name='sigma_int_7',label='\sigma_{int,7}')
 
-    samples.addDerived(np.power(10,p.log10sigma_int_8),name='sigma_int_8',label='\sigma_{int,8}')
+#    samples.addDerived(np.power(10,p.log10sigma_int_8),name='sigma_int_8',label='\sigma_{int,8}')
 
-    samples.addDerived(np.power(10,p.log10sigma_int_9),name='sigma_int_9',label='\sigma_{int,9}')
+#    samples.addDerived(np.power(10,p.log10sigma_int_9),name='sigma_int_9',label='\sigma_{int,9}')
 
 #samples.addDerived(p.mu01 + 5.*np.log10(p.H0) - 25. - 5.*p.av, name='mv1', label='m_{v,1}')
 
@@ -137,13 +143,13 @@ covariance_matrix_2.saveToFile('../output/chains/covariance_matrix.txt')
 
 if number_of_parameters == 27 :
 
-    h = plots.getSubplotPlotter()
+#    h = plots.getSubplotPlotter()
 
-    h.settings.rcSizes(axes_fontsize = 2, lab_fontsize = 7)
+#    h.settings.rcSizes(axes_fontsize = 2, lab_fontsize = 7)
 
-    h.plots_1d(samples,['sigma_int_LMC','sigma_int_MW','sigma_int_1','sigma_int_2','sigma_int_3','sigma_int_4','sigma_int_5','sigma_int_6','sigma_int_7','sigma_int_8','sigma_int_9'],nx=3)
+#    h.plots_1d(samples,['sigma_int_LMC','sigma_int_MW','sigma_int_1','sigma_int_2','sigma_int_3','sigma_int_4','sigma_int_5','sigma_int_6','sigma_int_7','sigma_int_8','sigma_int_9'],nx=3)
 
-    h.export('../output/chains/1D_sigma_int_plots.pdf')
+#    h.export('../output/chains/1D_sigma_int_plots.pdf')
 
     print 'ANALYZE SCRIPT ENDED'
 
