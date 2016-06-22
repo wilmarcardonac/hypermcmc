@@ -28,6 +28,7 @@ Program mcmc
     Real*4,dimension(number_of_parameters*(number_of_parameters+3)/2 + 1) :: parm     ! ARRAY NEEDED BY RANDON NUMBER GENERATOR 
     Real*4,dimension(number_of_parameters) :: work,x_old,x_new                        ! ARRAYS NEEDED BY RANDOM NUMBER GENERATOR 
     Real*8,dimension(number_of_parameters) :: bestfit,means                           ! SAVES BESTFIT AND MEANS OF PARAMETERS 
+    Real*8,dimension(number_of_hosts_galaxies) :: sigmainthost
 
     Logical :: not_good_aap,non_plausible_parameters   ! IT CONTROLS PLAUSIBLE VALUES OF COSMOLOGICAL PARAMETERS
     Logical,dimension(number_of_parameters) :: plausibility  
@@ -42,6 +43,8 @@ Program mcmc
 !##########################################################
 
     galaxy = host(8)
+
+    sigmainthost(:) = 0.d0
 
     weight = 1
 
@@ -238,45 +241,45 @@ Program mcmc
 
                             old_point(29) = log10(prior_sigma_int_MW)
 
-                            old_point(30) = log10(prior_sigma_int)
-
-                            old_point(31) = log10(prior_sigma_int)
-
-                            old_point(32) = log10(prior_sigma_int)
-
-                            old_point(33) = log10(prior_sigma_int)
-
-                            old_point(34) = log10(prior_sigma_int)
-
-                            old_point(35) = log10(prior_sigma_int)
-
-                            old_point(36) = log10(prior_sigma_int)
-
-                            old_point(37) = log10(prior_sigma_int)
-
-                            old_point(38) = log10(prior_sigma_int)
-
-                            old_point(39) = log10(prior_sigma_int)
-
-                            old_point(40) = log10(prior_sigma_int)
-
-                            old_point(41) = log10(prior_sigma_int)
-
-                            old_point(42) = log10(prior_sigma_int)
-
-                            old_point(43) = log10(prior_sigma_int)
-
-                            old_point(44) = log10(prior_sigma_int)
-
-                            old_point(45) = log10(prior_sigma_int)
-
-                            old_point(46) = log10(prior_sigma_int)
-
-                            old_point(47) = log10(prior_sigma_int)
-
-                            old_point(48) = log10(prior_sigma_int)
-
-                            old_point(49) = log10(prior_sigma_int)
+!!$                            old_point(30) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(31) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(32) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(33) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(34) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(35) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(36) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(37) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(38) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(39) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(40) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(41) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(42) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(43) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(44) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(45) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(46) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(47) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(48) = log10(prior_sigma_int)
+!!$
+!!$                            old_point(49) = log10(prior_sigma_int)
 
                          Else
 
@@ -1039,45 +1042,45 @@ Program mcmc
 
                             x_old(29) = genunf(real(-3.d0),real(-0.7d0))
 
-                            x_old(30) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(31) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(32) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(33) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(34) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(35) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(36) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(37) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(38) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(39) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(40) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(41) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(42) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(43) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(44) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(45) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(46) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(47) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(48) = genunf(real(-3.d0),real(-0.7d0))
-
-                            x_old(49) = genunf(real(-3.d0),real(-0.7d0))
+!!$                            x_old(30) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(31) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(32) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(33) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(34) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(35) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(36) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(37) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(38) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(39) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(40) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(41) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(42) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(43) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(44) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(45) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(46) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(47) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(48) = genunf(real(-3.d0),real(-0.7d0))
+!!$
+!!$                            x_old(49) = genunf(real(-3.d0),real(-0.7d0))
 
                          Else
                      
@@ -1768,96 +1771,103 @@ Program mcmc
 
                             old_point(29) = 10**(old_point(29))
 
-                            old_point(30) = 10**(old_point(30))
+!!$                            old_point(30) = 10**(old_point(30))
+!!$
+!!$                            old_point(31) = 10**(old_point(31))
+!!$
+!!$                            old_point(32) = 10**(old_point(32))
+!!$
+!!$                            old_point(33) = 10**(old_point(33))
+!!$
+!!$                            old_point(34) = 10**(old_point(34))
+!!$
+!!$                            old_point(35) = 10**(old_point(35))
+!!$
+!!$                            old_point(36) = 10**(old_point(36))
+!!$
+!!$                            old_point(37) = 10**(old_point(37))
+!!$
+!!$                            old_point(38) = 10**(old_point(38))
+!!$
+!!$                            old_point(39) = 10**(old_point(39))
+!!$
+!!$                            old_point(40) = 10**(old_point(40))
+!!$
+!!$                            old_point(41) = 10**(old_point(41))
+!!$
+!!$                            old_point(42) = 10**(old_point(42))
+!!$
+!!$                            old_point(43) = 10**(old_point(43))
+!!$
+!!$                            old_point(44) = 10**(old_point(44))
+!!$
+!!$                            old_point(45) = 10**(old_point(45))
+!!$
+!!$                            old_point(46) = 10**(old_point(46))
+!!$
+!!$                            old_point(47) = 10**(old_point(47))
+!!$
+!!$                            old_point(48) = 10**(old_point(48))
+!!$
+!!$                            old_point(49) = 10**(old_point(49))
 
-                            old_point(31) = 10**(old_point(31))
-
-                            old_point(32) = 10**(old_point(32))
-
-                            old_point(33) = 10**(old_point(33))
-
-                            old_point(34) = 10**(old_point(34))
-
-                            old_point(35) = 10**(old_point(35))
-
-                            old_point(36) = 10**(old_point(36))
-
-                            old_point(37) = 10**(old_point(37))
-
-                            old_point(38) = 10**(old_point(38))
-
-                            old_point(39) = 10**(old_point(39))
-
-                            old_point(40) = 10**(old_point(40))
-
-                            old_point(41) = 10**(old_point(41))
-
-                            old_point(42) = 10**(old_point(42))
-
-                            old_point(43) = 10**(old_point(43))
-
-                            old_point(44) = 10**(old_point(44))
-
-                            old_point(45) = 10**(old_point(45))
-
-                            old_point(46) = 10**(old_point(46))
-
-                            old_point(47) = 10**(old_point(47))
-
-                            old_point(48) = 10**(old_point(48))
-
-                            old_point(49) = 10**(old_point(49))
+!!$                            old_loglikelihood = log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(old_point(1:&
+!!$                                 number_model_parameters-28),&
+!!$                                 old_point(number_model_parameters-27),old_point(number_model_parameters-26),&
+!!$                                 old_point(number_model_parameters-25),old_point(number_model_parameters-24),&
+!!$                                 old_point(number_model_parameters-23),old_point(number_model_parameters-22),&
+!!$                                 old_point(30:49),old_point(28),old_point(29))
 
                             old_loglikelihood = log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(old_point(1:&
-                                 number_model_parameters-28),&
-                                 old_point(number_model_parameters-27),old_point(number_model_parameters-26),&
-                                 old_point(number_model_parameters-25),old_point(number_model_parameters-24),&
-                                 old_point(number_model_parameters-23),old_point(number_model_parameters-22),&
-                                 old_point(30:49),old_point(28),old_point(29))
+                                 number_model_parameters-8),&
+                                 old_point(number_model_parameters-7),old_point(number_model_parameters-6),&
+                                 old_point(number_model_parameters-5),old_point(number_model_parameters-4),&
+                                 old_point(number_model_parameters-3),old_point(number_model_parameters-2),&
+                                 sigmainthost,old_point(28),old_point(29))
 
                             old_point(28) = log10(old_point(28))
 
                             old_point(29) = log10(old_point(29))
 
-                            old_point(30) = log10(old_point(30))
-
-                            old_point(31) = log10(old_point(31))
-
-                            old_point(32) = log10(old_point(32))
-
-                            old_point(33) = log10(old_point(33))
-
-                            old_point(34) = log10(old_point(34))
-
-                            old_point(35) = log10(old_point(35))
-
-                            old_point(36) = log10(old_point(36))
-
-                            old_point(37) = log10(old_point(37))
-
-                            old_point(38) = log10(old_point(38))
-
-                            old_point(39) = log10(old_point(39))
-
-                            old_point(40) = log10(old_point(40))
-
-                            old_point(41) = log10(old_point(41))
-
-                            old_point(42) = log10(old_point(42))
-
-                            old_point(43) = log10(old_point(43))
-
-                            old_point(44) = log10(old_point(44))
-
-                            old_point(45) = log10(old_point(45))
-
-                            old_point(46) = log10(old_point(46))
-
-                            old_point(47) = log10(old_point(47))
-
-                            old_point(48) = log10(old_point(48))
-
-                            old_point(49) = log10(old_point(49))
+!!$                            old_point(30) = log10(old_point(30))
+!!$
+!!$                            old_point(31) = log10(old_point(31))
+!!$
+!!$                            old_point(32) = log10(old_point(32))
+!!$
+!!$                            old_point(33) = log10(old_point(33))
+!!$
+!!$                            old_point(34) = log10(old_point(34))
+!!$
+!!$                            old_point(35) = log10(old_point(35))
+!!$
+!!$                            old_point(36) = log10(old_point(36))
+!!$
+!!$                            old_point(37) = log10(old_point(37))
+!!$
+!!$                            old_point(38) = log10(old_point(38))
+!!$
+!!$                            old_point(39) = log10(old_point(39))
+!!$
+!!$                            old_point(40) = log10(old_point(40))
+!!$
+!!$                            old_point(41) = log10(old_point(41))
+!!$
+!!$                            old_point(42) = log10(old_point(42))
+!!$
+!!$                            old_point(43) = log10(old_point(43))
+!!$
+!!$                            old_point(44) = log10(old_point(44))
+!!$
+!!$                            old_point(45) = log10(old_point(45))
+!!$
+!!$                            old_point(46) = log10(old_point(46))
+!!$
+!!$                            old_point(47) = log10(old_point(47))
+!!$
+!!$                            old_point(48) = log10(old_point(48))
+!!$
+!!$                            old_point(49) = log10(old_point(49))
 
                          Else
 
@@ -2411,65 +2421,65 @@ Program mcmc
                          paramnames(29) = 'log10sigma_int_MW'
                          latexname(29) = '\log_{10}\sigma_{int}^{MW}'
 
-                         paramnames(30) = 'log10sigma_int_1'
-                         latexname(30) = '\log_{10}\sigma_{int,1}'
-
-                         paramnames(31) = 'log10sigma_int_2'
-                         latexname(31) = '\log_{10}\sigma_{int,2}'
-
-                         paramnames(32) = 'log10sigma_int_3'
-                         latexname(32) = '\log_{10}\sigma_{int,3}'
-
-                         paramnames(33) = 'log10sigma_int_4'
-                         latexname(33) = '\log_{10}\sigma_{int,4}'
-
-                         paramnames(34) = 'log10sigma_int_5'
-                         latexname(34) = '\log_{10}\sigma_{int,5}'
-
-                         paramnames(35) = 'log10sigma_int_6'
-                         latexname(35) = '\log_{10}\sigma_{int,6}'
-
-                         paramnames(36) = 'log10sigma_int_7'
-                         latexname(36) = '\log_{10}\sigma_{int,7}'
-
-                         paramnames(37) = 'log10sigma_int_8'
-                         latexname(37) = '\log_{10}\sigma_{int,8}'
-
-                         paramnames(38) = 'log10sigma_int_9'
-                         latexname(38) = '\log_{10}\sigma_{int,9}'
-
-                         paramnames(39) = 'log10sigma_int_10'
-                         latexname(39) = '\log_{10}\sigma_{int,10}'
-
-                         paramnames(40) = 'log10sigma_int_11'
-                         latexname(40) = '\log_{10}\sigma_{int,11}'
-
-                         paramnames(41) = 'log10sigma_int_12'
-                         latexname(41) = '\log_{10}\sigma_{int,12}'
-
-                         paramnames(42) = 'log10sigma_int_13'
-                         latexname(42) = '\log_{10}\sigma_{int,13}'
-
-                         paramnames(43) = 'log10sigma_int_14'
-                         latexname(43) = '\log_{10}\sigma_{int,14}'
-
-                         paramnames(44) = 'log10sigma_int_15'
-                         latexname(44) = '\log_{10}\sigma_{int,15}'
-
-                         paramnames(45) = 'log10sigma_int_16'
-                         latexname(45) = '\log_{10}\sigma_{int,16}'
-
-                         paramnames(46) = 'log10sigma_int_17'
-                         latexname(46) = '\log_{10}\sigma_{int,17}'
-
-                         paramnames(47) = 'log10sigma_int_18'
-                         latexname(47) = '\log_{10}\sigma_{int,18}'
-
-                         paramnames(48) = 'log10sigma_int_19'
-                         latexname(48) = '\log_{10}\sigma_{int,19}'
-
-                         paramnames(49) = 'log10sigma_int_20'
-                         latexname(49) = '\log_{10}\sigma_{int,20}'
+!!$                         paramnames(30) = 'log10sigma_int_1'
+!!$                         latexname(30) = '\log_{10}\sigma_{int,1}'
+!!$
+!!$                         paramnames(31) = 'log10sigma_int_2'
+!!$                         latexname(31) = '\log_{10}\sigma_{int,2}'
+!!$
+!!$                         paramnames(32) = 'log10sigma_int_3'
+!!$                         latexname(32) = '\log_{10}\sigma_{int,3}'
+!!$
+!!$                         paramnames(33) = 'log10sigma_int_4'
+!!$                         latexname(33) = '\log_{10}\sigma_{int,4}'
+!!$
+!!$                         paramnames(34) = 'log10sigma_int_5'
+!!$                         latexname(34) = '\log_{10}\sigma_{int,5}'
+!!$
+!!$                         paramnames(35) = 'log10sigma_int_6'
+!!$                         latexname(35) = '\log_{10}\sigma_{int,6}'
+!!$
+!!$                         paramnames(36) = 'log10sigma_int_7'
+!!$                         latexname(36) = '\log_{10}\sigma_{int,7}'
+!!$
+!!$                         paramnames(37) = 'log10sigma_int_8'
+!!$                         latexname(37) = '\log_{10}\sigma_{int,8}'
+!!$
+!!$                         paramnames(38) = 'log10sigma_int_9'
+!!$                         latexname(38) = '\log_{10}\sigma_{int,9}'
+!!$
+!!$                         paramnames(39) = 'log10sigma_int_10'
+!!$                         latexname(39) = '\log_{10}\sigma_{int,10}'
+!!$
+!!$                         paramnames(40) = 'log10sigma_int_11'
+!!$                         latexname(40) = '\log_{10}\sigma_{int,11}'
+!!$
+!!$                         paramnames(41) = 'log10sigma_int_12'
+!!$                         latexname(41) = '\log_{10}\sigma_{int,12}'
+!!$
+!!$                         paramnames(42) = 'log10sigma_int_13'
+!!$                         latexname(42) = '\log_{10}\sigma_{int,13}'
+!!$
+!!$                         paramnames(43) = 'log10sigma_int_14'
+!!$                         latexname(43) = '\log_{10}\sigma_{int,14}'
+!!$
+!!$                         paramnames(44) = 'log10sigma_int_15'
+!!$                         latexname(44) = '\log_{10}\sigma_{int,15}'
+!!$
+!!$                         paramnames(45) = 'log10sigma_int_16'
+!!$                         latexname(45) = '\log_{10}\sigma_{int,16}'
+!!$
+!!$                         paramnames(46) = 'log10sigma_int_17'
+!!$                         latexname(46) = '\log_{10}\sigma_{int,17}'
+!!$
+!!$                         paramnames(47) = 'log10sigma_int_18'
+!!$                         latexname(47) = '\log_{10}\sigma_{int,18}'
+!!$
+!!$                         paramnames(48) = 'log10sigma_int_19'
+!!$                         latexname(48) = '\log_{10}\sigma_{int,19}'
+!!$
+!!$                         paramnames(49) = 'log10sigma_int_20'
+!!$                         latexname(49) = '\log_{10}\sigma_{int,20}'
 
                       Else
 
@@ -3429,45 +3439,45 @@ Program mcmc
 
                          write(UNIT_RANGES_FILE,*) ''//trim(paramnames(29))//'    -3.    -0.7'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(30))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(31))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(32))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(33))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(34))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(35))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(36))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(37))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(38))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(39))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(40))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(41))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(42))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(43))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(44))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(45))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(46))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(47))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(48))//'    -3.    -0.7'
-
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(49))//'    -3.    -0.7'
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(30))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(31))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(32))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(33))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(34))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(35))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(36))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(37))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(38))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(39))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(40))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(41))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(42))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(43))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(44))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(45))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(46))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(47))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(48))//'    -3.    -0.7'
+!!$
+!!$                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(49))//'    -3.    -0.7'
 
                       Else
 
@@ -4494,45 +4504,45 @@ Program mcmc
 
                          plausibility(29) =  (x_new(29) .le. real(-3.d0)) .or. (x_new(29) .ge. real(-0.7d0)) 
 
-                         plausibility(30) =  (x_new(30) .le. real(-3.d0)) .or. (x_new(30) .ge. real(-0.7d0)) 
-
-                         plausibility(31) =  (x_new(31) .le. real(-3.d0)) .or. (x_new(31) .ge. real(-0.7d0)) 
-
-                         plausibility(32) =  (x_new(32) .le. real(-3.d0)) .or. (x_new(32) .ge. real(-0.7d0)) 
-
-                         plausibility(33) =  (x_new(33) .le. real(-3.d0)) .or. (x_new(33) .ge. real(-0.7d0)) 
-
-                         plausibility(34) =  (x_new(34) .le. real(-3.d0)) .or. (x_new(34) .ge. real(-0.7d0)) 
-
-                         plausibility(35) =  (x_new(35) .le. real(-3.d0)) .or. (x_new(35) .ge. real(-0.7d0)) 
-
-                         plausibility(36) =  (x_new(36) .le. real(-3.d0)) .or. (x_new(36) .ge. real(-0.7d0)) 
-
-                         plausibility(37) =  (x_new(37) .le. real(-3.d0)) .or. (x_new(37) .ge. real(-0.7d0)) 
-
-                         plausibility(38) =  (x_new(38) .le. real(-3.d0)) .or. (x_new(38) .ge. real(-0.7d0)) 
-
-                         plausibility(39) =  (x_new(39) .le. real(-3.d0)) .or. (x_new(39) .ge. real(-0.7d0)) 
-
-                         plausibility(40) =  (x_new(40) .le. real(-3.d0)) .or. (x_new(40) .ge. real(-0.7d0)) 
-
-                         plausibility(41) =  (x_new(41) .le. real(-3.d0)) .or. (x_new(41) .ge. real(-0.7d0)) 
-
-                         plausibility(42) =  (x_new(42) .le. real(-3.d0)) .or. (x_new(42) .ge. real(-0.7d0)) 
-
-                         plausibility(43) =  (x_new(43) .le. real(-3.d0)) .or. (x_new(43) .ge. real(-0.7d0)) 
-
-                         plausibility(44) =  (x_new(44) .le. real(-3.d0)) .or. (x_new(44) .ge. real(-0.7d0)) 
-
-                         plausibility(45) =  (x_new(45) .le. real(-3.d0)) .or. (x_new(45) .ge. real(-0.7d0)) 
-
-                         plausibility(46) =  (x_new(46) .le. real(-3.d0)) .or. (x_new(46) .ge. real(-0.7d0)) 
-
-                         plausibility(47) =  (x_new(47) .le. real(-3.d0)) .or. (x_new(47) .ge. real(-0.7d0)) 
-
-                         plausibility(48) =  (x_new(48) .le. real(-3.d0)) .or. (x_new(48) .ge. real(-0.7d0)) 
-
-                         plausibility(49) =  (x_new(49) .le. real(-3.d0)) .or. (x_new(49) .ge. real(-0.7d0)) 
+!!$                         plausibility(30) =  (x_new(30) .le. real(-3.d0)) .or. (x_new(30) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(31) =  (x_new(31) .le. real(-3.d0)) .or. (x_new(31) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(32) =  (x_new(32) .le. real(-3.d0)) .or. (x_new(32) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(33) =  (x_new(33) .le. real(-3.d0)) .or. (x_new(33) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(34) =  (x_new(34) .le. real(-3.d0)) .or. (x_new(34) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(35) =  (x_new(35) .le. real(-3.d0)) .or. (x_new(35) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(36) =  (x_new(36) .le. real(-3.d0)) .or. (x_new(36) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(37) =  (x_new(37) .le. real(-3.d0)) .or. (x_new(37) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(38) =  (x_new(38) .le. real(-3.d0)) .or. (x_new(38) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(39) =  (x_new(39) .le. real(-3.d0)) .or. (x_new(39) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(40) =  (x_new(40) .le. real(-3.d0)) .or. (x_new(40) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(41) =  (x_new(41) .le. real(-3.d0)) .or. (x_new(41) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(42) =  (x_new(42) .le. real(-3.d0)) .or. (x_new(42) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(43) =  (x_new(43) .le. real(-3.d0)) .or. (x_new(43) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(44) =  (x_new(44) .le. real(-3.d0)) .or. (x_new(44) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(45) =  (x_new(45) .le. real(-3.d0)) .or. (x_new(45) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(46) =  (x_new(46) .le. real(-3.d0)) .or. (x_new(46) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(47) =  (x_new(47) .le. real(-3.d0)) .or. (x_new(47) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(48) =  (x_new(48) .le. real(-3.d0)) .or. (x_new(48) .ge. real(-0.7d0)) 
+!!$
+!!$                         plausibility(49) =  (x_new(49) .le. real(-3.d0)) .or. (x_new(49) .ge. real(-0.7d0)) 
 
                       Else
 
@@ -5229,96 +5239,103 @@ Program mcmc
 
                                   current_point(29) = 10**(current_point(29))
 
-                                  current_point(30) = 10**(current_point(30))
+!!$                                  current_point(30) = 10**(current_point(30))
+!!$
+!!$                                  current_point(31) = 10**(current_point(31))
+!!$
+!!$                                  current_point(32) = 10**(current_point(32))
+!!$
+!!$                                  current_point(33) = 10**(current_point(33))
+!!$
+!!$                                  current_point(34) = 10**(current_point(34))
+!!$
+!!$                                  current_point(35) = 10**(current_point(35))
+!!$
+!!$                                  current_point(36) = 10**(current_point(36))
+!!$
+!!$                                  current_point(37) = 10**(current_point(37))
+!!$
+!!$                                  current_point(38) = 10**(current_point(38))
+!!$
+!!$                                  current_point(39) = 10**(current_point(39))
+!!$
+!!$                                  current_point(40) = 10**(current_point(40))
+!!$
+!!$                                  current_point(41) = 10**(current_point(41))
+!!$
+!!$                                  current_point(42) = 10**(current_point(42))
+!!$
+!!$                                  current_point(43) = 10**(current_point(43))
+!!$
+!!$                                  current_point(44) = 10**(current_point(44))
+!!$
+!!$                                  current_point(45) = 10**(current_point(45))
+!!$
+!!$                                  current_point(46) = 10**(current_point(46))
+!!$
+!!$                                  current_point(47) = 10**(current_point(47))
+!!$
+!!$                                  current_point(48) = 10**(current_point(48))
+!!$
+!!$                                  current_point(49) = 10**(current_point(49))
 
-                                  current_point(31) = 10**(current_point(31))
-
-                                  current_point(32) = 10**(current_point(32))
-
-                                  current_point(33) = 10**(current_point(33))
-
-                                  current_point(34) = 10**(current_point(34))
-
-                                  current_point(35) = 10**(current_point(35))
-
-                                  current_point(36) = 10**(current_point(36))
-
-                                  current_point(37) = 10**(current_point(37))
-
-                                  current_point(38) = 10**(current_point(38))
-
-                                  current_point(39) = 10**(current_point(39))
-
-                                  current_point(40) = 10**(current_point(40))
-
-                                  current_point(41) = 10**(current_point(41))
-
-                                  current_point(42) = 10**(current_point(42))
-
-                                  current_point(43) = 10**(current_point(43))
-
-                                  current_point(44) = 10**(current_point(44))
-
-                                  current_point(45) = 10**(current_point(45))
-
-                                  current_point(46) = 10**(current_point(46))
-
-                                  current_point(47) = 10**(current_point(47))
-
-                                  current_point(48) = 10**(current_point(48))
-
-                                  current_point(49) = 10**(current_point(49))
+!!$                                  current_loglikelihood = log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(current_point(1:&
+!!$                                       number_model_parameters-28),&
+!!$                                       current_point(number_model_parameters-27),current_point(number_model_parameters-26),&
+!!$                                       current_point(number_model_parameters-25),current_point(number_model_parameters-24),&
+!!$                                       current_point(number_model_parameters-23),current_point(number_model_parameters-22),&
+!!$                                       current_point(30:49),current_point(28),current_point(29))
 
                                   current_loglikelihood = log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(current_point(1:&
-                                       number_model_parameters-28),&
-                                       current_point(number_model_parameters-27),current_point(number_model_parameters-26),&
-                                       current_point(number_model_parameters-25),current_point(number_model_parameters-24),&
-                                       current_point(number_model_parameters-23),current_point(number_model_parameters-22),&
-                                       current_point(30:49),current_point(28),current_point(29))
+                                       number_model_parameters-8),&
+                                       current_point(number_model_parameters-7),current_point(number_model_parameters-6),&
+                                       current_point(number_model_parameters-5),current_point(number_model_parameters-4),&
+                                       current_point(number_model_parameters-3),current_point(number_model_parameters-2),&
+                                       sigmainthost,current_point(28),current_point(29))
 
                                   current_point(28) = log10(current_point(28))
 
                                   current_point(29) = log10(current_point(29))
 
-                                  current_point(30) = log10(current_point(30))
-
-                                  current_point(31) = log10(current_point(31))
-
-                                  current_point(32) = log10(current_point(32))
-
-                                  current_point(33) = log10(current_point(33))
-
-                                  current_point(34) = log10(current_point(34))
-
-                                  current_point(35) = log10(current_point(35))
-
-                                  current_point(36) = log10(current_point(36))
-
-                                  current_point(37) = log10(current_point(37))
-
-                                  current_point(38) = log10(current_point(38))
-
-                                  current_point(39) = log10(current_point(39))
-
-                                  current_point(40) = log10(current_point(40))
-
-                                  current_point(41) = log10(current_point(41))
-
-                                  current_point(42) = log10(current_point(42))
-
-                                  current_point(43) = log10(current_point(43))
-
-                                  current_point(44) = log10(current_point(44))
-
-                                  current_point(45) = log10(current_point(45))
-
-                                  current_point(46) = log10(current_point(46))
-
-                                  current_point(47) = log10(current_point(47))
-
-                                  current_point(48) = log10(current_point(48))
-
-                                  current_point(49) = log10(current_point(49))
+!!$                                  current_point(30) = log10(current_point(30))
+!!$
+!!$                                  current_point(31) = log10(current_point(31))
+!!$
+!!$                                  current_point(32) = log10(current_point(32))
+!!$
+!!$                                  current_point(33) = log10(current_point(33))
+!!$
+!!$                                  current_point(34) = log10(current_point(34))
+!!$
+!!$                                  current_point(35) = log10(current_point(35))
+!!$
+!!$                                  current_point(36) = log10(current_point(36))
+!!$
+!!$                                  current_point(37) = log10(current_point(37))
+!!$
+!!$                                  current_point(38) = log10(current_point(38))
+!!$
+!!$                                  current_point(39) = log10(current_point(39))
+!!$
+!!$                                  current_point(40) = log10(current_point(40))
+!!$
+!!$                                  current_point(41) = log10(current_point(41))
+!!$
+!!$                                  current_point(42) = log10(current_point(42))
+!!$
+!!$                                  current_point(43) = log10(current_point(43))
+!!$
+!!$                                  current_point(44) = log10(current_point(44))
+!!$
+!!$                                  current_point(45) = log10(current_point(45))
+!!$
+!!$                                  current_point(46) = log10(current_point(46))
+!!$
+!!$                                  current_point(47) = log10(current_point(47))
+!!$
+!!$                                  current_point(48) = log10(current_point(48))
+!!$
+!!$                                  current_point(49) = log10(current_point(49))
                           
                                Else
 
@@ -6550,7 +6567,9 @@ Program mcmc
 
                           If (PeriodR11(m) .lt. cepheid_Period_limit) then
 
-                             If ( chi2R11_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),10**(bestfit(29+n)),m)&
+!                             If ( chi2R11_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),10**(bestfit(29+n)),m)&
+!                                 .le. 1.d0 ) then
+                             If ( chi2R11_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),sigmainthost(1),m)&
                                   .le. 1.d0 ) then
 
                                 write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
@@ -6559,10 +6578,14 @@ Program mcmc
 
                              Else
 
+!                                write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
+!                                     P_L_relation_passband_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),&
+!                                     OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W_E14(bestfit(n),bestfit(22),&
+!                                     bestfit(23),bestfit(25),10**(bestfit(29+n)),m), Field(m)
                                 write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
                                      P_L_relation_passband_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),&
                                      OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W_E14(bestfit(n),bestfit(22),&
-                                     bestfit(23),bestfit(25),10**(bestfit(29+n)),m), Field(m)
+                                     bestfit(23),bestfit(25),sigmainthost(1),m), Field(m)
 
                              End If
 

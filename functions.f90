@@ -3847,7 +3847,7 @@ subroutine set_covariance_matrix()
 
                     If (sigma_int_per_R11_host) then
 
-                       If (number_model_parameters .eq. 49) then
+                       If (number_model_parameters .eq. 29) then
 
                           Covguess(1,1) = sigma_mu1**2    ! 
 
@@ -3903,49 +3903,52 @@ subroutine set_covariance_matrix()
 
                           Covguess(27,27) = sigma_a_cal**2
 
-                          Covguess(28,28) = sigma_sigma_int**2
+!!$                          Covguess(28,28) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(29,29) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(30,30) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(31,31) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(32,32) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(33,33) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(34,34) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(35,35) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(36,36) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(37,37) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(38,38) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(39,39) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(40,40) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(41,41) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(42,42) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(43,43) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(44,44) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(45,45) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(46,46) = sigma_sigma_int**2
+!!$
+!!$                          Covguess(47,47) = sigma_sigma_int**2 ! NGC4258
+!!$
+!!$                          Covguess(48,48) = sigma_sigma_int**2 ! LMC
+!!$
+!!$                          Covguess(49,49) = sigma_sigma_int**2 ! MW
+                          Covguess(28,28) = sigma_sigma_int**2 ! LMC
 
-                          Covguess(29,29) = sigma_sigma_int**2
-
-                          Covguess(30,30) = sigma_sigma_int**2
-
-                          Covguess(31,31) = sigma_sigma_int**2
-
-                          Covguess(32,32) = sigma_sigma_int**2
-
-                          Covguess(33,33) = sigma_sigma_int**2
-
-                          Covguess(34,34) = sigma_sigma_int**2
-
-                          Covguess(35,35) = sigma_sigma_int**2
-
-                          Covguess(36,36) = sigma_sigma_int**2
-
-                          Covguess(37,37) = sigma_sigma_int**2
-
-                          Covguess(38,38) = sigma_sigma_int**2
-
-                          Covguess(39,39) = sigma_sigma_int**2
-
-                          Covguess(40,40) = sigma_sigma_int**2
-
-                          Covguess(41,41) = sigma_sigma_int**2
-
-                          Covguess(42,42) = sigma_sigma_int**2
-
-                          Covguess(43,43) = sigma_sigma_int**2
-
-                          Covguess(44,44) = sigma_sigma_int**2
-
-                          Covguess(45,45) = sigma_sigma_int**2
-
-                          Covguess(46,46) = sigma_sigma_int**2
-
-                          Covguess(47,47) = sigma_sigma_int**2 ! NGC4258
-
-                          Covguess(48,48) = sigma_sigma_int**2 ! LMC
-
-                          Covguess(49,49) = sigma_sigma_int**2 ! MW
+                          Covguess(29,29) = sigma_sigma_int**2 ! MW
 
                        Else
 

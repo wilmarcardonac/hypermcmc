@@ -2,7 +2,7 @@ Module arrays
 
     Integer :: status1,status2,status3,status4,status5,status6
     Integer*4,dimension(13) :: buff
-    Integer*4,allocatable,dimension(:) :: ID
+!    Integer*4,allocatable,dimension(:) :: ID
 
     Real*8, allocatable, dimension(:) :: PeriodA,HA,Sigma_mA,VA,IIA,old_point
     Real*8, allocatable, dimension(:) :: PeriodB,HB,Sigma_mB,VB,IIB,current_point
@@ -16,5 +16,6 @@ Module arrays
     Character(len=10),allocatable,dimension(:) :: Name,NameA,NameB,NameC
     Character(len=5),allocatable,dimension(:) :: Field,Fieldmvi
     Character(len=6),allocatable,dimension(:) :: FieldHipp
+    Character(len=9),allocatable,dimension(:) :: ID
 
 End module arrays

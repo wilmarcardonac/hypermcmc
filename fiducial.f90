@@ -9,7 +9,7 @@ Module fiducial
     !#############################
 
     Real*8,parameter    :: prior_A = 12.5d0
-    Real*8,parameter    :: prior_bw = -3.3d0
+    Real*8,parameter    :: prior_bw = -3.26d0
     Real*8,parameter    :: prior_sigma_int = 0.1d0!0.20d0 SN Ia hosts. MUST BE ABOUT 0.1
     Real*8,parameter    :: prior_sigma_int_LMC = 0.113d0 ! SAME VALUE AS IN EQUATION (4a) OF EFSTATHIOU'S PAPER
     Real*8,parameter    :: prior_sigma_int_MW = 0.10d0 ! SAME VALUE AS IN SUBSECTION 4.2 OF EFSTATHIOU'S PAPER
@@ -63,7 +63,7 @@ Module fiducial
     !################################################
 
     Real*8,parameter    :: sigma_A = 1.8d-2
-    Real*8,parameter    :: sigma_bw = 1.d-1
+    Real*8,parameter    :: sigma_bw = 2.d-1
     Real*8,parameter    :: sigma_sigma_int = 1.d-1 !log10(sigma_int)
     Real*8,parameter    :: sigma_alpha_j = 1.d-3
     Real*8,parameter    :: sigma_a_v = 0.00176d0        ! TAKEN FROM PAGE 15 IN R16 (AGAIN THIS STANDS FOR 'sigma_a_v')
@@ -78,25 +78,25 @@ Module fiducial
     Real*8,parameter    :: sigma_mu_0_LMC = 5.d0/log(10.d0)/LMC_distance*sigma_LMC_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_zpH = 0.2d0
     Real*8,parameter    :: sigma_bH = 0.1d0
-    Real*8,parameter    :: sigma_mu1 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu2 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu3 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu4 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu5 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu6 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu7 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu8 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu10 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu11 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu12 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu13 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu14 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu15 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu16 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu17 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu18 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu19 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu1 = sigma_mu_0_NGC4258 ! 0.045d0 
+    Real*8,parameter    :: sigma_mu2 = sigma_mu_0_NGC4258 ! 0.081d0 
+    Real*8,parameter    :: sigma_mu3 = sigma_mu_0_NGC4258 ! 0.055d0 
+    Real*8,parameter    :: sigma_mu4 = sigma_mu_0_NGC4258 ! 0.057d0 
+    Real*8,parameter    :: sigma_mu5 = sigma_mu_0_NGC4258 ! 0.045d0 
+    Real*8,parameter    :: sigma_mu6 = sigma_mu_0_NGC4258 ! 0.053d0
+    Real*8,parameter    :: sigma_mu7 = sigma_mu_0_NGC4258 ! 0.090d0
+    Real*8,parameter    :: sigma_mu8 = sigma_mu_0_NGC4258 ! 0.049d0 
+    Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258 ! 0.043d0
+    Real*8,parameter    :: sigma_mu10 = sigma_mu_0_NGC4258 ! 0.070d0 
+    Real*8,parameter    :: sigma_mu11 = sigma_mu_0_NGC4258 ! 0.069d0
+    Real*8,parameter    :: sigma_mu12 = sigma_mu_0_NGC4258 ! 0.112d0
+    Real*8,parameter    :: sigma_mu13 = sigma_mu_0_NGC4258 ! 0.292d0
+    Real*8,parameter    :: sigma_mu14 = sigma_mu_0_NGC4258 ! 0.053d0
+    Real*8,parameter    :: sigma_mu15 = sigma_mu_0_NGC4258 ! 0.071d0
+    Real*8,parameter    :: sigma_mu16 = sigma_mu_0_NGC4258 ! 0.046d0
+    Real*8,parameter    :: sigma_mu17 = sigma_mu_0_NGC4258 ! 0.102d0
+    Real*8,parameter    :: sigma_mu18 = sigma_mu_0_NGC4258 ! 0.078d0
+    Real*8,parameter    :: sigma_mu19 = sigma_mu_0_NGC4258 ! 0.063d0 
     Real*8,parameter    :: sigma_mu20 = sigma_mu_0_NGC4258
     Real*8,parameter    :: sigma_mu21 = sigma_mu_0_LMC
     Real*8,parameter    :: sigma_zpw = 1.d-1
@@ -119,12 +119,12 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 21000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 49 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    Integer*4,parameter :: number_model_parameters = 29 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE, AND FIXED sigma_int), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
     ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 15 FOR ALL R11 CEPHEIDS +
     ! MW CEPHEIDS ANS USING MW AS ANCHOR, 16 FOR ALL R11 CEPHEIDS + NGC4258 AND LMC AS ANCHORS, 15 FOR ALL R11 CEPHEIDS + NGC4258 AND MW AS ANCHORS,
     ! 16 FOR ALL R11 CEPHEIDS + MW AND LMC AS ANCHORS, 16 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS, 
-    ! 49 FOR ALL R16 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS AND SIGMA INT PER HOST GALAXY, 26 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS, SIGMA INT PER HOST GALAXY 
+    ! 29 FOR ALL R16 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS AND SIGMA INT PER HOST GALAXY, 26 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS, SIGMA INT PER HOST GALAXY 
     ! BUT NOT INCLUDING METALLICITY, 4 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE, AND VARYING sigma_int)
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
     Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
