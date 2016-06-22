@@ -41,7 +41,8 @@ subroutine read_table2_R11(path_to_datafile)
 
     Do p=1,arrays_dimension
 
-        read(11,'(a5,i8,f9.3,4f6.2)') Field(p),ID(p),PeriodR11(p),VIR11(p),F160WR11(p),eF160WR11(p),OHR11(p)
+!        read(11,'(a5,i8,f9.3,4f6.2)') Field(p),ID(p),PeriodR11(p),VIR11(p),F160WR11(p),eF160WR11(p),OHR11(p)
+        read(11,*) Field(p),ID(p),PeriodR11(p),VIR11(p),F160WR11(p),eF160WR11(p),OHR11(p)
 
     End Do
 
@@ -185,7 +186,7 @@ subroutine read_data_Efstathiou(path_to_datafile)
 
     Do p=1,arrays_dimension
 
-        read(11,*) Name(p),Period(p),H(p),Sigma_m(p),V(p),II(p)
+        read(11,*) Name(p),Period(p),V(p),H(p),Sigma_m(p) ! HERE V STANDS FOR V-I MAGNITUDES
 
     End Do
 
@@ -1698,17 +1699,17 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
         
     If (use_HP_in_anchor) then ! ANCHOR
 
-       log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  log(new_chi2(chi2R11_anchor_LMC(mu0j(10)))) - &
+       log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  log(new_chi2(chi2R11_anchor_LMC(mu0j(21)))) - &
             log(2.d0*Pi*sigma_mu_0_LMC**2)/2.d0 + &
             !log(new_chi2(chi2R11_anchor_LMC_2015(mu0j(10)))) - &
             !log(2.d0*Pi*sigma_mu_0_LMC_2015**2)/2.d0 + &
-            log(new_chi2(chi2R11_anchor_NGC4258(mu0j(9)))) - log(2.d0*Pi*sigma_mu_0_NGC4258**2)/2.d0 + &
+            log(new_chi2(chi2R11_anchor_NGC4258(mu0j(20)))) - log(2.d0*Pi*sigma_mu_0_NGC4258**2)/2.d0 + &
 !            log(new_chi2(chi2R11_anchor_NGC4258_2015(mu0j(9)))) - log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2)/2.d0 + &
             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
 
        If (include_mu_0_NGC4258_2015) then
 
-          log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_anchor_NGC4258_2015(mu0j(9)))) &
+          log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_anchor_NGC4258_2015(mu0j(20)))) &
                - log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2)/2.d0 + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
        Else
 
@@ -1718,10 +1719,10 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
 
     Else
 
-       log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  -(chi2R11_anchor_LMC(mu0j(10)) + log(2.d0*Pi*sigma_mu_0_LMC**2))/2.d0 - &
+       log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  -(chi2R11_anchor_LMC(mu0j(21)) + log(2.d0*Pi*sigma_mu_0_LMC**2))/2.d0 - &
             !(chi2R11_anchor_LMC_2015(mu0j(10)) + log(2.d0*Pi*sigma_mu_0_LMC_2015**2))/2.d0 - &
-            (chi2R11_anchor_NGC4258(mu0j(9)) + log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 - &
-            (chi2R11_anchor_NGC4258_2015(mu0j(9)) + log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2))/2.d0 + &
+            (chi2R11_anchor_NGC4258(mu0j(20)) + log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 - &
+            (chi2R11_anchor_NGC4258_2015(mu0j(20)) + log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2))/2.d0 + &
             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
 
     End If
@@ -2839,7 +2840,7 @@ function chi2R11_W_LMC_E14(mu0_j,M_w,bw,Zw,sigma_int,m)    !    It computes equa
     Real*8 :: mu0_j,M_w,bw,Zw,sigma_int,chi2R11_W_LMC_E14
     Integer*4 :: m
 
-    chi2R11_W_LMC_E14 = ( observed_m_W(H(m),V(m)-II(m)) - &
+    chi2R11_W_LMC_E14 = ( observed_m_W(H(m),V(m)) - &
          P_L_relation_passband_W_E14(mu0_j,M_w,bw,Zw,meanOH_LMC,Period(m)) )**2/( Sigma_m(m)**2 + sigma_int**2 ) 
 
 end function chi2R11_W_LMC_E14
@@ -3846,61 +3847,105 @@ subroutine set_covariance_matrix()
 
                     If (sigma_int_per_R11_host) then
 
-                       If (number_model_parameters .eq. 27) then
+                       If (number_model_parameters .eq. 49) then
 
-                          Covguess(1,1) = sigma_mu1**2    ! n4536
+                          Covguess(1,1) = sigma_mu1**2    ! 
 
-                          Covguess(2,2) = sigma_mu2**2    ! n4639 
+                          Covguess(2,2) = sigma_mu2**2    !  
 
-                          Covguess(3,3) = sigma_mu3**2    ! n3982
+                          Covguess(3,3) = sigma_mu3**2    ! 
 
-                          Covguess(4,4) = sigma_mu4**2    ! n3370
+                          Covguess(4,4) = sigma_mu4**2    ! 
 
-                          Covguess(5,5) = sigma_mu5**2    ! n3021
+                          Covguess(5,5) = sigma_mu5**2    ! 
 
-                          Covguess(6,6) = sigma_mu6**2    ! n1309
+                          Covguess(6,6) = sigma_mu6**2    ! 
 
-                          Covguess(7,7) = sigma_mu7**2    ! n4038
+                          Covguess(7,7) = sigma_mu7**2    ! 
 
-                          Covguess(8,8) = sigma_mu8**2    ! n5584
+                          Covguess(8,8) = sigma_mu8**2    ! 
 
-                          Covguess(9,9) = sigma_mu9**2    ! n4258
+                          Covguess(9,9) = sigma_mu9**2    ! 
 
-                          Covguess(10,10) = sigma_mu10**2 
+                          Covguess(10,10) = sigma_mu10**2    ! 
 
-                          Covguess(11,11) = sigma_Mw**2
+                          Covguess(11,11) = sigma_mu11**2    ! 
 
-                          Covguess(12,12) = sigma_bw**2 
+                          Covguess(12,12) = sigma_mu12**2    ! 
 
-                          Covguess(13,13) = sigma_H0**2 
+                          Covguess(13,13) = sigma_mu13**2    ! 
 
-                          Covguess(14,14) = sigma_Zw**2 
+                          Covguess(14,14) = sigma_mu14**2    ! 
 
-                          Covguess(15,15) = sigma_a_v**2
+                          Covguess(15,15) = sigma_mu15**2    ! 
 
-                          Covguess(16,16) = sigma_a_cal**2
+                          Covguess(16,16) = sigma_mu16**2    ! 
 
-                          Covguess(17,17) = sigma_sigma_int**2
+                          Covguess(17,17) = sigma_mu17**2    ! 
 
-                          Covguess(18,18) = sigma_sigma_int**2
+                          Covguess(18,18) = sigma_mu18**2    ! 
 
-                          Covguess(19,19) = sigma_sigma_int**2
+                          Covguess(19,19) = sigma_mu19**2 !  
 
-                          Covguess(20,20) = sigma_sigma_int**2
+                          Covguess(20,20) = sigma_mu20**2 ! NGC4258
 
-                          Covguess(21,21) = sigma_sigma_int**2
+                          Covguess(21,21) = sigma_mu21**2 ! LMC
 
-                          Covguess(22,22) = sigma_sigma_int**2
+                          Covguess(22,22) = sigma_Mw**2
 
-                          Covguess(23,23) = sigma_sigma_int**2
+                          Covguess(23,23) = sigma_bw**2 
 
-                          Covguess(24,24) = sigma_sigma_int**2
+                          Covguess(24,24) = sigma_H0**2 
 
-                          Covguess(25,25) = sigma_sigma_int**2
+                          Covguess(25,25) = sigma_Zw**2 
 
-                          Covguess(26,26) = sigma_sigma_int**2
+                          Covguess(26,26) = sigma_a_v**2
 
-                          Covguess(27,27) = sigma_sigma_int**2
+                          Covguess(27,27) = sigma_a_cal**2
+
+                          Covguess(28,28) = sigma_sigma_int**2
+
+                          Covguess(29,29) = sigma_sigma_int**2
+
+                          Covguess(30,30) = sigma_sigma_int**2
+
+                          Covguess(31,31) = sigma_sigma_int**2
+
+                          Covguess(32,32) = sigma_sigma_int**2
+
+                          Covguess(33,33) = sigma_sigma_int**2
+
+                          Covguess(34,34) = sigma_sigma_int**2
+
+                          Covguess(35,35) = sigma_sigma_int**2
+
+                          Covguess(36,36) = sigma_sigma_int**2
+
+                          Covguess(37,37) = sigma_sigma_int**2
+
+                          Covguess(38,38) = sigma_sigma_int**2
+
+                          Covguess(39,39) = sigma_sigma_int**2
+
+                          Covguess(40,40) = sigma_sigma_int**2
+
+                          Covguess(41,41) = sigma_sigma_int**2
+
+                          Covguess(42,42) = sigma_sigma_int**2
+
+                          Covguess(43,43) = sigma_sigma_int**2
+
+                          Covguess(44,44) = sigma_sigma_int**2
+
+                          Covguess(45,45) = sigma_sigma_int**2
+
+                          Covguess(46,46) = sigma_sigma_int**2
+
+                          Covguess(47,47) = sigma_sigma_int**2 ! NGC4258
+
+                          Covguess(48,48) = sigma_sigma_int**2 ! LMC
+
+                          Covguess(49,49) = sigma_sigma_int**2 ! MW
 
                        Else
 

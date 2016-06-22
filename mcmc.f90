@@ -68,7 +68,7 @@ Program mcmc
 ! MARKOV CHAIN MONTE CARLO ANALYSIS
 !##################################
 
-    write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS (2013) : ', mu_0_NGC4258, '\pm ', sigma_mu_0_NGC4258
+    write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS (2016) : ', mu_0_NGC4258, '\pm ', sigma_mu_0_NGC4258
 
     write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS (2015) : ', mu_0_NGC4258_2015, '\pm ', sigma_mu_0_NGC4258_2015
 
@@ -200,39 +200,83 @@ Program mcmc
 
                             old_point(10) = prior_mu10
 
-                            old_point(11) = prior_Mw
+                            old_point(11) = prior_mu11
 
-                            old_point(12) = prior_bw
+                            old_point(12) = prior_mu12
 
-                            old_point(13) = prior_H0
+                            old_point(13) = prior_mu13
 
-                            old_point(14) = prior_Zw
+                            old_point(14) = prior_mu14
 
-                            old_point(15) = a_v
+                            old_point(15) = prior_mu15
 
-                            old_point(16) = a_cal
+                            old_point(16) = prior_mu16
 
-                            old_point(17) = log10(prior_sigma_int_LMC)
+                            old_point(17) = prior_mu17
 
-                            old_point(18) = log10(prior_sigma_int_MW)
+                            old_point(18) = prior_mu18
 
-                            old_point(19) = log10(prior_sigma_int)
+                            old_point(19) = prior_mu19
 
-                            old_point(20) = log10(prior_sigma_int)
+                            old_point(20) = prior_mu20
 
-                            old_point(21) = log10(prior_sigma_int)
+                            old_point(21) = prior_mu21
 
-                            old_point(22) = log10(prior_sigma_int)
+                            old_point(22) = prior_Mw
 
-                            old_point(23) = log10(prior_sigma_int)
+                            old_point(23) = prior_bw
 
-                            old_point(24) = log10(prior_sigma_int)
+                            old_point(24) = prior_H0
 
-                            old_point(25) = log10(prior_sigma_int)
+                            old_point(25) = prior_Zw
 
-                            old_point(26) = log10(prior_sigma_int)
+                            old_point(26) = a_v
 
-                            old_point(27) = log10(prior_sigma_int)
+                            old_point(27) = a_cal
+
+                            old_point(28) = log10(prior_sigma_int_LMC)
+
+                            old_point(29) = log10(prior_sigma_int_MW)
+
+                            old_point(30) = log10(prior_sigma_int)
+
+                            old_point(31) = log10(prior_sigma_int)
+
+                            old_point(32) = log10(prior_sigma_int)
+
+                            old_point(33) = log10(prior_sigma_int)
+
+                            old_point(34) = log10(prior_sigma_int)
+
+                            old_point(35) = log10(prior_sigma_int)
+
+                            old_point(36) = log10(prior_sigma_int)
+
+                            old_point(37) = log10(prior_sigma_int)
+
+                            old_point(38) = log10(prior_sigma_int)
+
+                            old_point(39) = log10(prior_sigma_int)
+
+                            old_point(40) = log10(prior_sigma_int)
+
+                            old_point(41) = log10(prior_sigma_int)
+
+                            old_point(42) = log10(prior_sigma_int)
+
+                            old_point(43) = log10(prior_sigma_int)
+
+                            old_point(44) = log10(prior_sigma_int)
+
+                            old_point(45) = log10(prior_sigma_int)
+
+                            old_point(46) = log10(prior_sigma_int)
+
+                            old_point(47) = log10(prior_sigma_int)
+
+                            old_point(48) = log10(prior_sigma_int)
+
+                            old_point(49) = log10(prior_sigma_int)
 
                          Else
 
@@ -957,39 +1001,83 @@ Program mcmc
 
                             x_old(10) = genunf(real(prior_mu10 - sigma_mu10),real(prior_mu10 + sigma_mu10))
 
-                            x_old(11) = genunf(real(prior_Mw - sigma_Mw),real(prior_Mw + sigma_Mw))
+                            x_old(11) = genunf(real(prior_mu11 - sigma_mu11),real(prior_mu11 + sigma_mu11))
 
-                            x_old(12) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
+                            x_old(12) = genunf(real(prior_mu12 - sigma_mu12),real(prior_mu12 + sigma_mu12))
 
-                            x_old(13) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
+                            x_old(13) = genunf(real(prior_mu13 - sigma_mu13),real(prior_mu13 + sigma_mu13))
 
-                            x_old(14) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
+                            x_old(14) = genunf(real(prior_mu14 - sigma_mu14),real(prior_mu14 + sigma_mu14))
 
-                            x_old(15) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
+                            x_old(15) = genunf(real(prior_mu15 - sigma_mu15),real(prior_mu15 + sigma_mu15))
 
-                            x_old(16) = genunf(real(a_cal - sigma_a_cal),real(a_cal + sigma_a_cal))
+                            x_old(16) = genunf(real(prior_mu16 - sigma_mu16),real(prior_mu16 + sigma_mu16))
 
-                            x_old(17) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(17) = genunf(real(prior_mu17 - sigma_mu17),real(prior_mu17 + sigma_mu17))
 
-                            x_old(18) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(18) = genunf(real(prior_mu18 - sigma_mu18),real(prior_mu18 + sigma_mu18))
 
-                            x_old(19) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(19) = genunf(real(prior_mu19 - sigma_mu19),real(prior_mu19 + sigma_mu19))
 
-                            x_old(20) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(20) = genunf(real(prior_mu20 - sigma_mu20),real(prior_mu20 + sigma_mu20))
 
-                            x_old(21) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(21) = genunf(real(prior_mu21 - sigma_mu21),real(prior_mu21 + sigma_mu21))
 
-                            x_old(22) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(22) = genunf(real(prior_Mw - sigma_Mw),real(prior_Mw + sigma_Mw))
 
-                            x_old(23) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(23) = genunf(real(prior_bw - sigma_bw),real(prior_bw + sigma_bw))
 
-                            x_old(24) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(24) = genunf(real(prior_H0 - sigma_H0),real(prior_H0 + sigma_H0))
 
-                            x_old(25) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(25) = genunf(real(prior_Zw - sigma_Zw),real(prior_Zw + sigma_Zw))
 
-                            x_old(26) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(26) = genunf(real(a_v - sigma_a_v),real(a_v + sigma_a_v))
 
-                            x_old(27) = genunf(real(-3.d0),real(-0.7d0))
+                            x_old(27) = genunf(real(a_cal - sigma_a_cal),real(a_cal + sigma_a_cal))
+
+                            x_old(28) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(29) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(30) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(31) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(32) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(33) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(34) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(35) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(36) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(37) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(38) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(39) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(40) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(41) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(42) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(43) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(44) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(45) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(46) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(47) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(48) = genunf(real(-3.d0),real(-0.7d0))
+
+                            x_old(49) = genunf(real(-3.d0),real(-0.7d0))
 
                          Else
                      
@@ -1676,56 +1764,100 @@ Program mcmc
 
                          If (sigma_int_per_R11_host) then
 
-                            old_point(17) = 10**(old_point(17))
+                            old_point(28) = 10**(old_point(28))
 
-                            old_point(18) = 10**(old_point(18))
+                            old_point(29) = 10**(old_point(29))
 
-                            old_point(19) = 10**(old_point(19))
+                            old_point(30) = 10**(old_point(30))
 
-                            old_point(20) = 10**(old_point(20))
+                            old_point(31) = 10**(old_point(31))
 
-                            old_point(21) = 10**(old_point(21))
+                            old_point(32) = 10**(old_point(32))
 
-                            old_point(22) = 10**(old_point(22))
+                            old_point(33) = 10**(old_point(33))
 
-                            old_point(23) = 10**(old_point(23))
+                            old_point(34) = 10**(old_point(34))
 
-                            old_point(24) = 10**(old_point(24))
+                            old_point(35) = 10**(old_point(35))
 
-                            old_point(25) = 10**(old_point(25))
+                            old_point(36) = 10**(old_point(36))
 
-                            old_point(26) = 10**(old_point(26))
+                            old_point(37) = 10**(old_point(37))
 
-                            old_point(27) = 10**(old_point(27))
+                            old_point(38) = 10**(old_point(38))
+
+                            old_point(39) = 10**(old_point(39))
+
+                            old_point(40) = 10**(old_point(40))
+
+                            old_point(41) = 10**(old_point(41))
+
+                            old_point(42) = 10**(old_point(42))
+
+                            old_point(43) = 10**(old_point(43))
+
+                            old_point(44) = 10**(old_point(44))
+
+                            old_point(45) = 10**(old_point(45))
+
+                            old_point(46) = 10**(old_point(46))
+
+                            old_point(47) = 10**(old_point(47))
+
+                            old_point(48) = 10**(old_point(48))
+
+                            old_point(49) = 10**(old_point(49))
 
                             old_loglikelihood = log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(old_point(1:&
-                                 number_model_parameters-17),&
-                                 old_point(number_model_parameters-16),old_point(number_model_parameters-15),&
-                                 old_point(number_model_parameters-14),old_point(number_model_parameters-13),&
-                                 old_point(number_model_parameters-12),old_point(number_model_parameters-11),&
-                                 old_point(19:27),old_point(17),old_point(18))
+                                 number_model_parameters-28),&
+                                 old_point(number_model_parameters-27),old_point(number_model_parameters-26),&
+                                 old_point(number_model_parameters-25),old_point(number_model_parameters-24),&
+                                 old_point(number_model_parameters-23),old_point(number_model_parameters-22),&
+                                 old_point(30:49),old_point(28),old_point(29))
 
-                            old_point(17) = log10(old_point(17))
+                            old_point(28) = log10(old_point(28))
 
-                            old_point(18) = log10(old_point(18))
+                            old_point(29) = log10(old_point(29))
 
-                            old_point(19) = log10(old_point(19))
+                            old_point(30) = log10(old_point(30))
 
-                            old_point(20) = log10(old_point(20))
+                            old_point(31) = log10(old_point(31))
 
-                            old_point(21) = log10(old_point(21))
+                            old_point(32) = log10(old_point(32))
 
-                            old_point(22) = log10(old_point(22))
+                            old_point(33) = log10(old_point(33))
 
-                            old_point(23) = log10(old_point(23))
+                            old_point(34) = log10(old_point(34))
 
-                            old_point(24) = log10(old_point(24))
+                            old_point(35) = log10(old_point(35))
 
-                            old_point(25) = log10(old_point(25))
+                            old_point(36) = log10(old_point(36))
 
-                            old_point(26) = log10(old_point(26))
+                            old_point(37) = log10(old_point(37))
 
-                            old_point(27) = log10(old_point(27))
+                            old_point(38) = log10(old_point(38))
+
+                            old_point(39) = log10(old_point(39))
+
+                            old_point(40) = log10(old_point(40))
+
+                            old_point(41) = log10(old_point(41))
+
+                            old_point(42) = log10(old_point(42))
+
+                            old_point(43) = log10(old_point(43))
+
+                            old_point(44) = log10(old_point(44))
+
+                            old_point(45) = log10(old_point(45))
+
+                            old_point(46) = log10(old_point(46))
+
+                            old_point(47) = log10(old_point(47))
+
+                            old_point(48) = log10(old_point(48))
+
+                            old_point(49) = log10(old_point(49))
 
                          Else
 
@@ -2216,62 +2348,128 @@ Program mcmc
                          paramnames(8) = 'mu08'
                          latexname(8) = '\mu_{0,8}'
 
-                         paramnames(9) = 'mu04258'
-                         latexname(9) = '\mu_{0,4258}'
+                         paramnames(9) = 'mu09'
+                         latexname(9) = '\mu_{0,9}'
 
-                         paramnames(10) = 'muLMC'
-                         latexname(10) = '\mu_{0,LMC}'
+                         paramnames(10) = 'mu010'
+                         latexname(10) = '\mu_{0,10}'
 
-                         paramnames(11) = 'Mw'
-                         latexname(11) = 'M_w'
+                         paramnames(11) = 'mu011'
+                         latexname(11) = '\mu_{0,11}'
 
-                         paramnames(12) = 'bw'
-                         latexname(12) = 'b_w'
+                         paramnames(12) = 'mu012'
+                         latexname(12) = '\mu_{0,12}'
 
-                         paramnames(13) = 'H0'
-                         latexname(13) = 'H_0'
+                         paramnames(13) = 'mu013'
+                         latexname(13) = '\mu_{0,13}'
 
-                         paramnames(14) = 'Zw'
-                         latexname(14) = 'Z_w'
+                         paramnames(14) = 'mu014'
+                         latexname(14) = '\mu_{0,14}'
 
-                         paramnames(15) = 'av'
-                         latexname(15) = 'a_v'
+                         paramnames(15) = 'mu015'
+                         latexname(15) = '\mu_{0,15}'
 
-                         paramnames(16) = 'acal'
-                         latexname(16) = 'a_{cal}'
+                         paramnames(16) = 'mu016'
+                         latexname(16) = '\mu_{0,16}'
 
-                         paramnames(17) = 'log10sigma_int_LMC'
-                         latexname(17) = '\log_{10}\sigma_{int}^{LMC}'
+                         paramnames(17) = 'mu017'
+                         latexname(17) = '\mu_{0,17}'
 
-                         paramnames(18) = 'log10sigma_int_MW'
-                         latexname(18) = '\log_{10}\sigma_{int}^{MW}'
+                         paramnames(18) = 'mu018'
+                         latexname(18) = '\mu_{0,18}'
 
-                         paramnames(19) = 'log10sigma_int_1'
-                         latexname(19) = '\log_{10}\sigma_{int,1}'
+                         paramnames(19) = 'mu019'
+                         latexname(19) = '\mu_{0,19}'
 
-                         paramnames(20) = 'log10sigma_int_2'
-                         latexname(20) = '\log_{10}\sigma_{int,2}'
+                         paramnames(20) = 'mu04258'
+                         latexname(20) = '\mu_{0,4258}'
 
-                         paramnames(21) = 'log10sigma_int_3'
-                         latexname(21) = '\log_{10}\sigma_{int,3}'
+                         paramnames(21) = 'muLMC'
+                         latexname(21) = '\mu_{0,LMC}'
 
-                         paramnames(22) = 'log10sigma_int_4'
-                         latexname(22) = '\log_{10}\sigma_{int,4}'
+                         paramnames(22) = 'Mw'
+                         latexname(22) = 'M_w'
 
-                         paramnames(23) = 'log10sigma_int_5'
-                         latexname(23) = '\log_{10}\sigma_{int,5}'
+                         paramnames(23) = 'bw'
+                         latexname(23) = 'b_w'
 
-                         paramnames(24) = 'log10sigma_int_6'
-                         latexname(24) = '\log_{10}\sigma_{int,6}'
+                         paramnames(24) = 'H0'
+                         latexname(24) = 'H_0'
 
-                         paramnames(25) = 'log10sigma_int_7'
-                         latexname(25) = '\log_{10}\sigma_{int,7}'
+                         paramnames(25) = 'Zw'
+                         latexname(25) = 'Z_w'
 
-                         paramnames(26) = 'log10sigma_int_8'
-                         latexname(26) = '\log_{10}\sigma_{int,8}'
+                         paramnames(26) = 'av'
+                         latexname(26) = 'a_v'
 
-                         paramnames(27) = 'log10sigma_int_9'
-                         latexname(27) = '\log_{10}\sigma_{int,9}'
+                         paramnames(27) = 'acal'
+                         latexname(27) = 'a_{cal}'
+
+                         paramnames(28) = 'log10sigma_int_LMC'
+                         latexname(28) = '\log_{10}\sigma_{int}^{LMC}'
+
+                         paramnames(29) = 'log10sigma_int_MW'
+                         latexname(29) = '\log_{10}\sigma_{int}^{MW}'
+
+                         paramnames(30) = 'log10sigma_int_1'
+                         latexname(30) = '\log_{10}\sigma_{int,1}'
+
+                         paramnames(31) = 'log10sigma_int_2'
+                         latexname(31) = '\log_{10}\sigma_{int,2}'
+
+                         paramnames(32) = 'log10sigma_int_3'
+                         latexname(32) = '\log_{10}\sigma_{int,3}'
+
+                         paramnames(33) = 'log10sigma_int_4'
+                         latexname(33) = '\log_{10}\sigma_{int,4}'
+
+                         paramnames(34) = 'log10sigma_int_5'
+                         latexname(34) = '\log_{10}\sigma_{int,5}'
+
+                         paramnames(35) = 'log10sigma_int_6'
+                         latexname(35) = '\log_{10}\sigma_{int,6}'
+
+                         paramnames(36) = 'log10sigma_int_7'
+                         latexname(36) = '\log_{10}\sigma_{int,7}'
+
+                         paramnames(37) = 'log10sigma_int_8'
+                         latexname(37) = '\log_{10}\sigma_{int,8}'
+
+                         paramnames(38) = 'log10sigma_int_9'
+                         latexname(38) = '\log_{10}\sigma_{int,9}'
+
+                         paramnames(39) = 'log10sigma_int_10'
+                         latexname(39) = '\log_{10}\sigma_{int,10}'
+
+                         paramnames(40) = 'log10sigma_int_11'
+                         latexname(40) = '\log_{10}\sigma_{int,11}'
+
+                         paramnames(41) = 'log10sigma_int_12'
+                         latexname(41) = '\log_{10}\sigma_{int,12}'
+
+                         paramnames(42) = 'log10sigma_int_13'
+                         latexname(42) = '\log_{10}\sigma_{int,13}'
+
+                         paramnames(43) = 'log10sigma_int_14'
+                         latexname(43) = '\log_{10}\sigma_{int,14}'
+
+                         paramnames(44) = 'log10sigma_int_15'
+                         latexname(44) = '\log_{10}\sigma_{int,15}'
+
+                         paramnames(45) = 'log10sigma_int_16'
+                         latexname(45) = '\log_{10}\sigma_{int,16}'
+
+                         paramnames(46) = 'log10sigma_int_17'
+                         latexname(46) = '\log_{10}\sigma_{int,17}'
+
+                         paramnames(47) = 'log10sigma_int_18'
+                         latexname(47) = '\log_{10}\sigma_{int,18}'
+
+                         paramnames(48) = 'log10sigma_int_19'
+                         latexname(48) = '\log_{10}\sigma_{int,19}'
+
+                         paramnames(49) = 'log10sigma_int_20'
+                         latexname(49) = '\log_{10}\sigma_{int,20}'
 
                       Else
 
@@ -3189,43 +3387,87 @@ Program mcmc
 
                          write(UNIT_RANGES_FILE,*) ''//trim(paramnames(8))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(9))//'    20.    30.'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(9))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(10))//'    0.    40.'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(10))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(11))//'    -8.    1.'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(11))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(12))//'    -3.5    -2.5'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(12))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(13))//'    55.    95.'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(13))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(14))//'    -2.    1.'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(14))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(15))//'    0.    1.'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(15))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(16))//'    -1.    1.'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(16))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(17))//'    -3.    -0.7'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(17))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(18))//'    -3.    -0.7'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(18))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(19))//'    -3.    -0.7'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(19))//'    20.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(20))//'    -3.    -0.7'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(20))//'    20.    30.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(21))//'    -3.    -0.7'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(21))//'    0.    40.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(22))//'    -3.    -0.7'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(22))//'    -8.    1.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(23))//'    -3.    -0.7'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(23))//'    -3.5    -2.5'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(24))//'    -3.    -0.7'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(24))//'    55.    95.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(25))//'    -3.    -0.7'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(25))//'    -2.    1.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(26))//'    -3.    -0.7'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(26))//'    0.    1.'
 
-                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(27))//'    -3.    -0.7'
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(27))//'    -1.    1.'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(28))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(29))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(30))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(31))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(32))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(33))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(34))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(35))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(36))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(37))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(38))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(39))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(40))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(41))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(42))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(43))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(44))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(45))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(46))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(47))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(48))//'    -3.    -0.7'
+
+                         write(UNIT_RANGES_FILE,*) ''//trim(paramnames(49))//'    -3.    -0.7'
 
                       Else
 
@@ -4210,43 +4452,87 @@ Program mcmc
 
                          plausibility(8) = (x_new(8) .le. real(20.d0)) .or. (x_new(8) .ge. real(4.d1))
 
-                         plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(30.d0))
+                         plausibility(9) = (x_new(9) .le. real(20.d0)) .or. (x_new(9) .ge. real(4.d1))
 
-                         plausibility(10) = (x_new(10) .le. real(0.d0)) .or. (x_new(10) .ge. real(40.d0))
+                         plausibility(10) = (x_new(10) .le. real(20.d0)) .or. (x_new(10) .ge. real(4.d1))
 
-                         plausibility(11) =  (x_new(11) .le. real(-8.d0)) .or. (x_new(11) .ge. real(1.d0)) 
+                         plausibility(11) = (x_new(11) .le. real(20.d0)) .or. (x_new(11) .ge. real(4.d1))
 
-                         plausibility(12) =  (x_new(12) .le. real(-3.5d0)) .or. (x_new(12) .ge. real(-2.5d0)) 
+                         plausibility(12) = (x_new(12) .le. real(20.d0)) .or. (x_new(12) .ge. real(4.d1))
 
-                         plausibility(13) =  (x_new(13) .le. real(55.d0)) .or. (x_new(13) .ge. real(95.d0)) 
+                         plausibility(13) = (x_new(13) .le. real(20.d0)) .or. (x_new(13) .ge. real(4.d1))
 
-                         plausibility(14) =  (x_new(14) .le. real(-2.d0)) .or. (x_new(14) .ge. real(1.d0)) 
+                         plausibility(14) = (x_new(14) .le. real(20.d0)) .or. (x_new(14) .ge. real(4.d1))
 
-                         plausibility(15) =  (x_new(15) .le. real(0.d0)) .or. (x_new(15) .ge. real(1.d0)) 
+                         plausibility(15) = (x_new(15) .le. real(20.d0)) .or. (x_new(15) .ge. real(4.d1))
 
-                         plausibility(16) =  (x_new(16) .le. real(-1.d0)) .or. (x_new(16) .ge. real(1.d0)) 
+                         plausibility(16) = (x_new(16) .le. real(20.d0)) .or. (x_new(16) .ge. real(4.d1))
 
-                         plausibility(17) =  (x_new(17) .le. real(-3.d0)) .or. (x_new(17) .ge. real(-0.7d0)) 
+                         plausibility(17) = (x_new(17) .le. real(20.d0)) .or. (x_new(17) .ge. real(4.d1))
 
-                         plausibility(18) =  (x_new(18) .le. real(-3.d0)) .or. (x_new(18) .ge. real(-0.7d0)) 
+                         plausibility(18) = (x_new(18) .le. real(20.d0)) .or. (x_new(18) .ge. real(4.d1))
 
-                         plausibility(19) =  (x_new(19) .le. real(-3.d0)) .or. (x_new(19) .ge. real(-0.7d0)) 
+                         plausibility(19) = (x_new(19) .le. real(20.d0)) .or. (x_new(19) .ge. real(4.d1))
 
-                         plausibility(20) =  (x_new(20) .le. real(-3.d0)) .or. (x_new(20) .ge. real(-0.7d0)) 
+                         plausibility(20) = (x_new(20) .le. real(20.d0)) .or. (x_new(20) .ge. real(30.d0))
 
-                         plausibility(21) =  (x_new(21) .le. real(-3.d0)) .or. (x_new(21) .ge. real(-0.7d0)) 
+                         plausibility(21) = (x_new(21) .le. real(0.d0)) .or. (x_new(21) .ge. real(40.d0))
 
-                         plausibility(22) =  (x_new(22) .le. real(-3.d0)) .or. (x_new(22) .ge. real(-0.7d0)) 
+                         plausibility(22) =  (x_new(22) .le. real(-8.d0)) .or. (x_new(22) .ge. real(1.d0)) 
 
-                         plausibility(23) =  (x_new(23) .le. real(-3.d0)) .or. (x_new(23) .ge. real(-0.7d0)) 
+                         plausibility(23) =  (x_new(23) .le. real(-3.5d0)) .or. (x_new(23) .ge. real(-2.5d0)) 
 
-                         plausibility(24) =  (x_new(24) .le. real(-3.d0)) .or. (x_new(24) .ge. real(-0.7d0)) 
+                         plausibility(24) =  (x_new(24) .le. real(55.d0)) .or. (x_new(24) .ge. real(95.d0)) 
 
-                         plausibility(25) =  (x_new(25) .le. real(-3.d0)) .or. (x_new(25) .ge. real(-0.7d0)) 
+                         plausibility(25) =  (x_new(25) .le. real(-2.d0)) .or. (x_new(25) .ge. real(1.d0)) 
 
-                         plausibility(26) =  (x_new(26) .le. real(-3.d0)) .or. (x_new(26) .ge. real(-0.7d0)) 
+                         plausibility(26) =  (x_new(26) .le. real(0.d0)) .or. (x_new(26) .ge. real(1.d0)) 
 
-                         plausibility(27) =  (x_new(27) .le. real(-3.d0)) .or. (x_new(27) .ge. real(-0.7d0)) 
+                         plausibility(27) =  (x_new(27) .le. real(-1.d0)) .or. (x_new(27) .ge. real(1.d0)) 
+
+                         plausibility(28) =  (x_new(28) .le. real(-3.d0)) .or. (x_new(28) .ge. real(-0.7d0)) 
+
+                         plausibility(29) =  (x_new(29) .le. real(-3.d0)) .or. (x_new(29) .ge. real(-0.7d0)) 
+
+                         plausibility(30) =  (x_new(30) .le. real(-3.d0)) .or. (x_new(30) .ge. real(-0.7d0)) 
+
+                         plausibility(31) =  (x_new(31) .le. real(-3.d0)) .or. (x_new(31) .ge. real(-0.7d0)) 
+
+                         plausibility(32) =  (x_new(32) .le. real(-3.d0)) .or. (x_new(32) .ge. real(-0.7d0)) 
+
+                         plausibility(33) =  (x_new(33) .le. real(-3.d0)) .or. (x_new(33) .ge. real(-0.7d0)) 
+
+                         plausibility(34) =  (x_new(34) .le. real(-3.d0)) .or. (x_new(34) .ge. real(-0.7d0)) 
+
+                         plausibility(35) =  (x_new(35) .le. real(-3.d0)) .or. (x_new(35) .ge. real(-0.7d0)) 
+
+                         plausibility(36) =  (x_new(36) .le. real(-3.d0)) .or. (x_new(36) .ge. real(-0.7d0)) 
+
+                         plausibility(37) =  (x_new(37) .le. real(-3.d0)) .or. (x_new(37) .ge. real(-0.7d0)) 
+
+                         plausibility(38) =  (x_new(38) .le. real(-3.d0)) .or. (x_new(38) .ge. real(-0.7d0)) 
+
+                         plausibility(39) =  (x_new(39) .le. real(-3.d0)) .or. (x_new(39) .ge. real(-0.7d0)) 
+
+                         plausibility(40) =  (x_new(40) .le. real(-3.d0)) .or. (x_new(40) .ge. real(-0.7d0)) 
+
+                         plausibility(41) =  (x_new(41) .le. real(-3.d0)) .or. (x_new(41) .ge. real(-0.7d0)) 
+
+                         plausibility(42) =  (x_new(42) .le. real(-3.d0)) .or. (x_new(42) .ge. real(-0.7d0)) 
+
+                         plausibility(43) =  (x_new(43) .le. real(-3.d0)) .or. (x_new(43) .ge. real(-0.7d0)) 
+
+                         plausibility(44) =  (x_new(44) .le. real(-3.d0)) .or. (x_new(44) .ge. real(-0.7d0)) 
+
+                         plausibility(45) =  (x_new(45) .le. real(-3.d0)) .or. (x_new(45) .ge. real(-0.7d0)) 
+
+                         plausibility(46) =  (x_new(46) .le. real(-3.d0)) .or. (x_new(46) .ge. real(-0.7d0)) 
+
+                         plausibility(47) =  (x_new(47) .le. real(-3.d0)) .or. (x_new(47) .ge. real(-0.7d0)) 
+
+                         plausibility(48) =  (x_new(48) .le. real(-3.d0)) .or. (x_new(48) .ge. real(-0.7d0)) 
+
+                         plausibility(49) =  (x_new(49) .le. real(-3.d0)) .or. (x_new(49) .ge. real(-0.7d0)) 
 
                       Else
 
@@ -4939,56 +5225,100 @@ Program mcmc
 
                                If (sigma_int_per_R11_host) then
 
-                                  current_point(17) = 10**(current_point(17))
+                                  current_point(28) = 10**(current_point(28))
 
-                                  current_point(18) = 10**(current_point(18))
+                                  current_point(29) = 10**(current_point(29))
 
-                                  current_point(19) = 10**(current_point(19))
+                                  current_point(30) = 10**(current_point(30))
 
-                                  current_point(20) = 10**(current_point(20))
+                                  current_point(31) = 10**(current_point(31))
 
-                                  current_point(21) = 10**(current_point(21))
+                                  current_point(32) = 10**(current_point(32))
 
-                                  current_point(22) = 10**(current_point(22))
+                                  current_point(33) = 10**(current_point(33))
 
-                                  current_point(23) = 10**(current_point(23))
+                                  current_point(34) = 10**(current_point(34))
 
-                                  current_point(24) = 10**(current_point(24))
+                                  current_point(35) = 10**(current_point(35))
 
-                                  current_point(25) = 10**(current_point(25))
+                                  current_point(36) = 10**(current_point(36))
 
-                                  current_point(26) = 10**(current_point(26))
+                                  current_point(37) = 10**(current_point(37))
 
-                                  current_point(27) = 10**(current_point(27))
+                                  current_point(38) = 10**(current_point(38))
+
+                                  current_point(39) = 10**(current_point(39))
+
+                                  current_point(40) = 10**(current_point(40))
+
+                                  current_point(41) = 10**(current_point(41))
+
+                                  current_point(42) = 10**(current_point(42))
+
+                                  current_point(43) = 10**(current_point(43))
+
+                                  current_point(44) = 10**(current_point(44))
+
+                                  current_point(45) = 10**(current_point(45))
+
+                                  current_point(46) = 10**(current_point(46))
+
+                                  current_point(47) = 10**(current_point(47))
+
+                                  current_point(48) = 10**(current_point(48))
+
+                                  current_point(49) = 10**(current_point(49))
 
                                   current_loglikelihood = log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(current_point(1:&
-                                       number_model_parameters-17),&
-                                       current_point(number_model_parameters-16),current_point(number_model_parameters-15),&
-                                       current_point(number_model_parameters-14),current_point(number_model_parameters-13),&
-                                       current_point(number_model_parameters-12),current_point(number_model_parameters-11),&
-                                       current_point(19:27),current_point(17),current_point(18))
+                                       number_model_parameters-28),&
+                                       current_point(number_model_parameters-27),current_point(number_model_parameters-26),&
+                                       current_point(number_model_parameters-25),current_point(number_model_parameters-24),&
+                                       current_point(number_model_parameters-23),current_point(number_model_parameters-22),&
+                                       current_point(30:49),current_point(28),current_point(29))
 
-                                  current_point(17) = log10(current_point(17))
+                                  current_point(28) = log10(current_point(28))
 
-                                  current_point(18) = log10(current_point(18))
+                                  current_point(29) = log10(current_point(29))
 
-                                  current_point(19) = log10(current_point(19))
+                                  current_point(30) = log10(current_point(30))
 
-                                  current_point(20) = log10(current_point(20))
+                                  current_point(31) = log10(current_point(31))
 
-                                  current_point(21) = log10(current_point(21))
+                                  current_point(32) = log10(current_point(32))
 
-                                  current_point(22) = log10(current_point(22))
+                                  current_point(33) = log10(current_point(33))
 
-                                  current_point(23) = log10(current_point(23))
+                                  current_point(34) = log10(current_point(34))
 
-                                  current_point(24) = log10(current_point(24))
+                                  current_point(35) = log10(current_point(35))
 
-                                  current_point(25) = log10(current_point(25))
+                                  current_point(36) = log10(current_point(36))
 
-                                  current_point(26) = log10(current_point(26))
+                                  current_point(37) = log10(current_point(37))
 
-                                  current_point(27) = log10(current_point(27))
+                                  current_point(38) = log10(current_point(38))
+
+                                  current_point(39) = log10(current_point(39))
+
+                                  current_point(40) = log10(current_point(40))
+
+                                  current_point(41) = log10(current_point(41))
+
+                                  current_point(42) = log10(current_point(42))
+
+                                  current_point(43) = log10(current_point(43))
+
+                                  current_point(44) = log10(current_point(44))
+
+                                  current_point(45) = log10(current_point(45))
+
+                                  current_point(46) = log10(current_point(46))
+
+                                  current_point(47) = log10(current_point(47))
+
+                                  current_point(48) = log10(current_point(48))
+
+                                  current_point(49) = log10(current_point(49))
                           
                                Else
 
@@ -5692,7 +6022,7 @@ Program mcmc
 
              Do n=1,number_of_hosts_galaxies-1 ! SN Ia
 
-                If (chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n) .le. 1.d0 ) then
+                If (chi2R11_SNIa(bestfit(n),bestfit(24),bestfit(26),n) .le. 1.d0 ) then
                    
                    write(UNIT_EXE_FILE,*) n, 1.d0 
 
@@ -5702,7 +6032,7 @@ Program mcmc
 
                 Else
 
-                   write(UNIT_EXE_FILE,*) n, 1.d0/chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n) 
+                   write(UNIT_EXE_FILE,*) n, 1.d0/chi2R11_SNIa(bestfit(n),bestfit(24),bestfit(26),n) 
 
       !             chi2SNIabestfit = chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n) + chi2SNIabestfit
 
@@ -6071,88 +6401,88 @@ Program mcmc
 
                     open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_SNIa.txt')
 
-                    write(UNIT_HP_FILE,*) 'n4258', bestfit(9)-bestfit(9),&
-                         bestfit(9)+5.d0*log10(bestfit(13))-25.d0,0.d0,&
-                         bestfit(9)+5.d0*log10(bestfit(13))-25.d0,1.d0
+                    write(UNIT_HP_FILE,*) 'n4258', bestfit(20)-bestfit(20),&
+                         bestfit(20)+5.d0*log10(bestfit(24))-25.d0,0.d0,&
+                         bestfit(20)+5.d0*log10(bestfit(24))-25.d0,1.d0
 
                     Do m=1,number_of_hosts_galaxies-1
 
-                       If (m .eq. 3) then
+!                       If (m .eq. 3) then
 
-                          If ( chi2R11_SNIa(bestfit(4),bestfit(13),bestfit(15),m) .le. 1.d0) then
+!                          If ( chi2R11_SNIa(bestfit(4),bestfit(13),bestfit(15),m) .le. 1.d0) then
 
-                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(4)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                  bestfit(4)+5.d0*log10(bestfit(13))-25.d0,1.d0
+!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(4)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+!                                  bestfit(4)+5.d0*log10(bestfit(13))-25.d0,1.d0
 
-                          Else
+!                          Else
 
-                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(4)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                  bestfit(4)+5.d0*log10(bestfit(13))-25.d0,&
-                                  1.d0/chi2R11_SNIa(bestfit(4),bestfit(13),bestfit(15),m)
+!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(4)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+!                                  bestfit(4)+5.d0*log10(bestfit(13))-25.d0,&
+!                                  1.d0/chi2R11_SNIa(bestfit(4),bestfit(13),bestfit(15),m)
                              
-                          End If
+!                          End If
 
-                       Else if (m .eq. 4) then
+!                       Else if (m .eq. 4) then
 
-                          If ( chi2R11_SNIa(bestfit(3),bestfit(13),bestfit(15),m) .le. 1.d0) then
+!                          If ( chi2R11_SNIa(bestfit(3),bestfit(13),bestfit(15),m) .le. 1.d0) then
 
-                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(3)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                  bestfit(3)+5.d0*log10(bestfit(13))-25.d0,1.d0
+!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(3)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+!                                  bestfit(3)+5.d0*log10(bestfit(13))-25.d0,1.d0
 
-                          Else
+!                          Else
 
-                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(3)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                  bestfit(3)+5.d0*log10(bestfit(13))-25.d0,&
-                                  1.d0/chi2R11_SNIa(bestfit(3),bestfit(13),bestfit(15),m)
+!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(3)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+!                                  bestfit(3)+5.d0*log10(bestfit(13))-25.d0,&
+!                                  1.d0/chi2R11_SNIa(bestfit(3),bestfit(13),bestfit(15),m)
                              
-                          End If
+!                          End If
 
-                       Else if (m .eq. 7) then
+!                       Else if (m .eq. 7) then
 
-                          If ( chi2R11_SNIa(bestfit(8),bestfit(13),bestfit(15),m) .le. 1.d0) then
+!                          If ( chi2R11_SNIa(bestfit(8),bestfit(13),bestfit(15),m) .le. 1.d0) then
 
-                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(8)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                  bestfit(8)+5.d0*log10(bestfit(13))-25.d0,1.d0
+!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(8)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+!                                  bestfit(8)+5.d0*log10(bestfit(13))-25.d0,1.d0
 
-                          Else
+!                          Else
 
-                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(8)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                  bestfit(8)+5.d0*log10(bestfit(13))-25.d0,&
-                                  1.d0/chi2R11_SNIa(bestfit(8),bestfit(13),bestfit(15),m)
+!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(8)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+!                                  bestfit(8)+5.d0*log10(bestfit(13))-25.d0,&
+!                                  1.d0/chi2R11_SNIa(bestfit(8),bestfit(13),bestfit(15),m)
                              
-                          End If
+!                          End If
 
-                       Else if (m .eq. 8) then
+!                       Else if (m .eq. 8) then
 
-                          If ( chi2R11_SNIa(bestfit(7),bestfit(13),bestfit(15),m) .le. 1.d0) then
+!                          If ( chi2R11_SNIa(bestfit(7),bestfit(13),bestfit(15),m) .le. 1.d0) then
 
-                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(7)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                  bestfit(7)+5.d0*log10(bestfit(13))-25.d0,1.d0
+!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(7)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+!                                  bestfit(7)+5.d0*log10(bestfit(13))-25.d0,1.d0
 
-                          Else
+!                          Else
 
-                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(7)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                  bestfit(7)+5.d0*log10(bestfit(13))-25.d0,&
-                                  1.d0/chi2R11_SNIa(bestfit(7),bestfit(13),bestfit(15),m)
+!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(7)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
+!                                  bestfit(7)+5.d0*log10(bestfit(13))-25.d0,&
+!                                  1.d0/chi2R11_SNIa(bestfit(7),bestfit(13),bestfit(15),m)
                              
-                          End If
+!                          End If
+
+ !                      Else
+
+                       If ( chi2R11_SNIa(bestfit(m),bestfit(24),bestfit(26),m) .le. 1.d0) then
+
+                          write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(20),mvi5av(m), Sigma_mvi5av(m), &
+                               bestfit(m)+5.d0*log10(bestfit(24))-25.d0,1.d0
 
                        Else
 
-                          If ( chi2R11_SNIa(bestfit(m),bestfit(13),bestfit(15),m) .le. 1.d0) then
-
-                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                  bestfit(m)+5.d0*log10(bestfit(13))-25.d0,1.d0
-
-                          Else
-
-                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-                                  bestfit(m)+5.d0*log10(bestfit(13))-25.d0,&
-                                  1.d0/chi2R11_SNIa(bestfit(m),bestfit(13),bestfit(15),m)
-
-                          End If
+                          write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(20),mvi5av(m), Sigma_mvi5av(m), &
+                               bestfit(m)+5.d0*log10(bestfit(24))-25.d0,&
+                               1.d0/chi2R11_SNIa(bestfit(m),bestfit(24),bestfit(26),m)
 
                        End If
+
+!                       End If
 
                     End Do
 
@@ -6166,35 +6496,35 @@ Program mcmc
 
                  If (use_HP_in_anchor) then
 
-                    If ( chi2R11_anchor_LMC(bestfit(10)) .le. 1.d0) then
+                    If ( chi2R11_anchor_LMC(bestfit(21)) .le. 1.d0) then
 
                        write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR LMC IS: ',1.d0
 
                     Else
 
-                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR LMC IS: ',1.d0/chi2R11_anchor_LMC(bestfit(10))
+                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR LMC IS: ',1.d0/chi2R11_anchor_LMC(bestfit(21))
 
                     End If
 
-                    If ( chi2R11_anchor_NGC4258(bestfit(9)) .le. 1.d0) then
+                    If ( chi2R11_anchor_NGC4258(bestfit(20)) .le. 1.d0) then
 
-                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2013) IS: ',1.d0
+                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2016) IS: ',1.d0
 
                     Else
 
-                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2013) IS: ',1.d0/chi2R11_anchor_NGC4258(bestfit(9))
+                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2016) IS: ',1.d0/chi2R11_anchor_NGC4258(bestfit(20))
 
                     End If
 
                     If (include_mu_0_NGC4258_2015) then
 
-                       If ( chi2R11_anchor_NGC4258_2015(bestfit(9)) .le. 1.d0) then
+                       If ( chi2R11_anchor_NGC4258_2015(bestfit(20)) .le. 1.d0) then
 
-                          write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2015) IS: ',1.d0
+                          write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2016) IS: ',1.d0
 
                        Else
 
-                          write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2015) IS: ',1.d0/chi2R11_anchor_NGC4258_2015(bestfit(9))
+                          write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2016) IS: ',1.d0/chi2R11_anchor_NGC4258_2015(bestfit(20))
 
                        End If
 
@@ -6220,19 +6550,19 @@ Program mcmc
 
                           If (PeriodR11(m) .lt. cepheid_Period_limit) then
 
-                             If ( chi2R11_W_E14(bestfit(n),bestfit(11),bestfit(12),bestfit(14),10**(bestfit(18+n)),m)&
+                             If ( chi2R11_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),10**(bestfit(29+n)),m)&
                                   .le. 1.d0 ) then
 
                                 write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
-                                     P_L_relation_passband_W_E14(bestfit(n),bestfit(11),bestfit(12),bestfit(14),&
+                                     P_L_relation_passband_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),&
                                      OHR11(m),PeriodR11(m)),eF160WR11(m), 1.d0, Field(m)
 
                              Else
 
                                 write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
-                                     P_L_relation_passband_W_E14(bestfit(n),bestfit(11),bestfit(12),bestfit(14),&
-                                     OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W_E14(bestfit(n),bestfit(11),&
-                                     bestfit(12),bestfit(14),10**(bestfit(18+n)),m), Field(m)
+                                     P_L_relation_passband_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),&
+                                     OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W_E14(bestfit(n),bestfit(22),&
+                                     bestfit(23),bestfit(25),10**(bestfit(29+n)),m), Field(m)
 
                              End If
 
@@ -6252,19 +6582,19 @@ Program mcmc
 
                     If (Period(m) .lt. cepheid_Period_limit) then
 
-                       If ( chi2R11_W_LMC_E14(bestfit(10),bestfit(11),bestfit(12),bestfit(14),10**(bestfit(17)),m)&
+                       If ( chi2R11_W_LMC_E14(bestfit(21),bestfit(22),bestfit(23),bestfit(25),10**(bestfit(28)),m)&
                             .le. 1.d0 ) then
 
-                          write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)-II(m)) - &
-                               P_L_relation_passband_W_E14(bestfit(10),bestfit(11),bestfit(12),bestfit(14),&
+                          write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)) - &
+                               P_L_relation_passband_W_E14(bestfit(21),bestfit(22),bestfit(23),bestfit(25),&
                                meanOH_LMC,Period(m)),Sigma_m(m), 1.d0, 'LMC'
 
                        Else
 
-                          write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)-II(m)) - &
-                               P_L_relation_passband_W_E14(bestfit(10),bestfit(11),bestfit(12),bestfit(14),&
-                               meanOH_LMC,Period(m)), Sigma_m(m), 1.d0/chi2R11_W_LMC_E14(bestfit(10),bestfit(11),&
-                               bestfit(12),bestfit(14),10**(bestfit(17)),m), 'LMC'
+                          write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)) - &
+                               P_L_relation_passband_W_E14(bestfit(21),bestfit(22),bestfit(23),bestfit(25),&
+                               meanOH_LMC,Period(m)), Sigma_m(m), 1.d0/chi2R11_W_LMC_E14(bestfit(21),bestfit(22),&
+                               bestfit(23),bestfit(25),10**(bestfit(28)),m), 'LMC'
 
                        End If
 
@@ -6280,19 +6610,19 @@ Program mcmc
 
                     If (10**(logP(m)) .lt. cepheid_Period_limit) then
 
-                       If ( chi2R11_W_MW(bestfit(11),bestfit(12),bestfit(14),10**(bestfit(18)),m)&
+                       If ( chi2R11_W_MW(bestfit(22),bestfit(23),bestfit(25),10**(bestfit(29)),m)&
                             .le. 1.d0 ) then
 
                           write(UNIT_HP_FILE,*) 10**(logP(m)), Mw(m) - &
-                               P_L_relation_passband_W_E14(0.d0,bestfit(11),bestfit(12),bestfit(14),&
+                               P_L_relation_passband_W_E14(0.d0,bestfit(22),bestfit(23),bestfit(25),&
                                meanOH_MW,10**(logP(m))),SigmaMw(m), 1.d0, 'MW'
 
                        Else
 
                           write(UNIT_HP_FILE,*) 10**(logP(m)), Mw(m) - &
-                               P_L_relation_passband_W_E14(0.d0,bestfit(11),bestfit(12),bestfit(14),&
-                               meanOH_MW,10**(logP(m))), SigmaMw(m), 1.d0/chi2R11_W_MW(bestfit(11),&
-                               bestfit(12),bestfit(14),10**(bestfit(18)),m), 'MW'
+                               P_L_relation_passband_W_E14(0.d0,bestfit(22),bestfit(23),bestfit(25),&
+                               meanOH_MW,10**(logP(m))), SigmaMw(m), 1.d0/chi2R11_W_MW(bestfit(22),&
+                               bestfit(23),bestfit(25),10**(bestfit(29)),m), 'MW'
 
                        End If
 

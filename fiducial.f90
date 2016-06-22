@@ -15,9 +15,9 @@ Module fiducial
     Real*8,parameter    :: prior_sigma_int_MW = 0.10d0 ! SAME VALUE AS IN SUBSECTION 4.2 OF EFSTATHIOU'S PAPER
     Real*8,parameter    :: prior_alpha_j = 5.d-1
     Real*8,parameter    :: R = 0.410d0                  ! TAKEN FROM PAGE 7 IN R11
-    Real*8,parameter    :: a_v = 0.697d0                ! TAKEN FROM PAGE 9 IN R11
+    Real*8,parameter    :: a_v = 0.71273d0               ! TAKEN FROM PAGE 16 IN R16. R16 USED B BAND (R11 V BAND), HENCE 'a_v' HERE STANDS FOR a_B 
     Real*8,parameter    :: a_cal = 0.d0                 ! AUXILIAR PARAMETER TO HAVE DIAGNONAL COVARIANCE MATRIX FOR LMC CEPHEID VARIABLES
-    Real*8,parameter    :: NGC4258_distance = 7.60d0    ! TAKEN FROM PAGE 1 IN H13. UNITS : MPC
+    Real*8,parameter    :: NGC4258_distance = 7.54d0    ! TAKEN FROM PAGE 16 IN R16. UNITS : MPC
     Real*8,parameter    :: NGC4258_distance_2015 = 7.08d0    ! TAKEN FROM PAGE 1 IN J. POLSHAW. UNITS : MPC
     Real*8,parameter    :: mu_0_NGC4258 = 5.d0*log10(NGC4258_distance) + 25.d0 ! DEFINITION OF DISTANCE MODULUS
     Real*8,parameter    :: mu_0_NGC4258_2015 = 5.d0*log10(NGC4258_distance_2015) + 25.d0 ! DEFINITION OF DISTANCE MODULUS
@@ -29,16 +29,27 @@ Module fiducial
     Real*8,parameter    :: meanOH_MW = 8.9d0           ! MEAN METALLICITY FOR MW CEPHEID VARIABLES ASSUMED BY EFSTATHIOU
     Real*8,parameter    :: prior_zpH = 28.d0
     Real*8,parameter    :: prior_bH = -2.7d0
-    Real*8,parameter    :: prior_mu1 = 30.91d0 ! n4536 FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu2 = 31.67d0 ! n4639 FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu3 = 31.70d0 ! n3982 FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu4 = 32.13d0 ! n3370 FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu5 = 32.27d0 ! n3021 FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu6 = 32.59d0 ! n1309 FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu7 = 31.66d0 ! n4038 FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu8 = 31.72d0 ! n5584 FROM TABLE 3 IN R11 
-    Real*8,parameter    :: prior_mu9 = 24.3d0  ! n4258
-    Real*8,parameter    :: prior_mu10 = 18.5d0 ! LMC
+    Real*8,parameter    :: prior_mu1 = 29.135d0 ! M101  FROM TABLE 5 IN R16 
+    Real*8,parameter    :: prior_mu2 = 32.497d0 ! N1015 FROM TABLE 5 IN R16 
+    Real*8,parameter    :: prior_mu3 = 32.523d0 ! N1309 FROM TABLE 5 IN R16 
+    Real*8,parameter    :: prior_mu4 = 31.307d0 ! N1365 FROM TABLE 5 IN R16 
+    Real*8,parameter    :: prior_mu5 = 31.311d0 ! N1448 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu6 = 31.511d0 ! N2442 FROM TABLE 5 IN R16 
+    Real*8,parameter    :: prior_mu7 = 32.498d0 ! N3021 FROM TABLE 5 IN R16 
+    Real*8,parameter    :: prior_mu8 = 32.072d0 ! N3370 FROM TABLE 5 IN R16 
+    Real*8,parameter    :: prior_mu9 = 31.908d0 ! N3447 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu10 = 31.587d0! N3972 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu11 = 31.737d0! N3982 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu12 = 31.290d0! N4038 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu13 = 31.080d0! N4424 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu14 = 30.906d0! N4536 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu15 = 31.532d0! N4639 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu16 = 31.786d0! N5584 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu17 = 32.263d0! N5917 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu18 = 31.499d0! N7250 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu19 = 32.919d0! U9391 FROM TABLE 5 IN R16
+    Real*8,parameter    :: prior_mu20 = 29.387d0! N4258
+    Real*8,parameter    :: prior_mu21 = 18.5d0  ! LMC
     Real*8,parameter    :: prior_zpw = 29.d0
     Real*8,parameter    :: prior_zpw4258 = 30.5d0  ! CENTRAL VALUE OF PRIOR ON zp_{w,4258} 
     Real*8,parameter    :: prior_zpwLMC = 20.98d0
@@ -55,9 +66,9 @@ Module fiducial
     Real*8,parameter    :: sigma_bw = 1.d-1
     Real*8,parameter    :: sigma_sigma_int = 1.d-1 !log10(sigma_int)
     Real*8,parameter    :: sigma_alpha_j = 1.d-3
-    Real*8,parameter    :: sigma_a_v = 0.00201d0        ! TAKEN FROM PAGE 9 IN R11
+    Real*8,parameter    :: sigma_a_v = 0.00176d0        ! TAKEN FROM PAGE 15 IN R16 (AGAIN THIS STANDS FOR 'sigma_a_v')
     Real*8,parameter    :: sigma_a_cal = 0.04d0         ! TAKEN FROM PAGE 10 IN EFSTATHIOU'S PAPER
-    Real*8,parameter    :: sigma_NGC4258_quadrature =  0.23d0    ! TAKEN FROM PAGE 1 IN H13. UNITS : MPC
+    Real*8,parameter    :: sigma_NGC4258_quadrature =  0.1972d0    ! TAKEN FROM PAGE 16 IN R16. UNITS : MPC
     Real*8,parameter    :: sigma_NGC4258_2015 =  0.86d0    ! TAKEN FROM PAGE 1 IN J. POLSHAW. UNITS : MPC
     Real*8,parameter    :: sigma_mu_0_NGC4258 = 5.d0/log(10.d0)/NGC4258_distance*sigma_NGC4258_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_mu_0_NGC4258_2015 = 5.d0/log(10.d0)/NGC4258_distance_2015*sigma_NGC4258_2015 ! ERROR ON DISTANCE MODULUS
@@ -67,16 +78,27 @@ Module fiducial
     Real*8,parameter    :: sigma_mu_0_LMC = 5.d0/log(10.d0)/LMC_distance*sigma_LMC_quadrature ! ERROR ON DISTANCE MODULUS
     Real*8,parameter    :: sigma_zpH = 0.2d0
     Real*8,parameter    :: sigma_bH = 0.1d0
-    Real*8,parameter    :: sigma_mu1 = sigma_mu_0_NGC4258!/2.d0
-    Real*8,parameter    :: sigma_mu2 = sigma_mu_0_NGC4258!/2.d0
-    Real*8,parameter    :: sigma_mu3 = sigma_mu_0_NGC4258!/2.d0
-    Real*8,parameter    :: sigma_mu4 = sigma_mu_0_NGC4258!/2.d0
-    Real*8,parameter    :: sigma_mu5 = sigma_mu_0_NGC4258!/2.d0
-    Real*8,parameter    :: sigma_mu6 = sigma_mu_0_NGC4258!/2.d0
-    Real*8,parameter    :: sigma_mu7 = sigma_mu_0_NGC4258!/2.d0
-    Real*8,parameter    :: sigma_mu8 = sigma_mu_0_NGC4258!/2.d0
-    Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258!/2.d0
-    Real*8,parameter    :: sigma_mu10 = sigma_mu_0_LMC!/2.d0
+    Real*8,parameter    :: sigma_mu1 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu2 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu3 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu4 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu5 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu6 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu7 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu8 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu9 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu10 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu11 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu12 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu13 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu14 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu15 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu16 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu17 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu18 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu19 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu20 = sigma_mu_0_NGC4258
+    Real*8,parameter    :: sigma_mu21 = sigma_mu_0_LMC
     Real*8,parameter    :: sigma_zpw = 1.d-1
     Real*8,parameter    :: sigma_zpw4258 = 0.1d0 
     Real*8,parameter    :: sigma_zpwLMC = 0.78d0
@@ -97,19 +119,19 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 21000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 27 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    Integer*4,parameter :: number_model_parameters = 49 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE, AND FIXED sigma_int), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
     ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 15 FOR ALL R11 CEPHEIDS +
     ! MW CEPHEIDS ANS USING MW AS ANCHOR, 16 FOR ALL R11 CEPHEIDS + NGC4258 AND LMC AS ANCHORS, 15 FOR ALL R11 CEPHEIDS + NGC4258 AND MW AS ANCHORS,
     ! 16 FOR ALL R11 CEPHEIDS + MW AND LMC AS ANCHORS, 16 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS, 
-    ! 27 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS AND SIGMA INT PER HOST GALAXY, 26 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS, SIGMA INT PER HOST GALAXY 
+    ! 49 FOR ALL R16 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS AND SIGMA INT PER HOST GALAXY, 26 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS, SIGMA INT PER HOST GALAXY 
     ! BUT NOT INCLUDING METALLICITY, 4 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE, AND VARYING sigma_int)
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
     Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
     Integer*4,parameter :: jumping_factor_update = 100           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)
     Integer*4,parameter :: covariance_matrix_update = 20000        ! STEPS TAKEN BEFORE UPDATING COVARIANCE MATRIX (IF NEEDED)
     Integer*4,parameter :: steps_taken_before_definite_run = 1000000 ! STEPS TAKEN BEFORE DEFINITE RUN
-    Integer*4,parameter :: number_of_hosts_galaxies = 9 ! TOTAL NUMBER OF HOSTS GALAXIES AS IN R11 (NUMBER INCLUDES NGC4258)
+    Integer*4,parameter :: number_of_hosts_galaxies = 20 ! TOTAL NUMBER OF HOSTS GALAXIES AS IN R16 (NUMBER INCLUDES NGC4258)
     Integer*4,parameter :: UNIT_EXE_FILE = 90           ! UNIT NUMBER FOR EXECUTION INFORMATION FILE
     Integer*4,parameter :: UNIT_RANGES_FILE = 91           ! UNIT NUMBER FOR RANGES FILE
     Integer*4,parameter :: UNIT_PARAMNAMES_FILE = 92           ! UNIT NUMBER FOR PARAMNAMES FILE
@@ -118,7 +140,7 @@ Module fiducial
     Integer*4,parameter :: UNIT_HP_FILE = 95           ! UNIT EFFECTIVE HPS FILE
 
     Real*8,parameter    :: step_size_changes = 1.d-2             ! CHANGES IN STEP SIZE
-    Real*8,parameter    :: cepheid_Period_limit = 60.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
+    Real*8,parameter    :: cepheid_Period_limit = 205.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
     Real*8,parameter    :: cepheid_lower_Period_limit = 0.d0                    ! DISREGARD CEPHEID VARIABLES WITH PERIOD SHORTER THAN cepheid_lower_Period_limit
 
     Logical,parameter   :: separate_dataA = .false.!.true.               ! INCLUDE DATA SET A AS SINGLE POINTS IF SET IT TRUE
@@ -145,7 +167,7 @@ Module fiducial
     Logical,parameter   :: use_HP_per_cepheid = .true.           ! USE HPs FOR EACH CEPHEID IN R11 IF SET IT TRUE
     Logical,parameter   :: use_HP_per_MW_cepheid = .true.       ! USE HPs FOR EACH CEPHEID IN MW IF SET IT TRUE
     Logical,parameter   :: use_HP_for_MW_dataset = .false.       ! USE HP FOR MW DATASET IF SET IT TRUE (JEFFREY'S PRIOR)
-    Logical,parameter   :: doing_R11_analysis = .true.           ! DO R11 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU'S SECTION 2 (LMC CEPHEIDS ALONE)
+    Logical,parameter   :: doing_R11_analysis = .true.           ! DO R16 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU'S SECTION 2 (LMC CEPHEIDS ALONE)
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
@@ -162,11 +184,12 @@ Module fiducial
     Character(len=*),parameter :: path_to_datafileAB = './data/dataAB.txt'    ! PATH TO JOINT DATA SET AB
     Character(len=*),parameter :: path_to_datafileABC = './data/dataABC.txt'    ! PATH TO JOINT DATA SET ABC
     Character*16,parameter     :: phrase = 'randomizer'    ! PHRASE NEEDED BY RANDOM NUMBER GENERATOR 
-    character(len=*),parameter :: path_to_table2_R11 = './data/table2_R11.txt' ! PATH TO DATA OF TABLE 2 IN R11
-    character(len=*),parameter :: path_to_table3_R11 = './data/table3_R11.txt' ! PATH TO DATA OF TABLE 2 IN R11
+    character(len=*),parameter :: path_to_table2_R11 = './data/table4_R16.txt' ! PATH TO DATA OF TABLE 4 IN R16
+    character(len=*),parameter :: path_to_table3_R11 = './data/table5_R16.txt' ! PATH TO DATA OF TABLE 5 IN R16
     character(len=*),parameter :: path_to_table2_LEEUWEN = './data/table2_Leeuwen.txt' ! PATH TO DATA OF TABLE 2 IN LEEUWEN
-    Character(len=5),dimension(number_of_hosts_galaxies), parameter :: host = ['n4536','n4639','n3982','n3370','n3021','n1309',&
-    'n4038','n5584','n4258'] ! HOST GALAXIES IN SAME ORDER LISTED IN TABLE 2 OF R11
+    Character(len=5),dimension(number_of_hosts_galaxies), parameter :: host = ['m101 ','n1015','n1309','n1365',&
+         'n1448','n2442','n3021','n3370','n3447','n3972','n3982','n4038','n4424','n4536','n4639','n5584',&
+         'n5917','n7250','u9391','n4258'] ! HOST GALAXIES IN SAME ORDER LISTED IN TABLE 5 OF R16
     Character(len=*),parameter :: EXECUTION_INFORMATION = './output/chains/execution_information.txt' ! PATH TO EXECUTION INFORMATION FILE
 
 End Module fiducial

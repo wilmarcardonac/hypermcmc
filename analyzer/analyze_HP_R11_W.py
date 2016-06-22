@@ -1,8 +1,8 @@
 from getdist import loadMCSamples,plots,covmat
 import numpy as np
 
-number_of_parameters = 27 # 14 NGC4258 AS ANCHOR, 16 LMC AS ANCHOR, 15 MW AS ANCHOR, 16 NGC4258+LMC AS ANCHORS, 15 NGC4258+MW AS ANCHORS, 
-# 16 LMC+MW AS ANCHORS, 16 NGC4258+LMC+MW AS ANCHORS, 19 NGC4258+LMC+MW AS ANCHORS (VARYING sigma_int), 27 NGC4258+LMC+MW AS ANCHORS AND SIGMA INT PER GALAXY, 26 NGC4258+LMC+MW AS ANCHORS AND SIGMA INT PER GALAXY WITHOUT METALLICITY
+number_of_parameters = 49 # 14 NGC4258 AS ANCHOR, 16 LMC AS ANCHOR, 15 MW AS ANCHOR, 16 NGC4258+LMC AS ANCHORS, 15 NGC4258+MW AS ANCHORS, 
+# 16 LMC+MW AS ANCHORS, 16 NGC4258+LMC+MW AS ANCHORS, 19 NGC4258+LMC+MW AS ANCHORS (VARYING sigma_int), 49 NGC4258+LMC+MW AS ANCHORS AND SIGMA INT PER GALAXY, 26 NGC4258+LMC+MW AS ANCHORS AND SIGMA INT PER GALAXY WITHOUT METALLICITY
 
 samples = loadMCSamples('../output/chains/mcmc_final_output_HP',settings={'ignore_rows': 0.2 }) 
 
@@ -61,6 +61,28 @@ samples.addDerived(p.mu06 - p.mu04258, name='mu06_mu04258', label='\mu_{0,6}-\mu
 samples.addDerived(p.mu07 - p.mu04258, name='mu07_mu04258', label='\mu_{0,7}-\mu_{0,4258}')
 
 samples.addDerived(p.mu08 - p.mu04258, name='mu08_mu04258', label='\mu_{0,8}-\mu_{0,4258}')
+
+samples.addDerived(p.mu09 - p.mu04258, name='mu09_mu04258', label='\mu_{0,9}-\mu_{0,4258}')
+
+samples.addDerived(p.mu010 - p.mu04258, name='mu010_mu04258', label='\mu_{0,10}-\mu_{0,4258}')
+
+samples.addDerived(p.mu011 - p.mu04258, name='mu011_mu04258', label='\mu_{0,11}-\mu_{0,4258}')
+
+samples.addDerived(p.mu012 - p.mu04258, name='mu012_mu04258', label='\mu_{0,12}-\mu_{0,4258}')
+
+samples.addDerived(p.mu013 - p.mu04258, name='mu013_mu04258', label='\mu_{0,13}-\mu_{0,4258}')
+
+samples.addDerived(p.mu014 - p.mu04258, name='mu014_mu04258', label='\mu_{0,14}-\mu_{0,4258}')
+
+samples.addDerived(p.mu015 - p.mu04258, name='mu015_mu04258', label='\mu_{0,15}-\mu_{0,4258}')
+
+samples.addDerived(p.mu016 - p.mu04258, name='mu016_mu04258', label='\mu_{0,16}-\mu_{0,4258}')
+
+samples.addDerived(p.mu017 - p.mu04258, name='mu017_mu04258', label='\mu_{0,17}-\mu_{0,4258}')
+
+samples.addDerived(p.mu018 - p.mu04258, name='mu018_mu04258', label='\mu_{0,18}-\mu_{0,4258}')
+
+samples.addDerived(p.mu019 - p.mu04258, name='mu019_mu04258', label='\mu_{0,19}-\mu_{0,4258}')
 
 samples.addDerived(p.mu04258 + 5.*np.log10(p.H0) - 25., name='mu04258_5av', label='m^0_{v,4258}+5a_v')
 
