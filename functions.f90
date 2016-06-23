@@ -1583,7 +1583,7 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
                        
              If (Period(m) .lt. cepheid_Period_limit) then
 
-                log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_W_LMC_E14(mu0j(10),M_w,bw,&
+                log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_W_LMC_E14(mu0j(21),M_w,bw,&
                      Zw,sigma_int_LMC,m))) + &
                      log(N_tilde_R11_W_LMC(sigma_int_LMC,m)) + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
                       
@@ -1599,7 +1599,7 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
 
           If (Period(m) .lt. cepheid_Period_limit) then
 
-             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = -chi2R11_W_LMC_E14(mu0j(10),M_w,bw,Zw,sigma_int_LMC,m)/2.d0 + &
+             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = -chi2R11_W_LMC_E14(mu0j(21),M_w,bw,Zw,sigma_int_LMC,m)/2.d0 + &
                   log(N_tilde_R11_W_LMC(sigma_int_LMC,m)) + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
 
           End If
