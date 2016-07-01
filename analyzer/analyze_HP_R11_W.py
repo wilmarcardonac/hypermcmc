@@ -1,10 +1,10 @@
 from getdist import loadMCSamples,plots,covmat
 import numpy as np
 
-number_of_parameters = 29 # 14 NGC4258 AS ANCHOR, 16 LMC AS ANCHOR, 15 MW AS ANCHOR, 16 NGC4258+LMC AS ANCHORS, 15 NGC4258+MW AS ANCHORS, 
-# 16 LMC+MW AS ANCHORS, 16 NGC4258+LMC+MW AS ANCHORS, 19 NGC4258+LMC+MW AS ANCHORS (VARYING sigma_int), 29 NGC4258+LMC+MW AS ANCHORS AND SIGMA INT PER GALAXY, 26 NGC4258+LMC+MW AS ANCHORS AND SIGMA INT PER GALAXY WITHOUT METALLICITY
+number_of_parameters = 28 # 14 NGC4258 AS ANCHOR, 16 LMC AS ANCHOR, 15 MW AS ANCHOR, 16 NGC4258+LMC AS ANCHORS, 15 NGC4258+MW AS ANCHORS, 
+# 16 LMC+MW AS ANCHORS, 16 NGC4258+LMC+MW AS ANCHORS, 19 NGC4258+LMC+MW AS ANCHORS (VARYING sigma_int), 28 NGC4258+LMC+MW+M31 AS ANCHORS, 26 NGC4258+LMC+MW AS ANCHORS AND SIGMA INT PER GALAXY WITHOUT METALLICITY
 
-samples = loadMCSamples('../output/chains/mcmc_final_output_HP',settings={'ignore_rows': 0.2 }) 
+samples = loadMCSamples('../output/chains/mcmc_final_output_HP',settings={'ignore_rows': 0. }) 
 
 g = plots.getSinglePlotter()
 
@@ -16,7 +16,7 @@ if number_of_parameters == 26 :
 
 else:
 
-    g.triangle_plot(samples,['mu04258','muLMC','Mw','Zw','bw','H0'],filled=True)
+    g.triangle_plot(samples,['mu04258','muLMC','mu0M31','Mw','Zw','bw','H0'],filled=True)
 
     for ax in g.subplots[:,0]:
         ax.axvline(29.25,color='green',ls='--')
@@ -27,11 +27,14 @@ else:
     for ax in g.subplots[1:,1]:
         ax.axvline(18.49,color='black',ls='--')
 
-    for ax in g.subplots[5:,5]:
+    for ax in g.subplots[2:,2]:
+        ax.axvline(24.36,color='black',ls='--')
+
+    for ax in g.subplots[6:,6]:
         ax.axvline(67.81,color='black',ls='--')
         ax.axvline(70.6,color='green',ls='--')
         ax.axvline(73.8,color='red',ls='--')
-        ax.axvline(73.02,color='red',ls='dotted')
+        ax.axvline(73.24,color='red',ls='dotted')
 
 
     g.export('../output/chains/triangle_plot.pdf')
@@ -86,18 +89,17 @@ samples.addDerived(p.mu019 - p.mu04258, name='mu019_mu04258', label='\mu_{0,19}-
 
 samples.addDerived(p.mu04258 + 5.*np.log10(p.H0) - 25., name='mu04258_5av', label='m^0_{v,4258}+5a_v')
 
-if number_of_parameters == 16 :
+#if number_of_parameters == 16 :
 
-    pass
+#    pass
 
-else:
+#else:
 
-    samples.addDerived(np.power(10,p.log10sigma_int_LMC),name='sigma_int_LMC',label='\sigma_{int}^{LMC}')
+#    samples.addDerived(np.power(10,p.log10sigma_int_LMC),name='sigma_int_LMC',label='\sigma_{int}^{LMC}')
 
-    samples.addDerived(np.power(10,p.log10sigma_int_MW),name='sigma_int_MW',label='\sigma_{int}^{MW}')
+#    samples.addDerived(np.power(10,p.log10sigma_int_MW),name='sigma_int_MW',label='\sigma_{int}^{MW}')
 
 #if number_of_parameters == 27 :
-
 
 #    samples.addDerived(np.power(10,p.log10sigma_int_1),name='sigma_int_1',label='\sigma_{int,1}')
 

@@ -101,7 +101,7 @@ subroutine read_table2_LEEUWEN(path_to_datafile)
     Integer*4 :: arrays_dimension,p
     Integer :: stat
     character(len=*) :: path_to_datafile
-    Real*8,allocatable,dimension(:) :: LK
+    Real*8,allocatable,dimension(:) :: LK,parallax,parallaxerr,vimw,mhmw,sigmamwr16
 
     open(11,file=path_to_datafile)
 
@@ -130,7 +130,9 @@ subroutine read_table2_LEEUWEN(path_to_datafile)
     close(11)
 
     allocate (FieldHipp(1:arrays_dimension),logP(1:arrays_dimension),Mw(1:arrays_dimension),&
-         sigmaMw(1:arrays_dimension),LK(1:arrays_dimension),stat=status1)
+         sigmaMw(1:arrays_dimension),LK(1:arrays_dimension),parallax(1:arrays_dimension),&
+         parallaxerr(1:arrays_dimension),vimw(1:arrays_dimension),mhmw(1:arrays_dimension),&
+         sigmamwr16(1:arrays_dimension),stat=status1)
 
     open(11,file=path_to_datafile)
 
@@ -140,9 +142,14 @@ subroutine read_table2_LEEUWEN(path_to_datafile)
 
     Do p=1,arrays_dimension
 
-        read(11,*) FieldHipp(p),logP(p),Mw(p),sigmaMw(p),LK(p)
+        read(11,*) FieldHipp(p),logP(p),Mw(p),sigmaMw(p),LK(p),parallax(p),parallaxerr(p),&
+             vimw(p),mhmw(p),sigmamwr16(p)
 
-        MW(p) = Mw(p) + LK(p)
+        !Mw(p) = Mw(p) + LK(p)
+
+        Mw(p) = observed_m_W(mhmw(p),vimw(p)) -(5.d0*log10(1.d-3/parallax(p)) + 25.d0) + LK(p)
+
+        sigmaMw(p) = sigmamwr16(p)
 
     End Do
 
@@ -193,6 +200,50 @@ subroutine read_data_Efstathiou(path_to_datafile)
     close(11)
 
 end subroutine read_data_Efstathiou
+
+subroutine read_data_M31(path_to_datafile)
+    use arrays
+    Implicit none
+    Integer*4 :: arrays_dimension,p
+    Integer :: stat
+    character(len=*) :: path_to_datafile
+
+    open(11,file=path_to_datafile)
+
+    arrays_dimension = 0
+
+    Do 
+
+        read(11,*,iostat=stat)
+
+        If (stat .ne. 0) then
+
+            exit
+
+        Else
+
+            arrays_dimension = arrays_dimension + 1 
+
+        End If
+
+    End Do
+
+    close(11)
+
+    allocate (Namem31(1:arrays_dimension),IDm31(1:arrays_dimension),Periodm31(1:arrays_dimension),&
+    Vm31(1:arrays_dimension),Hm31(1:arrays_dimension),Sigma_m31(1:arrays_dimension),stat=status1)
+
+    open(11,file=path_to_datafile)
+
+    Do p=1,arrays_dimension
+
+        read(11,*) Namem31(p),IDm31(p),Periodm31(p),Vm31(p),Hm31(p),Sigma_m31(p) ! HERE V STANDS FOR V-I MAGNITUDES
+
+    End Do
+
+    close(11)
+
+end subroutine read_data_M31
 
 subroutine read_data_EfstathiouA(path_to_datafile)
     use arrays
@@ -1467,7 +1518,7 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
 
     Real*8 :: log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int,M_w,bw,H0,Zw,av,acal,sigma_int_LMC,normalizationA,sigma_int_MW
     Real*8 :: normalizationMW,chiMW
-    Real*8,dimension(number_of_hosts_galaxies + 1) :: mu0j 
+    Real*8,dimension(number_of_hosts_galaxies + 2) :: mu0j 
     Real*8,dimension(number_of_hosts_galaxies) ::  sigma_int
     Integer*4 :: m,index_host,number_cepheid
 
@@ -1583,7 +1634,7 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
                        
              If (Period(m) .lt. cepheid_Period_limit) then
 
-                log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_W_LMC_E14(mu0j(21),M_w,bw,&
+                log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_W_LMC_E14(mu0j(22),M_w,bw,&
                      Zw,sigma_int_LMC,m))) + &
                      log(N_tilde_R11_W_LMC(sigma_int_LMC,m)) + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
                       
@@ -1599,8 +1650,47 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
 
           If (Period(m) .lt. cepheid_Period_limit) then
 
-             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = -chi2R11_W_LMC_E14(mu0j(21),M_w,bw,Zw,sigma_int_LMC,m)/2.d0 + &
+             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = -chi2R11_W_LMC_E14(mu0j(22),M_w,bw,Zw,sigma_int_LMC,m)/2.d0 + &
                   log(N_tilde_R11_W_LMC(sigma_int_LMC,m)) + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
+          End If
+
+       End Do
+
+    End If
+
+    If (use_HP_per_cepheid) then ! M31 CEPHEID VARIABLES
+
+       Do m=1,size(Namem31)
+
+          If (using_jeffreys_prior) then
+
+             print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+             stop
+
+          Else
+                       
+             If (Periodm31(m) .lt. cepheid_Period_limit) then
+
+                log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_W_M31_E14(mu0j(21),M_w,bw,&
+                     Zw,sigma_int_LMC,m))) + &
+                     log(N_tilde_R11_W_M31(sigma_int_LMC,m)) + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+                      
+             End If
+
+          End If
+
+       End Do
+
+    Else
+
+       Do m=1,size(Namem31)
+
+          If (Periodm31(m) .lt. cepheid_Period_limit) then
+
+             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = -chi2R11_W_M31_E14(mu0j(21),M_w,bw,Zw,sigma_int_LMC,m)/2.d0 + &
+                  log(N_tilde_R11_W_M31(sigma_int_LMC,m)) + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
 
           End If
 
@@ -1699,7 +1789,7 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
         
     If (use_HP_in_anchor) then ! ANCHOR
 
-       log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  log(new_chi2(chi2R11_anchor_LMC(mu0j(21)))) - &
+       log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  log(new_chi2(chi2R11_anchor_LMC(mu0j(22)))) - &
             log(2.d0*Pi*sigma_mu_0_LMC**2)/2.d0 + &
             !log(new_chi2(chi2R11_anchor_LMC_2015(mu0j(10)))) - &
             !log(2.d0*Pi*sigma_mu_0_LMC_2015**2)/2.d0 + &
@@ -1711,6 +1801,18 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
 
           log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_anchor_NGC4258_2015(mu0j(20)))) &
                - log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2)/2.d0 + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
+       Else
+
+          continue
+
+       End If
+
+       If (use_M31_as_anchor) then
+
+          log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_anchor_M31(mu0j(21)))) - &
+            log(2.d0*Pi*sigma_mu_0_M31**2)/2.d0 + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
        Else
 
           continue
@@ -1719,11 +1821,22 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
 
     Else
 
-       log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  -(chi2R11_anchor_LMC(mu0j(21)) + log(2.d0*Pi*sigma_mu_0_LMC**2))/2.d0 - &
+       log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  -(chi2R11_anchor_LMC(mu0j(22)) + log(2.d0*Pi*sigma_mu_0_LMC**2))/2.d0 - &
             !(chi2R11_anchor_LMC_2015(mu0j(10)) + log(2.d0*Pi*sigma_mu_0_LMC_2015**2))/2.d0 - &
             (chi2R11_anchor_NGC4258(mu0j(20)) + log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 - &
             (chi2R11_anchor_NGC4258_2015(mu0j(20)) + log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2))/2.d0 + &
             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
+       If (use_M31_as_anchor) then
+
+          log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = -chi2R11_anchor_M31(mu0j(21)) + &
+            log(2.d0*Pi*sigma_mu_0_M31**2)/2.d0 + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
+       Else
+
+          continue
+
+       End If
 
     End If
 
@@ -2845,6 +2958,20 @@ function chi2R11_W_LMC_E14(mu0_j,M_w,bw,Zw,sigma_int,m)    !    It computes equa
 
 end function chi2R11_W_LMC_E14
 
+function chi2R11_W_M31_E14(mu0_j,M_w,bw,Zw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: mu0_j,M_w,bw,Zw,sigma_int,chi2R11_W_M31_E14
+    Integer*4 :: m
+
+    chi2R11_W_M31_E14 = ( observed_m_W(Hm31(m),Vm31(m)) - &
+         P_L_relation_passband_W_E14(mu0_j,M_w,bw,Zw,meanOH_MW,Periodm31(m)) )**2/( Sigma_m31(m)**2 + sigma_int**2 ) 
+
+end function chi2R11_W_M31_E14
+
 function chi2R11_W_MW(M_w,bw,Zw,sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
 
     use arrays
@@ -2999,6 +3126,18 @@ function chi2R11_anchor_LMC(mu09)    !    It computes equation (3) in published 
 
 end function chi2R11_anchor_LMC
 
+function chi2R11_anchor_M31(mu09)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: mu09,chi2R11_anchor_M31
+
+    chi2R11_anchor_M31 = ( mu09 - mu_0_M31)**2/sigma_mu_0_M31**2
+
+end function chi2R11_anchor_M31
+
 function chi2R11_anchor_LMC_2015(mu09)    !    It computes equation (3) in published version of 1311.3461
 
     use arrays
@@ -3036,6 +3175,19 @@ function N_tilde_R11_W_LMC(sigma_int,m)    !    It computes equation (3) in publ
     N_tilde_R11_W_LMC = 1.d0/sqrt( Sigma_m(m)**2 + sigma_int**2 ) 
 
 end function N_tilde_R11_W_LMC
+
+function N_tilde_R11_W_M31(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
+
+    use arrays
+    use fiducial
+    Implicit none
+
+    Real*8 :: sigma_int,N_tilde_R11_W_M31
+    Integer*4 :: m
+
+    N_tilde_R11_W_M31 = 1.d0/sqrt( Sigma_m31(m)**2 + sigma_int**2 ) 
+
+end function N_tilde_R11_W_M31
 
 function N_tilde_R11_W_MW(sigma_int,m)    !    It computes equation (3) in published version of 1311.3461
 
@@ -3847,7 +3999,7 @@ subroutine set_covariance_matrix()
 
                     If (sigma_int_per_R11_host) then
 
-                       If (number_model_parameters .eq. 29) then
+                       If (number_model_parameters .eq. 28) then
 
                           Covguess(1,1) = sigma_mu1**2    ! 
 
@@ -3889,19 +4041,21 @@ subroutine set_covariance_matrix()
 
                           Covguess(20,20) = sigma_mu20**2 ! NGC4258
 
-                          Covguess(21,21) = sigma_mu21**2 ! LMC
+                          Covguess(21,21) = sigma_mu21**2 ! M31
 
-                          Covguess(22,22) = sigma_Mw**2
+                          Covguess(22,22) = sigma_mu21**2 ! LMC
 
-                          Covguess(23,23) = sigma_bw**2 
+                          Covguess(23,23) = sigma_Mw**2
 
-                          Covguess(24,24) = sigma_H0**2 
+                          Covguess(24,24) = sigma_bw**2 
 
-                          Covguess(25,25) = sigma_Zw**2 
+                          Covguess(25,25) = sigma_H0**2 
 
-                          Covguess(26,26) = sigma_a_v**2
+                          Covguess(26,26) = sigma_Zw**2 
 
-                          Covguess(27,27) = sigma_a_cal**2
+                          Covguess(27,27) = sigma_a_v**2
+
+                          Covguess(28,28) = sigma_a_cal**2
 
 !!$                          Covguess(28,28) = sigma_sigma_int**2
 !!$
@@ -3946,9 +4100,9 @@ subroutine set_covariance_matrix()
 !!$                          Covguess(48,48) = sigma_sigma_int**2 ! LMC
 !!$
 !!$                          Covguess(49,49) = sigma_sigma_int**2 ! MW
-                          Covguess(28,28) = sigma_sigma_int**2 ! LMC
+!                          Covguess(28,28) = sigma_sigma_int**2 ! LMC
 
-                          Covguess(29,29) = sigma_sigma_int**2 ! MW
+ !                         Covguess(29,29) = sigma_sigma_int**2 ! MW
 
                        Else
 
@@ -4755,6 +4909,8 @@ subroutine read_data()
         call read_table3_R11(path_to_table3_R11)
 
         call read_data_Efstathiou(path_to_datafileABC)
+
+        call read_data_M31(path_to_datafileM31)
 
         call read_table2_LEEUWEN(path_to_table2_LEEUWEN)
 

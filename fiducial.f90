@@ -24,7 +24,8 @@ Module fiducial
     Real*8,parameter    :: LMC_distance = 49.97d-3       ! TAKEN FROM PAGE 76 IN PIETRZYNSKI. UNITS : MPC
     Real*8,parameter    :: mu_0_LMC = 5.d0*log10(LMC_distance) + 25.d0 
     Real*8,parameter    :: LMC_distance_2015 = 51.82d-3  ! FROM ABSTRACT IN M. M. FAUSNAUGH (2015). UNITS : MPC
-    Real*8,parameter    :: mu_0_LMC_2015 = 5.d0*log10(LMC_distance_2015) + 25.d0 
+    Real*8,parameter    :: mu_0_LMC_2015 = 5.d0*log10(LMC_distance_2015) + 25.d0
+    Real*8,parameter    :: mu_0_M31 = 24.36d0   ! TAKEN FROM R16
     Real*8,parameter    :: meanOH_LMC = 8.5d0           ! MEAN METALLICITY FOR LMC CEPHEID VARIABLES ASSUMED BY EFSTATHIOU
     Real*8,parameter    :: meanOH_MW = 8.9d0           ! MEAN METALLICITY FOR MW CEPHEID VARIABLES ASSUMED BY EFSTATHIOU
     Real*8,parameter    :: prior_zpH = 28.d0
@@ -49,7 +50,8 @@ Module fiducial
     Real*8,parameter    :: prior_mu18 = 31.499d0! N7250 FROM TABLE 5 IN R16
     Real*8,parameter    :: prior_mu19 = 32.919d0! U9391 FROM TABLE 5 IN R16
     Real*8,parameter    :: prior_mu20 = 29.387d0! N4258
-    Real*8,parameter    :: prior_mu21 = 18.5d0  ! LMC
+    Real*8,parameter    :: prior_mu21 = 24.36d0 ! M31
+    Real*8,parameter    :: prior_mu22 = 18.5d0  ! LMC
     Real*8,parameter    :: prior_zpw = 29.d0
     Real*8,parameter    :: prior_zpw4258 = 30.5d0  ! CENTRAL VALUE OF PRIOR ON zp_{w,4258} 
     Real*8,parameter    :: prior_zpwLMC = 20.98d0
@@ -76,6 +78,7 @@ Module fiducial
     Real*8,parameter    :: sigma_LMC_2015 = 3.23d-3  ! FROM ABSTRACT IN M. M. FAUSNAUGH (2015). UNITS : MPC
     Real*8,parameter    :: sigma_mu_0_LMC_2015 = 5.d0/log(10.d0)/LMC_distance_2015*sigma_LMC_2015
     Real*8,parameter    :: sigma_mu_0_LMC = 5.d0/log(10.d0)/LMC_distance*sigma_LMC_quadrature ! ERROR ON DISTANCE MODULUS
+    Real*8,parameter    :: sigma_mu_0_M31 = 0.08d0        ! ERROR ON M31 DISTANCE MODULUS
     Real*8,parameter    :: sigma_zpH = 0.2d0
     Real*8,parameter    :: sigma_bH = 0.1d0
     Real*8,parameter    :: sigma_mu1 = sigma_mu_0_NGC4258 ! 0.045d0 
@@ -98,7 +101,8 @@ Module fiducial
     Real*8,parameter    :: sigma_mu18 = sigma_mu_0_NGC4258 ! 0.078d0
     Real*8,parameter    :: sigma_mu19 = sigma_mu_0_NGC4258 ! 0.063d0 
     Real*8,parameter    :: sigma_mu20 = sigma_mu_0_NGC4258
-    Real*8,parameter    :: sigma_mu21 = sigma_mu_0_LMC
+    Real*8,parameter    :: sigma_mu21 = sigma_mu_0_M31
+    Real*8,parameter    :: sigma_mu22 = sigma_mu_0_LMC
     Real*8,parameter    :: sigma_zpw = 1.d-1
     Real*8,parameter    :: sigma_zpw4258 = 0.1d0 
     Real*8,parameter    :: sigma_zpwLMC = 0.78d0
@@ -119,12 +123,12 @@ Module fiducial
     !################
 
     Integer*4,parameter :: number_iterations = 11000000              ! TOTAL NUMBER OF ITERATIONS IN MCMC RUN
-    Integer*4,parameter :: number_model_parameters = 29 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
+    Integer*4,parameter :: number_model_parameters = 28 ! NUMBER OF PARAMETERS IN MODEL : 2 FOR LMC ALONE, 10 FOR R11 DATA WITHOUT METALLICITY,
     ! 3 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE, AND FIXED sigma_int), 12 FOR ALL R11 CEPHEIDS, 14 FOR R11 DATA USING NGC4258 AS AN ANCHOR 
     ! INCLUDING METALLICITY AND REDDENING-FREE MAGNITUDE, 16 FOR ALL R11 CEPHEIDS + LMC CEPHEIDS AND USING LMC AS ANCHOR, 15 FOR ALL R11 CEPHEIDS +
     ! MW CEPHEIDS ANS USING MW AS ANCHOR, 16 FOR ALL R11 CEPHEIDS + NGC4258 AND LMC AS ANCHORS, 15 FOR ALL R11 CEPHEIDS + NGC4258 AND MW AS ANCHORS,
     ! 16 FOR ALL R11 CEPHEIDS + MW AND LMC AS ANCHORS, 16 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS, 
-    ! 29 FOR ALL R16 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS AND SIGMA INT PER HOST GALAXY, 26 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS, SIGMA INT PER HOST GALAXY 
+    ! 28 FOR ALL R16 CEPHEIDS + NGC4258, LMC, MW, AND M31 AS ANCHORS, 26 FOR ALL R11 CEPHEIDS + NGC4258, LMC AND MW AS ANCHORS, SIGMA INT PER HOST GALAXY 
     ! BUT NOT INCLUDING METALLICITY, 4 FOR CEPHEIDS ALONE (INCLUDING METALLICITY DEPENDENCE, AND VARYING sigma_int)
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
     Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
@@ -157,6 +161,7 @@ Module fiducial
     Logical,parameter   :: hyperparameters_as_mcmc = .false.      ! SET HYPER-PARAMETERS AS MCMC PARAMETERS IF SET IT TRUE
     Logical,parameter   :: use_NGC4258_as_anchor = .true.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_LMC_as_anchor = .true.           ! USE LMC AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_M31_as_anchor = .true.          ! USE M31 AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_MW_as_anchor = .true.            ! USE MW AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_metallicity = .true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
     Logical,parameter   :: use_H_band = .false.!.true.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
@@ -171,18 +176,19 @@ Module fiducial
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
-    Logical,parameter   :: use_prior_on_Zw = .false.              ! USE PRIOR ON Zw IF SET IT TRUE 
+    Logical,parameter   :: use_prior_on_Zw = .true.              ! USE PRIOR ON Zw IF SET IT TRUE 
     Logical,parameter   :: use_prior_on_bw = .false.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
     Logical,parameter   :: varying_sigma_int = .true.            ! TRUE IF VARYING sigma_int IN MCMC WHEN NO sigma_int_per_R11_host, SET TO FALSE OTHERWISE
     Logical,parameter   :: sigma_int_per_R11_host = .true.        ! TRUE FOR MAIN ANALYSIS: IT INCLUDES SIGMA INT PER R11 HOST 
-    Logical,parameter   :: include_mu_0_NGC4258_2015 = .true.    ! TRUE TO INCLUDE DISTANCE TO NGC4258 FROM 2015, FALSE TO INCLUDE ONLY MEASUREMENT FROM 2013
+    Logical,parameter   :: include_mu_0_NGC4258_2015 = .true.    ! TRUE TO INCLUDE DISTANCE TO NGC4258 FROM 2015, FALSE TO INCLUDE ONLY MEASUREMENT FROM 2016
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 
     Character(len=*),parameter :: path_to_datafileC = './data/dataC.txt'    ! PATH TO DATA SET C
     Character(len=*),parameter :: path_to_datafileAB = './data/dataAB.txt'    ! PATH TO JOINT DATA SET AB
     Character(len=*),parameter :: path_to_datafileABC = './data/dataABC.txt'    ! PATH TO JOINT DATA SET ABC
+    Character(len=*),parameter :: path_to_datafileM31 = './data/M31.txt'    ! PATH TO M31 CEPHEID DATA 
     Character*16,parameter     :: phrase = 'randomizer'    ! PHRASE NEEDED BY RANDOM NUMBER GENERATOR 
     character(len=*),parameter :: path_to_table2_R11 = './data/table4_R16.txt' ! PATH TO DATA OF TABLE 4 IN R16
     character(len=*),parameter :: path_to_table3_R11 = './data/table5_R16.txt' ! PATH TO DATA OF TABLE 5 IN R16
