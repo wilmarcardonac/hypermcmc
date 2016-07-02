@@ -165,23 +165,27 @@ Module fiducial
     Logical,parameter   :: use_MW_as_anchor = .true.            ! USE MW AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_metallicity = .true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
     Logical,parameter   :: use_H_band = .false.!.true.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
-    Logical,parameter   :: use_HP_in_SNIa = .true.               ! USE HPs WHEN COMPUTING SNIa CHI2
+    Logical,parameter   :: use_HP_in_SNIa = .false.               ! USE HPs WHEN COMPUTING SNIa CHI2
     Logical,parameter   :: use_HP_in_av = .false.                ! USE HPs WHEN COMPUTINNG av CHI2
-    Logical,parameter   :: use_HP_in_anchor = .true.            ! USE HPs WHEN COMPUTING ANCHOR CHI2
+    Logical,parameter   :: use_HP_in_anchor = .false.            ! USE HPs WHEN COMPUTING ANCHOR CHI2
     Logical,parameter   :: use_HP_per_host = .false.              ! USE HPs FOR EACH HOST IN R11 IF SET IT TRUE
-    Logical,parameter   :: use_HP_per_cepheid = .true.           ! USE HPs FOR EACH CEPHEID IN R11 IF SET IT TRUE
-    Logical,parameter   :: use_HP_per_MW_cepheid = .true.       ! USE HPs FOR EACH CEPHEID IN MW IF SET IT TRUE
+    Logical,parameter   :: use_HP_per_cepheid = .false.           ! USE HPs FOR EACH CEPHEID IN R11 IF SET IT TRUE
+    Logical,parameter   :: use_HP_per_MW_cepheid = .false.       ! USE HPs FOR EACH CEPHEID IN MW IF SET IT TRUE
     Logical,parameter   :: use_HP_for_MW_dataset = .false.       ! USE HP FOR MW DATASET IF SET IT TRUE (JEFFREY'S PRIOR)
     Logical,parameter   :: doing_R11_analysis = .true.           ! DO R16 ANALYSIS IF SET IT TRUE, OTHERWISE DO EFSTATHIOU'S SECTION 2 (LMC CEPHEIDS ALONE)
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
-    Logical,parameter   :: use_prior_on_Zw = .true.              ! USE PRIOR ON Zw IF SET IT TRUE 
+    Logical,parameter   :: use_prior_on_Zw = .false.              ! USE PRIOR ON Zw IF SET IT TRUE 
     Logical,parameter   :: use_prior_on_bw = .false.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
     Logical,parameter   :: varying_sigma_int = .true.            ! TRUE IF VARYING sigma_int IN MCMC WHEN NO sigma_int_per_R11_host, SET TO FALSE OTHERWISE
     Logical,parameter   :: sigma_int_per_R11_host = .true.        ! TRUE FOR MAIN ANALYSIS: IT INCLUDES SIGMA INT PER R11 HOST 
     Logical,parameter   :: include_mu_0_NGC4258_2015 = .true.    ! TRUE TO INCLUDE DISTANCE TO NGC4258 FROM 2015, FALSE TO INCLUDE ONLY MEASUREMENT FROM 2016
+    Logical,parameter   :: use_NGC4258_as_free_distance = .false. ! USE NGC4258 AS FREE DISTANCE IF SET IT TRUE
+    Logical,parameter   :: use_LMC_as_free_distance = .false.     ! USE LMC AS FREE DISTANCE IF SET IT TRUE
+    Logical,parameter   :: use_M31_as_free_distance = .false.     ! USE M31 AS FREE DISTANCE IF SET IT TRUE
+    Logical,parameter   :: use_MW_parallaxes = .true.            ! USE MW CEPHEID PARALLAXES IF SET IT TRUE
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 

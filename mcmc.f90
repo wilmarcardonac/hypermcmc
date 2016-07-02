@@ -71,13 +71,135 @@ Program mcmc
 ! MARKOV CHAIN MONTE CARLO ANALYSIS
 !##################################
 
-    write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS (2016) : ', mu_0_NGC4258, '\pm ', sigma_mu_0_NGC4258
+    write(UNIT_EXE_FILE,*) 'THIS ANALYSIS OF R16 DATA SET USES ', number_model_parameters, ' PARAMETERS'
 
-    write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS (2015) : ', mu_0_NGC4258_2015, '\pm ', sigma_mu_0_NGC4258_2015
+    write(UNIT_EXE_FILE,*) 'CONSIDERS CEPHEID STARS WITH PERIOD GREATER THAN ', cepheid_lower_Period_limit
+    
+    write(UNIT_EXE_FILE,*) 'AND SHORTER THAN ', cepheid_Period_limit
 
-    write(UNIT_EXE_FILE,*) 'LMC DISTANCE MODULUS (2013) : ', mu_0_LMC, '\pm ', sigma_mu_0_LMC
+    write(UNIT_EXE_FILE,*) 'INTERNAL SCATTER FOR GALAXIES IS ALREADY INCLUDED IN R16 SAMPLE '
 
-    write(UNIT_EXE_FILE,*) 'M31 DISTANCE MODULUS (2013) : ', mu_0_M31, '\pm ', sigma_mu_0_M31
+    write(UNIT_EXE_FILE,*) 'AND THEREFORE NOT INCLUDED IN THIS ANALYSIS'
+
+    If (use_prior_on_Zw) then
+
+       write(UNIT_EXE_FILE,*) 'INCLUDES METALLICITY PARAMETER Z_W WITH GAUSSIAN PRIOR: MEAN ', prior_Zw
+    
+       write(UNIT_EXE_FILE,*) 'AND STANDARD DEVIATION ', sigma_Zw_prior
+
+    Else
+
+       write(UNIT_EXE_FILE,*) 'INCLUDES METALLICITY PARAMETER Z_W WITHOUT PRIOR (WIDE, FLAT PRIOR)'
+
+    End If
+
+    If (use_HP_per_cepheid) then
+
+       write(UNIT_EXE_FILE,*) 'CEPHEID VARIABLES ARE INCLUDED WITH HYPER-PARAMETERS'
+
+    Else
+
+       write(UNIT_EXE_FILE,*) 'CEPHEID VARIABLES ARE NOT INCLUDED WITH HYPER-PARAMETERS'
+
+    End If
+
+    If (use_HP_in_SNIa) then
+
+       write(UNIT_EXE_FILE,*) 'SUPERNOVAE MAGNITUDES ARE INCLUDED WITH HYPER-PARAMETERS'
+
+    Else
+
+       write(UNIT_EXE_FILE,*) 'SUPERNOVAE MAGNITUDES ARE NOT INCLUDED WITH HYPER-PARAMETERS'
+
+    End If
+
+    If (use_NGC4258_as_free_distance) then
+
+       write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS INCLUDED AS FREE DISTANCE '
+       
+    Else
+
+       If (use_HP_in_anchor) then
+
+          write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS (2016) : ', mu_0_NGC4258, '\pm ', sigma_mu_0_NGC4258 
+
+          write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS (2015) : ', mu_0_NGC4258_2015, '\pm ', sigma_mu_0_NGC4258_2015
+
+          write(UNIT_EXE_FILE,*) 'INCLUDED WITH HYPER-PARAMETERS' 
+
+       Else
+
+          write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS (2016) : ', mu_0_NGC4258, '\pm ', sigma_mu_0_NGC4258 
+
+          write(UNIT_EXE_FILE,*) 'NGC4258 DISTANCE MODULUS (2015) : ', mu_0_NGC4258_2015, '\pm ', sigma_mu_0_NGC4258_2015
+
+          write(UNIT_EXE_FILE,*) 'NOT INCLUDED WITH HYPER-PARAMETERS' 
+
+       End If
+
+    End If
+
+    If (use_LMC_as_free_distance) then
+
+       write(UNIT_EXE_FILE,*) 'LMC DISTANCE MODULUS INCLUDED AS FREE DISTANCE '
+
+    Else
+
+       If (use_HP_in_anchor) then
+
+          write(UNIT_EXE_FILE,*) 'LMC DISTANCE MODULUS (2013) : ', mu_0_LMC, '\pm ', sigma_mu_0_LMC
+
+          write(UNIT_EXE_FILE,*) 'INCLUDED WITH HYPER-PARAMETERS' 
+
+       Else
+
+          write(UNIT_EXE_FILE,*) 'LMC DISTANCE MODULUS (2013) : ', mu_0_LMC, '\pm ', sigma_mu_0_LMC
+
+          write(UNIT_EXE_FILE,*) 'NOT INCLUDED WITH HYPER-PARAMETERS' 
+
+       End If
+
+    End If
+
+    If (use_M31_as_free_distance) then
+
+       write(UNIT_EXE_FILE,*) 'M31 DISTANCE MODULUS INCLUDED AS FREE DISTANCE '
+
+    Else
+
+       If (use_HP_in_anchor) then
+
+          write(UNIT_EXE_FILE,*) 'M31 DISTANCE MODULUS (2013) : ', mu_0_M31, '\pm ', sigma_mu_0_M31
+
+          write(UNIT_EXE_FILE,*) 'INCLUDED WITH HYPER-PARAMETERS' 
+
+       Else
+
+          write(UNIT_EXE_FILE,*) 'M31 DISTANCE MODULUS (2013) : ', mu_0_M31, '\pm ', sigma_mu_0_M31
+
+          write(UNIT_EXE_FILE,*) 'NOT INCLUDED WITH HYPER-PARAMETERS' 
+
+       End If
+
+    End If
+
+    If (use_MW_parallaxes) then
+
+       If (use_HP_per_MW_cepheid) then
+
+          write(UNIT_EXE_FILE,*) 'ANALYSIS INCLUDING R16 MW PARALLAXES WITH HYPER-PARAMETERS' 
+
+       Else
+
+          write(UNIT_EXE_FILE,*) 'ANALYSIS INCLUDING R16 MW PARALLAXES WITHOUT HYPER-PARAMETERS' 
+
+       End If
+
+    Else
+
+       write(UNIT_EXE_FILE,*) 'ANALYSIS NOT INCLUDING R16 MW PARALLAXES' 
+
+    End If
 
     write(UNIT_EXE_FILE,*) 'STARTING MCMC ANALYSIS'
 
@@ -6048,34 +6170,6 @@ Program mcmc
 
              End Do
 
-!             chi2SNIabestfit = 0.d0
-
-             Do n=1,number_of_hosts_galaxies-1 ! SN Ia
-
-                If (chi2R11_SNIa(bestfit(n),bestfit(25),bestfit(27),n) .le. 1.d0 ) then
-                   
-                   write(UNIT_EXE_FILE,*) n, 1.d0 
-
-    !               stop
-!                   chi2SNIabestfit = log(new_chi2(chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n))) + &
- !                       log(N_tilde_R11_SNIa(n)) + chi2SNIabestfit
-
-                Else
-
-                   write(UNIT_EXE_FILE,*) n, 1.d0/chi2R11_SNIa(bestfit(n),bestfit(25),bestfit(27),n) 
-
-      !             chi2SNIabestfit = chi2R11_SNIa(bestfit(n),bestfit(13),bestfit(15),n) + chi2SNIabestfit
-
-                End If
-              
-             End Do
-
-         !    write(UNIT_EXE_FILE,*) 'CHI2 CONTRIBUTION OF SNIa IS', chi2SNIabestfit
-
-          !   print *,'USE OF THREE ANCHORS SIMULTANEOUSLY NOT IMPLEMENTED YET'
-
-           !  stop
-
           Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
              write(UNIT_EXE_FILE,*) 'BESTFIT IS : '
@@ -6437,70 +6531,8 @@ Program mcmc
 
                     Do m=1,number_of_hosts_galaxies-1
 
-!                       If (m .eq. 3) then
-
-!                          If ( chi2R11_SNIa(bestfit(4),bestfit(13),bestfit(15),m) .le. 1.d0) then
-
-!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(4)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-!                                  bestfit(4)+5.d0*log10(bestfit(13))-25.d0,1.d0
-
-!                          Else
-
-!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(4)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-!                                  bestfit(4)+5.d0*log10(bestfit(13))-25.d0,&
-!                                  1.d0/chi2R11_SNIa(bestfit(4),bestfit(13),bestfit(15),m)
-                             
-!                          End If
-
-!                       Else if (m .eq. 4) then
-
-!                          If ( chi2R11_SNIa(bestfit(3),bestfit(13),bestfit(15),m) .le. 1.d0) then
-
-!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(3)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-!                                  bestfit(3)+5.d0*log10(bestfit(13))-25.d0,1.d0
-
-!                          Else
-
-!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(3)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-!                                  bestfit(3)+5.d0*log10(bestfit(13))-25.d0,&
-!                                  1.d0/chi2R11_SNIa(bestfit(3),bestfit(13),bestfit(15),m)
-                             
-!                          End If
-
-!                       Else if (m .eq. 7) then
-
-!                          If ( chi2R11_SNIa(bestfit(8),bestfit(13),bestfit(15),m) .le. 1.d0) then
-
-!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(8)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-!                                  bestfit(8)+5.d0*log10(bestfit(13))-25.d0,1.d0
-
-!                          Else
-
-!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(8)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-!                                  bestfit(8)+5.d0*log10(bestfit(13))-25.d0,&
-!                                  1.d0/chi2R11_SNIa(bestfit(8),bestfit(13),bestfit(15),m)
-                             
-!                          End If
-
-!                       Else if (m .eq. 8) then
-
-!                          If ( chi2R11_SNIa(bestfit(7),bestfit(13),bestfit(15),m) .le. 1.d0) then
-
-!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(7)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-!                                  bestfit(7)+5.d0*log10(bestfit(13))-25.d0,1.d0
-
-!                          Else
-
-!                             write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(7)-bestfit(9),mvi5av(m), Sigma_mvi5av(m), &
-!                                  bestfit(7)+5.d0*log10(bestfit(13))-25.d0,&
-!                                  1.d0/chi2R11_SNIa(bestfit(7),bestfit(13),bestfit(15),m)
-                             
-!                          End If
-
- !                      Else
-
                        If ( chi2R11_SNIa(bestfit(m),bestfit(25),bestfit(27),m) .le. 1.d0) then
-
+                          
                           write(UNIT_HP_FILE,*) Fieldmvi(m), bestfit(m)-bestfit(20),mvi5av(m), Sigma_mvi5av(m), &
                                bestfit(m)+5.d0*log10(bestfit(25))-25.d0,1.d0
 
@@ -6511,8 +6543,6 @@ Program mcmc
                                1.d0/chi2R11_SNIa(bestfit(m),bestfit(25),bestfit(27),m)
 
                        End If
-
-!                       End If
 
                     End Do
 
@@ -6590,39 +6620,73 @@ Program mcmc
 
                  End If
 
-                 open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_R11.txt')
+                 If (use_HP_per_cepheid) then
 
-                 Do m=1,size(Field)
+                    open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_R11.txt')
 
-                    Do n=1,number_of_hosts_galaxies
+                    Do m=1,size(Field)
 
-                       If (host(n) .eq. Field(m)) then
+                       Do n=1,number_of_hosts_galaxies
 
-                          If (PeriodR11(m) .lt. cepheid_Period_limit) then
+                          If (host(n) .eq. Field(m)) then
 
-!                             If ( chi2R11_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),10**(bestfit(29+n)),m)&
-!                                 .le. 1.d0 ) then
-                             If ( chi2R11_W_E14(bestfit(n),bestfit(23),bestfit(24),bestfit(26),sigmainthost(1),m)&
-                                  .le. 1.d0 ) then
+                             If (PeriodR11(m) .lt. cepheid_Period_limit) then
 
-                                write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)),&
-                                     observed_m_W(F160WR11(m),VIR11(m)) - &
-                                     P_L_relation_passband_W_E14(bestfit(n),bestfit(23),bestfit(24),bestfit(26),&
-                                     OHR11(m),PeriodR11(m)),eF160WR11(m), 1.d0, Field(m), OHR11(m)
+                                !                             If ( chi2R11_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),10**(bestfit(29+n)),m)&
+                                !                                 .le. 1.d0 ) then
+                                If ( chi2R11_W_E14(bestfit(n),bestfit(23),bestfit(24),bestfit(26),sigmainthost(1),m)&
+                                     .le. 1.d0 ) then
 
-                             Else
+                                   write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)),&
+                                        observed_m_W(F160WR11(m),VIR11(m)) - &
+                                        P_L_relation_passband_W_E14(bestfit(n),bestfit(23),bestfit(24),bestfit(26),&
+                                        OHR11(m),PeriodR11(m)),eF160WR11(m), 1.d0, Field(m), OHR11(m)
 
-!                                write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
-!                                     P_L_relation_passband_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),&
-!                                     OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W_E14(bestfit(n),bestfit(22),&
-!                                     bestfit(23),bestfit(25),10**(bestfit(29+n)),m), Field(m)
-                                write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)),&
-                                     observed_m_W(F160WR11(m),VIR11(m)) - &
-                                     P_L_relation_passband_W_E14(bestfit(n),bestfit(23),bestfit(24),bestfit(26),&
-                                     OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W_E14(bestfit(n),bestfit(23),&
-                                     bestfit(24),bestfit(26),sigmainthost(1),m), Field(m), OHR11(m)
+                                Else
+
+                                   !                                write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
+                                   !                                     P_L_relation_passband_W_E14(bestfit(n),bestfit(22),bestfit(23),bestfit(25),&
+                                   !                                     OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W_E14(bestfit(n),bestfit(22),&
+                                   !                                     bestfit(23),bestfit(25),10**(bestfit(29+n)),m), Field(m)
+                                   write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)),&
+                                        observed_m_W(F160WR11(m),VIR11(m)) - &
+                                        P_L_relation_passband_W_E14(bestfit(n),bestfit(23),bestfit(24),bestfit(26),&
+                                        OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W_E14(bestfit(n),bestfit(23),&
+                                        bestfit(24),bestfit(26),sigmainthost(1),m), Field(m), OHR11(m)
+
+                                End If
 
                              End If
+
+                          End If
+
+                       End Do
+
+                    End Do
+
+                    close(UNIT_HP_FILE)
+
+                    call system('cd analyzer; python plot_HP_NGC4258_alone.py')
+
+                    open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_LMC.txt')
+
+                    Do m=1,size(Name)
+
+                       If (Period(m) .lt. cepheid_Period_limit) then
+
+                          If ( chi2R11_W_LMC_E14(bestfit(22),bestfit(23),bestfit(24),bestfit(26),0.d0,m)&
+                               .le. 1.d0 ) then
+
+                             write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)),observed_m_W(H(m),V(m)) - &
+                                  P_L_relation_passband_W_E14(bestfit(22),bestfit(23),bestfit(24),bestfit(26),&
+                                  meanOH_LMC,Period(m)),Sigma_m(m), 1.d0, 'LMC', meanOH_LMC
+
+                          Else
+
+                             write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)),observed_m_W(H(m),V(m)) - &
+                                  P_L_relation_passband_W_E14(bestfit(22),bestfit(23),bestfit(24),bestfit(26),&
+                                  meanOH_LMC,Period(m)), Sigma_m(m), 1.d0/chi2R11_W_LMC_E14(bestfit(22),bestfit(23),&
+                                  bestfit(24),bestfit(26),0.d0,m), 'LMC', meanOH_LMC
 
                           End If
 
@@ -6630,105 +6694,79 @@ Program mcmc
 
                     End Do
 
-                 End Do
+                    close(UNIT_HP_FILE)
 
-                 close(UNIT_HP_FILE)
+                    call system('cd analyzer; python plot_HP_LMC.py')
 
-                 call system('cd analyzer; python plot_HP_NGC4258_alone.py')
+                    open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_M31.txt')
 
-                 open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_LMC.txt')
+                    Do m=1,size(Namem31)
 
-                 Do m=1,size(Name)
+                       If (Periodm31(m) .lt. cepheid_Period_limit) then
 
-                    If (Period(m) .lt. cepheid_Period_limit) then
+                          If ( chi2R11_W_M31_E14(bestfit(21),bestfit(23),bestfit(24),bestfit(26),0.d0,m)&
+                               .le. 1.d0 ) then
 
-                       If ( chi2R11_W_LMC_E14(bestfit(22),bestfit(23),bestfit(24),bestfit(26),0.d0,m)&
-                            .le. 1.d0 ) then
+                             write(UNIT_HP_FILE,*) Periodm31(m), observed_m_W(Hm31(m),Vm31(m)), &
+                                  observed_m_W(Hm31(m),Vm31(m)) - &
+                                  P_L_relation_passband_W_E14(bestfit(21),bestfit(23),bestfit(24),bestfit(26),&
+                                  meanOH_MW,Periodm31(m)),Sigma_m31(m), 1.d0, 'M31', meanOH_MW
 
-                          write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)),observed_m_W(H(m),V(m)) - &
-                               P_L_relation_passband_W_E14(bestfit(22),bestfit(23),bestfit(24),bestfit(26),&
-                               meanOH_LMC,Period(m)),Sigma_m(m), 1.d0, 'LMC', meanOH_LMC
+                          Else
 
-                       Else
+                             write(UNIT_HP_FILE,*) Periodm31(m), observed_m_W(Hm31(m),Vm31(m)),&
+                                  observed_m_W(Hm31(m),Vm31(m)) - &
+                                  P_L_relation_passband_W_E14(bestfit(21),bestfit(23),bestfit(24),bestfit(26),&
+                                  meanOH_MW,Periodm31(m)), Sigma_m31(m), 1.d0/chi2R11_W_M31_E14(bestfit(21),bestfit(23),&
+                                  bestfit(24),bestfit(26),0.d0,m), 'M31', meanOH_MW
 
-                          write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)),observed_m_W(H(m),V(m)) - &
-                               P_L_relation_passband_W_E14(bestfit(22),bestfit(23),bestfit(24),bestfit(26),&
-                               meanOH_LMC,Period(m)), Sigma_m(m), 1.d0/chi2R11_W_LMC_E14(bestfit(22),bestfit(23),&
-                               bestfit(24),bestfit(26),0.d0,m), 'LMC', meanOH_LMC
-
-                       End If
-
-                    End If
-
-                 End Do
-
-                 close(UNIT_HP_FILE)
-
-                 call system('cd analyzer; python plot_HP_LMC.py')
-
-                 open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_M31.txt')
-
-                 Do m=1,size(Namem31)
-
-                    If (Periodm31(m) .lt. cepheid_Period_limit) then
-
-                       If ( chi2R11_W_M31_E14(bestfit(21),bestfit(23),bestfit(24),bestfit(26),0.d0,m)&
-                            .le. 1.d0 ) then
-
-                          write(UNIT_HP_FILE,*) Periodm31(m), observed_m_W(Hm31(m),Vm31(m)), &
-                               observed_m_W(Hm31(m),Vm31(m)) - &
-                               P_L_relation_passband_W_E14(bestfit(21),bestfit(23),bestfit(24),bestfit(26),&
-                               meanOH_MW,Periodm31(m)),Sigma_m31(m), 1.d0, 'M31', meanOH_MW
-
-                       Else
-
-                          write(UNIT_HP_FILE,*) Periodm31(m), observed_m_W(Hm31(m),Vm31(m)),&
-                               observed_m_W(Hm31(m),Vm31(m)) - &
-                               P_L_relation_passband_W_E14(bestfit(21),bestfit(23),bestfit(24),bestfit(26),&
-                               meanOH_MW,Periodm31(m)), Sigma_m31(m), 1.d0/chi2R11_W_M31_E14(bestfit(21),bestfit(23),&
-                               bestfit(24),bestfit(26),0.d0,m), 'M31', meanOH_MW
+                          End If
 
                        End If
 
-                    End If
+                    End Do
 
-                 End Do
+                    close(UNIT_HP_FILE)
 
-                 close(UNIT_HP_FILE)
+                    call system('cd analyzer; python plot_HP_M31.py')
 
-                 call system('cd analyzer; python plot_HP_M31.py')
+                    open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_MW.txt')
 
-                 open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_MW.txt')
+                    Do m=1,size(FieldHipp)
 
-                 Do m=1,size(FieldHipp)
+                       If (10**(logP(m)) .lt. cepheid_Period_limit) then
 
-                    If (10**(logP(m)) .lt. cepheid_Period_limit) then
+                          If ( chi2R11_W_MW(bestfit(23),bestfit(24),bestfit(26),0.d0,m)&
+                               .le. 1.d0 ) then
 
-                       If ( chi2R11_W_MW(bestfit(23),bestfit(24),bestfit(26),0.d0,m)&
-                            .le. 1.d0 ) then
+                             write(UNIT_HP_FILE,*) 10**(logP(m)), Mw(m), Mw(m) - &
+                                  P_L_relation_passband_W_E14(0.d0,bestfit(23),bestfit(24),bestfit(26),&
+                                  meanOH_MW,10**(logP(m))),SigmaMw(m), 1.d0, 'MW', meanOH_MW
 
-                          write(UNIT_HP_FILE,*) 10**(logP(m)), Mw(m), Mw(m) - &
-                               P_L_relation_passband_W_E14(0.d0,bestfit(23),bestfit(24),bestfit(26),&
-                               meanOH_MW,10**(logP(m))),SigmaMw(m), 1.d0, 'MW', meanOH_MW
+                          Else
 
-                       Else
+                             write(UNIT_HP_FILE,*) 10**(logP(m)), Mw(m), Mw(m) - &
+                                  P_L_relation_passband_W_E14(0.d0,bestfit(23),bestfit(24),bestfit(26),&
+                                  meanOH_MW,10**(logP(m))), SigmaMw(m), 1.d0/chi2R11_W_MW(bestfit(23),&
+                                  bestfit(24),bestfit(26),0.d0,m), 'MW', meanOH_MW
 
-                          write(UNIT_HP_FILE,*) 10**(logP(m)), Mw(m), Mw(m) - &
-                               P_L_relation_passband_W_E14(0.d0,bestfit(23),bestfit(24),bestfit(26),&
-                               meanOH_MW,10**(logP(m))), SigmaMw(m), 1.d0/chi2R11_W_MW(bestfit(23),&
-                               bestfit(24),bestfit(26),0.d0,m), 'MW', meanOH_MW
+                          End If
 
                        End If
 
-                    End If
+                    End Do
 
-                 End Do
+                    close(UNIT_HP_FILE)
 
-                 close(UNIT_HP_FILE)
+                    call system('cd analyzer; python plot_HP_MW.py')
 
-                 call system('cd analyzer; python plot_HP_MW.py')
+                    call system('cd analyzer; python histogram_HP.py')
 
-                 call system('cd analyzer; python histogram_HP.py')
+                 Else
+
+                    continue
+
+                 End If
 
               Else If ( ( use_NGC4258_as_anchor .and. use_LMC_as_anchor ) .and. (.not.use_MW_as_anchor) ) then
 
