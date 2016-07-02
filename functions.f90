@@ -1698,32 +1698,34 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
 
     End If
 
-    If (use_HP_per_MW_cepheid) then ! MW CEPHEID VARIABLES
+    If (use_MW_parallaxes) then
 
-       Do m=1,size(FieldHipp)
+       If (use_HP_per_MW_cepheid) then ! MW CEPHEID VARIABLES
 
-          If (using_jeffreys_prior) then
+          Do m=1,size(FieldHipp)
 
-             print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+             If (using_jeffreys_prior) then
 
-             stop
+                print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
 
-          Else
-                       
-             If (10**(logP(m)) .lt. cepheid_Period_limit) then
+                stop
 
-                log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m))) + &
-                     log(N_tilde_R11_W_MW(sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
-                      
+             Else
+
+                If (10**(logP(m)) .lt. cepheid_Period_limit) then
+
+                   log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m))) + &
+                        log(N_tilde_R11_W_MW(sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
+                End If
+
              End If
 
-          End If
+          End Do
 
-       End Do
+       Else
 
-    Else
-
-       If (use_HP_for_MW_dataset) then
+          If (use_HP_for_MW_dataset) then
 
              normalizationMW = 0.d0
 
@@ -1736,24 +1738,30 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
                 chiMW = chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m) + chiMW
 
              End Do
-             
+
              log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = - dble(size(FieldHipp))*log(chiMW)/2.d0 - normalizationMW/2.d0&
                   + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
 
-       Else
+          Else
 
-          Do m=1,size(FieldHipp)
+             Do m=1,size(FieldHipp)
 
-             If (10**(logP(m)) .lt. cepheid_Period_limit) then
+                If (10**(logP(m)) .lt. cepheid_Period_limit) then
 
-                log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = -chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m)/2.d0 + &
-                     log(N_tilde_R11_W_MW(sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+                   log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = -chi2R11_W_MW(M_w,bw,Zw,sigma_int_MW,m)/2.d0 + &
+                        log(N_tilde_R11_W_MW(sigma_int_MW,m)) + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
 
-             End If
+                End If
 
-          End Do
+             End Do
+
+          End If
 
        End If
+
+    Else
+
+       continue
 
     End If
 
@@ -1789,22 +1797,37 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
         
     If (use_HP_in_anchor) then ! ANCHOR
 
-       log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  log(new_chi2(chi2R11_anchor_LMC(mu0j(22)))) - &
-            log(2.d0*Pi*sigma_mu_0_LMC**2)/2.d0 + &
-            !log(new_chi2(chi2R11_anchor_LMC_2015(mu0j(10)))) - &
-            !log(2.d0*Pi*sigma_mu_0_LMC_2015**2)/2.d0 + &
-            log(new_chi2(chi2R11_anchor_NGC4258(mu0j(20)))) - log(2.d0*Pi*sigma_mu_0_NGC4258**2)/2.d0 + &
-!            log(new_chi2(chi2R11_anchor_NGC4258_2015(mu0j(9)))) - log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2)/2.d0 + &
-            log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+       If (use_LMC_as_free_distance) then
 
-       If (include_mu_0_NGC4258_2015) then
-
-          log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_anchor_NGC4258_2015(mu0j(20)))) &
-               - log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2)/2.d0 + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+          continue
 
        Else
 
+          log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  log(new_chi2(chi2R11_anchor_LMC(mu0j(22)))) - &
+            log(2.d0*Pi*sigma_mu_0_LMC**2)/2.d0 + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
+       End If
+
+       If (use_NGC4258_as_free_distance) then
+
           continue
+
+       Else
+
+          log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  log(new_chi2(chi2R11_anchor_NGC4258(mu0j(20)))) - &
+               log(2.d0*Pi*sigma_mu_0_NGC4258**2)/2.d0 + &
+               log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
+          If (include_mu_0_NGC4258_2015) then
+
+             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = log(new_chi2(chi2R11_anchor_NGC4258_2015(mu0j(20)))) &
+                  - log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2)/2.d0 + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
+          Else
+
+             continue
+
+          End If
 
        End If
 
@@ -1821,11 +1844,39 @@ function log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal
 
     Else
 
-       log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  -(chi2R11_anchor_LMC(mu0j(22)) + log(2.d0*Pi*sigma_mu_0_LMC**2))/2.d0 - &
-            !(chi2R11_anchor_LMC_2015(mu0j(10)) + log(2.d0*Pi*sigma_mu_0_LMC_2015**2))/2.d0 - &
-            (chi2R11_anchor_NGC4258(mu0j(20)) + log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 - &
-            (chi2R11_anchor_NGC4258_2015(mu0j(20)) + log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2))/2.d0 + &
-            log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+       If (use_LMC_as_free_distance) then
+
+          continue
+
+       Else
+
+          log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  -(chi2R11_anchor_LMC(mu0j(22)) + &
+               log(2.d0*Pi*sigma_mu_0_LMC**2))/2.d0 + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int 
+
+       End If
+
+       If (use_NGC4258_as_free_distance) then
+
+          continue
+
+       Else
+
+
+          log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int =  -(chi2R11_anchor_NGC4258(mu0j(20)) + &
+               log(2.d0*Pi*sigma_mu_0_NGC4258**2))/2.d0 + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
+          If (include_mu_0_NGC4258_2015) then
+
+             log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int = -(chi2R11_anchor_NGC4258_2015(mu0j(20)) + &
+                  log(2.d0*Pi*sigma_mu_0_NGC4258_2015**2))/2.d0 + log_R11_likelihood_W_LMC_MW_NGC4258_sigma_int
+
+          Else
+
+             continue
+
+          End If
+
+       End If
 
        If (use_M31_as_anchor) then
 
