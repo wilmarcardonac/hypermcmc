@@ -63,7 +63,7 @@ Program mcmc
     call set_covariance_matrix()
 
     call read_data()
-    
+
 !##################################
 ! MARKOV CHAIN MONTE CARLO ANALYSIS
 !##################################
@@ -5600,6 +5600,71 @@ Program mcmc
                     continue
 
                  End If
+
+                 open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_R11.txt')
+
+                 Do m=1,size(Field)
+
+                    Do n=1,number_of_hosts_galaxies
+
+                       If (host(n) .eq. Field(m)) then
+
+                          If (PeriodR11(m) .lt. cepheid_Period_limit) then
+
+                             If ( chi2R11_W(bestfit(n),bestfit(10),bestfit(11),bestfit(12),bestfit(14),10**(bestfit(17+n)),m)&
+                                  .le. 1.d0 ) then
+
+                                write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
+                                     P_L_relation_passband_W(bestfit(n),bestfit(10),bestfit(11),bestfit(12),bestfit(14),&
+                                     OHR11(m),PeriodR11(m)),eF160WR11(m), 1.d0, Field(m)
+
+                             Else
+
+                                write(UNIT_HP_FILE,*) PeriodR11(m), observed_m_W(F160WR11(m),VIR11(m)) - &
+                                     P_L_relation_passband_W(bestfit(n),bestfit(10),bestfit(11),bestfit(12),bestfit(14),&
+                                     OHR11(m),PeriodR11(m)), eF160WR11(m), 1.d0/chi2R11_W(bestfit(n),bestfit(10),bestfit(11),&
+                                     bestfit(12),bestfit(14),10**(bestfit(17+n)),m), Field(m)
+
+                             End If
+
+                          End If
+
+                       End If
+
+                    End Do
+
+                 End Do
+
+                 close(UNIT_HP_FILE)
+
+                 open(UNIT_HP_FILE,file='./output/chains/effective_hyperparameters_cepheids_LMC.txt')
+
+                 Do m=1,size(Name)
+
+                    If (Period(m) .lt. cepheid_Period_limit) then
+
+                       If ( chi2R11_W_LMC(bestfit(10),bestfit(10),bestfit(11),bestfit(12),bestfit(14),10**(bestfit(17)),m)&
+                            .le. 1.d0 ) then
+
+                          write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)-II(m)) - &
+                               P_L_relation_passband_W(bestfit(10),bestfit(10),bestfit(11),bestfit(12),bestfit(14),&
+                               meanOH_LMC,Period(m)),Sigma_m(m), 1.d0, 'LMC'
+
+                       Else
+
+                          write(UNIT_HP_FILE,*) Period(m), observed_m_W(H(m),V(m)-II(m)) - &
+                               P_L_relation_passband_W(bestfit(10),bestfit(10),bestfit(11),bestfit(12),bestfit(14),&
+                               meanOH_LMC,Period(m)), Sigma_m(m), 1.d0/chi2R11_W_LMC(bestfit(10),bestfit(10),bestfit(11),&
+                               bestfit(12),bestfit(14),10**(bestfit(17)),m), 'LMC'
+
+                       End If
+
+                    End If
+
+                 End Do
+
+                 close(UNIT_HP_FILE)
+
 
                  If (use_HP_in_anchor) then
 
