@@ -81,6 +81,8 @@ Program mcmc
 
     write(UNIT_EXE_FILE,*) 'AND THEREFORE NOT INCLUDED IN THIS ANALYSIS'
 
+    write(UNIT_EXE_FILE,*) 'REDDENING LAW :', R
+
     If (use_prior_on_Zw) then
 
        write(UNIT_EXE_FILE,*) 'INCLUDES METALLICITY PARAMETER Z_W WITH GAUSSIAN PRIOR: MEAN ', prior_Zw

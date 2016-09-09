@@ -58,7 +58,7 @@ py.ylim(-0.3,4.)
 
 py.title('Relative distances from Cepheid variables and SNe Ia')
 
-py.xlabel(r'$\mathrm{SN\, Ia} \,m_v^0+5a_v \,\mathrm{[mag]}$')
+py.xlabel(r'$\mathrm{SN\, Ia} \,m_B^0+5a_B \,\mathrm{[mag]}$')
 
 py.ylabel(r'$\mathrm{Cepheid}\, (\mu_0 - \mu_{0,4258})\, \mathrm{[mag]}$')
 
