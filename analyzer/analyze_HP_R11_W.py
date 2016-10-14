@@ -1,8 +1,8 @@
 from getdist import loadMCSamples,plots,covmat
 import numpy as np
 
-number_of_parameters = 18 # 14 NGC4258 AS ANCHOR, 16 LMC AS ANCHOR, 15 MW AS ANCHOR, 18 NGC4258+LMC AS ANCHORS, 15 NGC4258+MW AS ANCHORS, 
-# 16 LMC+MW AS ANCHORS, 16 NGC4258+LMC+MW AS ANCHORS
+number_of_parameters = 26 # 14 NGC4258 AS ANCHOR, 16 LMC AS ANCHOR, 15 MW AS ANCHOR, 18 NGC4258+LMC AS ANCHORS, 15 NGC4258+MW AS ANCHORS, 
+# 16 LMC+MW AS ANCHORS, 16 NGC4258+LMC+MW AS ANCHORS, 26 NGC4258+LMC AS ANCHORS AND SIGMA INT PER GALAXY
 
 samples = loadMCSamples('../output/chains/mcmc_final_output_HP',settings={'ignore_rows': 0.2 }) 
 
@@ -10,9 +10,29 @@ g = plots.getSinglePlotter()
 
 g.settings.rcSizes(axes_fontsize = 2,lab_fontsize = 7)
 
-g.triangle_plot(samples,filled=True)
+if number_of_parameters == 25:
 
-g.export('../output/chains/triangle_figure_HP_R11_W.pdf')
+    pass
+
+else:
+
+    g.triangle_plot(samples,['mu04258','muLMC','Mw','Zw','bw','H0'],filled=True)
+
+    for ax in g.subplots[:,0]:
+        ax.axvline(29.25,color='green',ls='--')
+        ax.axvline(29.40,color='black',ls='--')
+        ax.axvline(29.387,color='red',ls='--')
+
+    for ax in g.subplots[1:,1]:
+        ax.axvline(18.49,color='black',ls='--')
+
+    for ax in g.subplots[5:,5]:
+        ax.axvline(67.81,color='black',ls='--')
+        ax.axvline(70.6,color='green',ls='--')
+        ax.axvline(73.8,color='red',ls='--')
+        ax.axvline(73.02,color='red',ls='dotted')
+    
+    g.export('../output/chains/triangle_figure_HP_R11_W.pdf')
 
 p = samples.getParams()
 
@@ -33,6 +53,28 @@ samples.addDerived(p.mu07 - p.mu04258, name='mu07_mu04258', label='\mu_{0,7}-\mu
 samples.addDerived(p.mu08 - p.mu04258, name='mu08_mu04258', label='\mu_{0,8}-\mu_{0,4258}')
 
 samples.addDerived(p.mu04258 + 5.*np.log10(p.H0) - 25., name='mu04258_5av', label='m^0_{v,4258}+5a_v')
+
+if number_of_parameters == 26:
+
+    samples.addDerived(np.power(10,p.log10sigma_int_LMC), name='sigma_int_LMC', label='\sigma_{int}^{LMC}')
+
+#    samples.addDerived(np.power(10,p.log10sigma_int_1), name='sigma_int_1', label='\sigma_{int,1}')
+
+#    samples.addDerived(np.power(10,p.log10sigma_int_2), name='sigma_int_2', label='\sigma_{int,2}')
+
+#    samples.addDerived(np.power(10,p.log10sigma_int_3), name='sigma_int_3', label='\sigma_{int,3}')
+
+#    samples.addDerived(np.power(10,p.log10sigma_int_4), name='sigma_int_4', label='\sigma_{int,4}')
+
+#    samples.addDerived(np.power(10,p.log10sigma_int_5), name='sigma_int_5', label='\sigma_{int,5}')
+
+#    samples.addDerived(np.power(10,p.log10sigma_int_6), name='sigma_int_6', label='\sigma_{int,6}')
+
+#    samples.addDerived(np.power(10,p.log10sigma_int_7), name='sigma_int_7', label='\sigma_{int,7}')
+
+#    samples.addDerived(np.power(10,p.log10sigma_int_8), name='sigma_int_8', label='\sigma_{int,8}')
+
+#    samples.addDerived(np.power(10,p.log10sigma_int_9), name='sigma_int_9', label='\sigma_{int,9}')
 
 #samples.addDerived(p.mu01 + 5.*np.log10(p.H0) - 25. - 5.*p.av, name='mv1', label='m_{v,1}')
 
