@@ -100,7 +100,7 @@ subroutine read_table2_LEEUWEN(path_to_datafile)
     Integer*4 :: arrays_dimension,p
     Integer :: stat
     character(len=*) :: path_to_datafile
-    Real*8,allocatable,dimension(:) :: LK
+    Real*8,allocatable,dimension(:) :: LK,pi
 
     open(11,file=path_to_datafile)
 
@@ -129,7 +129,8 @@ subroutine read_table2_LEEUWEN(path_to_datafile)
     close(11)
 
     allocate (FieldHipp(1:arrays_dimension),logP(1:arrays_dimension),Mw(1:arrays_dimension),&
-         sigmaMw(1:arrays_dimension),LK(1:arrays_dimension),stat=status1)
+         sigmaMw(1:arrays_dimension),LK(1:arrays_dimension),pi(1:arrays_dimension),&
+         muMw(1:arrays_dimension),stat=status1)
 
     open(11,file=path_to_datafile)
 
@@ -139,9 +140,11 @@ subroutine read_table2_LEEUWEN(path_to_datafile)
 
     Do p=1,arrays_dimension
 
-        read(11,*) FieldHipp(p),logP(p),Mw(p),sigmaMw(p),LK(p)
+        read(11,*) FieldHipp(p),logP(p),Mw(p),sigmaMw(p),LK(p),pi(p)
 
-        MW(p) = Mw(p) + LK(p)
+        muMw(p) = 5.d0*log10(1.d-3/pi(p)) + 25.d0 
+
+        Mw(p) =  Mw(p) + LK(p)
 
     End Do
 

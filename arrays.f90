@@ -6,7 +6,7 @@ Module arrays
 
     Real*8, allocatable, dimension(:) :: PeriodA,HA,Sigma_mA,VA,IIA,old_point
     Real*8, allocatable, dimension(:) :: PeriodB,HB,Sigma_mB,VB,IIB,current_point
-    Real*8, allocatable, dimension(:) :: PeriodC,HC,Sigma_mC,VC,IIC,mvi5av,Sigma_mvi5av,logP,Mw,sigmaMw
+    Real*8, allocatable, dimension(:) :: PeriodC,HC,Sigma_mC,VC,IIC,mvi5av,Sigma_mvi5av,logP,Mw,sigmaMw,muMw
     Real*8, allocatable, dimension(:) :: Period,H,Sigma_m,V,II,PeriodR11,VIR11,F160WR11,eF160WR11,OHR11
     Real*8, allocatable, dimension(:,:,:,:,:) :: cov,inv_cov
     Real*4, allocatable, dimension(:) :: acceptance_probability
