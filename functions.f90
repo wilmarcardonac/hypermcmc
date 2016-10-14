@@ -2112,98 +2112,9 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
 
     log_R11_likelihood_W = 0.d0
 
-    If (use_HP_per_host) then
- 
-       If (using_jeffreys_prior) then
+    print *, 'NEEDS TO BE FIXED'
 
-          Do index_host=1,number_of_hosts_galaxies
-
-             normalizationA = 0.d0
-
-             number_cepheid = 0
-
-             Do m=1, size(Field)
-
-                If (host(index_host) .eq. Field(m)) then
-                       
-                   number_cepheid = number_cepheid + 1
-
-                   normalizationA = log( eF160WR11(m)**2 + sigma_int**2 ) + normalizationA
-
-                End If
-
-             End Do
-
-             log_R11_likelihood_W = - dble(number_cepheid)*log(chi2R11_W_host(mu0j(index_host),mu0j(9),&
-                  zpw_ref,bw,Zw,sigma_int,index_host))/2.d0 - normalizationA/2.d0 + log_R11_likelihood_W
-
-          End Do
-
-       Else
-
-          print *, 'UNIFORM PRIOR NOT IMPLEMENTED YET. NEED TO CODE EXPRESSION WITH GAMMA FUNCTIONS'
-
-          stop
-
-       End If
-
-    Else
-
-       If (use_HP_per_cepheid) then
-
-          Do m=1,size(Field)
-
-             Do index_host=1,number_of_hosts_galaxies
- 
-                If (host(index_host) .eq. Field(m)) then
-    
-                   If (using_jeffreys_prior) then
-
-                      print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
-
-                      stop
-
-                   Else
-                       
-                      If (PeriodR11(m) .lt. cepheid_Period_limit) then
-
-                         log_R11_likelihood_W = log(new_chi2(chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,sigma_int,m))) + &
-                              log(N_tilde_R11_W(sigma_int,m)) + log_R11_likelihood_W
-
-                      End If
-
-                   End If
-
-                End If
-
-             End Do
-
-          End Do
-
-       Else
-
-          Do m=1,size(Field)
-
-             Do index_host=1,number_of_hosts_galaxies
- 
-                If (host(index_host) .eq. Field(m)) then
-    
-                   If (PeriodR11(m) .lt. cepheid_Period_limit) then
-
-                      log_R11_likelihood_W = -chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,sigma_int,m)/2.d0 + &
-                           log(N_tilde_R11_W(sigma_int,m)) + log_R11_likelihood_W
-
-                   End If
-
-                End If
-
-             End Do
-
-          End Do
-
-       End If
-
-    End If
+    stop
 
     Do index_host=1,number_of_hosts_galaxies-1
 
@@ -2223,11 +2134,13 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
         
     If (use_HP_in_av) then
 
-       log_R11_likelihood_W = log(new_chi2((a_v - av)**2/sigma_a_v**2)) - log(2.d0*Pi*sigma_a_v**2)/2.d0  + log_R11_likelihood_W
+       log_R11_likelihood_W = log(new_chi2((a_v - av)**2/sigma_a_v**2)) - log(2.d0*Pi*sigma_a_v**2)/2.d0  + &
+            log_R11_likelihood_W
 
     Else
 
-       log_R11_likelihood_W = -((a_v - av)**2/sigma_a_v**2 + log(2.d0*Pi*sigma_a_v**2) )/2.d0  + log_R11_likelihood_W
+       log_R11_likelihood_W = -((a_v - av)**2/sigma_a_v**2 + log(2.d0*Pi*sigma_a_v**2) )/2.d0  &
+             + log_R11_likelihood_W
 
     End If
         
@@ -2288,19 +2201,19 @@ function log_R11_likelihood_W(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATI
 
 end function log_R11_likelihood_W
 
-function log_R11_likelihood_W_sigma_int(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !    EQUATION (4) IN R09
+function log_R11_likelihood_W_sigma_int(mu0j,M_w,bw,H0,Zw,av,acal,sigma_int)    !    EQUATION (4) IN R09
 
     use arrays
     use fiducial
     Implicit none
 
-    Real*8 :: log_R11_likelihood_W_sigma_int,zpw_ref,bw,H0,Zw,av,normalizationA
-    Real*8,dimension(number_of_hosts_galaxies) :: mu0j,sigma_int 
+    Real*8 :: log_R11_likelihood_W_sigma_int,M_w,bw,H0,Zw,av,normalizationA,acal
+    Real*8,dimension(number_of_hosts_galaxies + 1) :: mu0j,sigma_int 
     Integer*4 :: m,index_host,number_cepheid
 
     log_R11_likelihood_W_sigma_int = 0.d0
 
-    If (use_HP_per_host) then
+    If (use_HP_per_host) then  ! R11 SAMPLE
  
        If (using_jeffreys_prior) then
 
@@ -2322,8 +2235,9 @@ function log_R11_likelihood_W_sigma_int(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !
 
              End Do
 
-             log_R11_likelihood_W_sigma_int = - dble(number_cepheid)*log(chi2R11_W_host(mu0j(index_host),mu0j(9),&
-                  zpw_ref,bw,Zw,sigma_int(index_host),index_host))/2.d0 - normalizationA/2.d0 + log_R11_likelihood_W_sigma_int
+             log_R11_likelihood_W_sigma_int = - dble(number_cepheid)*log(chi2R11_W_host_E14(mu0j(index_host),M_w,&
+                  bw,Zw,sigma_int(index_host),index_host))/2.d0 - normalizationA/2.d0 + &
+                  log_R11_likelihood_W_sigma_int
 
           End Do
 
@@ -2355,9 +2269,9 @@ function log_R11_likelihood_W_sigma_int(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !
                        
                       If (PeriodR11(m) .lt. cepheid_Period_limit) then
 
-                         log_R11_likelihood_W_sigma_int = log(new_chi2(chi2R11_W(mu0j(index_host),mu0j(9),&
-                              zpw_ref,bw,Zw,sigma_int(index_host),m))) + &
-                              log(N_tilde_R11_W(sigma_int(index_host),m)) + log_R11_likelihood_W_sigma_int
+                         log_R11_likelihood_W_sigma_int = log(new_chi2(chi2R11_W_E14(mu0j(index_host),M_w,bw,&
+                              Zw,sigma_int(index_host),m))) + log(N_tilde_R11_W(sigma_int(index_host),m)) + &
+                              log_R11_likelihood_W_sigma_int
 
                       End If
 
@@ -2379,8 +2293,8 @@ function log_R11_likelihood_W_sigma_int(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !
     
                    If (PeriodR11(m) .lt. cepheid_Period_limit) then
 
-                      log_R11_likelihood_W_sigma_int = -chi2R11_W(mu0j(index_host),mu0j(9),zpw_ref,bw,Zw,&
-                           sigma_int(index_host),m)/2.d0 + &
+                      log_R11_likelihood_W_sigma_int = -chi2R11_W_E14(mu0j(index_host),M_w,bw,Zw,&
+                           sigma_int(index_host),m)/2.d0 + & 
                            log(N_tilde_R11_W(sigma_int(index_host),m)) + log_R11_likelihood_W_sigma_int
 
                    End If
@@ -2392,6 +2306,45 @@ function log_R11_likelihood_W_sigma_int(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !
           End Do
 
        End If
+
+    End If
+
+    If (use_HP_per_cepheid) then ! LMC CEPHEID VARIABLES
+
+       Do m=1,size(Name)
+
+          If (using_jeffreys_prior) then
+
+             print *, 'IMPROPER JEFFREYS PRIOR LEADS TO SINGULARITIES AND THEREFORE IS NOT IMPLEMENTED'
+
+             stop
+
+          Else
+                       
+             If (Period(m) .lt. cepheid_Period_limit) then
+
+                log_R11_likelihood_W_sigma_int = log(new_chi2(chi2R11_W_LMC_E14(mu0j(10),M_w,bw,&
+                     Zw,sigma_int(10),m))) + &
+                     log(N_tilde_R11_W_LMC(sigma_int(10),m)) + log_R11_likelihood_W_sigma_int
+                      
+             End If
+
+          End If
+
+       End Do
+
+    Else
+
+       Do m=1,size(Name)
+
+          If (Period(m) .lt. cepheid_Period_limit) then
+
+             log_R11_likelihood_W_sigma_int = -chi2R11_W_LMC_E14(mu0j(10),M_w,bw,Zw,sigma_int(10),m)/2.d0 + &
+                  log(N_tilde_R11_W_LMC(sigma_int(10),m)) + log_R11_likelihood_W_sigma_int
+
+          End If
+
+       End Do
 
     End If
 
@@ -2413,12 +2366,14 @@ function log_R11_likelihood_W_sigma_int(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !
         
     If (use_HP_in_av) then
 
-       log_R11_likelihood_W_sigma_int = log(new_chi2((a_v - av)**2/sigma_a_v**2)) - &
+       log_R11_likelihood_W_sigma_int = log(new_chi2((a_v - av)**2/sigma_a_v**2)) + &
+            log(new_chi2((a_cal - acal)**2/sigma_a_cal**2)) - log(2.d0*Pi*sigma_a_cal**2)/2.d0 - &
             log(2.d0*Pi*sigma_a_v**2)/2.d0  + log_R11_likelihood_W_sigma_int
 
     Else
 
-       log_R11_likelihood_W_sigma_int = -((a_v - av)**2/sigma_a_v**2 + log(2.d0*Pi*sigma_a_v**2) )/2.d0  + &
+       log_R11_likelihood_W_sigma_int = -((a_v - av)**2/sigma_a_v**2 + log(2.d0*Pi*sigma_a_v**2) )/2.d0  - &
+            ((a_cal - acal)**2/sigma_a_cal**2 + log(2.d0*Pi*sigma_a_cal**2) )/2.d0 + &           
             log_R11_likelihood_W_sigma_int
 
     End If
@@ -2436,16 +2391,16 @@ function log_R11_likelihood_W_sigma_int(mu0j,zpw_ref,bw,H0,Zw,av,sigma_int)    !
 
     End If
 
-    If (use_prior_on_zpw4258) then
+!    If (use_prior_on_zpw4258) then
 
-       log_R11_likelihood_W_sigma_int = -((zpw_ref - prior_zpw4258)**2/sigma_zpw4258**2 + log(2.d0*Pi*sigma_zpw4258**2) )/2.d0  +&
-            log_R11_likelihood_W_sigma_int
+!       log_R11_likelihood_W_sigma_int = -((zpw_ref - prior_zpw4258)**2/sigma_zpw4258**2 + log(2.d0*Pi*sigma_zpw4258**2) )/2.d0  +&
+!            log_R11_likelihood_W_sigma_int
 
-    Else 
+!    Else 
 
-       continue
+!       continue
 
-    End If
+!    End If
 
     If (use_prior_on_Zw) then
 
@@ -4161,7 +4116,7 @@ subroutine set_covariance_matrix()
 
                     If (sigma_int_per_R11_host) then
 
-                       If (number_model_parameters .eq. 23) then
+                       If (number_model_parameters .eq. 26) then
 
                           Covguess(1,1) = sigma_mu1**2 
 
@@ -4181,19 +4136,19 @@ subroutine set_covariance_matrix()
 
                           Covguess(9,9) = sigma_mu9**2 
 
-                          Covguess(10,10) = sigma_zpw**2
+                          Covguess(10,10) = sigma_mu10**2 
 
-                          Covguess(11,11) = sigma_bw**2 
+                          Covguess(11,11) = sigma_zpw**2
 
-                          Covguess(12,12) = sigma_H0**2 
+                          Covguess(12,12) = sigma_bw**2 
 
-                          Covguess(13,13) = sigma_Zw**2 
+                          Covguess(13,13) = sigma_H0**2 
 
-                          Covguess(14,14) = sigma_a_v**2
+                          Covguess(14,14) = sigma_Zw**2 
 
-                          Covguess(15,15) = sigma_sigma_int**2 
+                          Covguess(15,15) = sigma_a_v**2
 
-                          Covguess(16,16) = sigma_sigma_int**2 
+                          Covguess(16,16) = sigma_a_cal**2
 
                           Covguess(17,17) = sigma_sigma_int**2 
 
@@ -4209,9 +4164,15 @@ subroutine set_covariance_matrix()
 
                           Covguess(23,23) = sigma_sigma_int**2 
 
+                          Covguess(24,24) = sigma_sigma_int**2 
+
+                          Covguess(25,25) = sigma_sigma_int**2 
+
+                          Covguess(26,26) = sigma_sigma_int**2 
+
                        Else
 
-                          print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE, IT MUST BE 23 FOR THE CURRENT CASE'
+                          print *,'WRONG NUMBER OF MODEL PARAMETERS. CHECK FIDUCIAL MODULE, IT MUST BE 26 FOR THE CURRENT CASE'
 
                           stop
 
