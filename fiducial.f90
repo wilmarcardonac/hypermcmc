@@ -14,7 +14,7 @@ Module fiducial
     Real*8,parameter    :: prior_sigma_int_LMC = 0.113d0 ! SAME VALUE AS IN EQUATION (4a) OF EFSTATHIOU'S PAPER
     Real*8,parameter    :: prior_sigma_int_MW = 0.10d0 ! SAME VALUE AS IN SUBSECTION 4.2 OF EFSTATHIOU'S PAPER
     Real*8,parameter    :: prior_alpha_j = 5.d-1
-    Real*8,parameter    :: R = 0.31d0                  ! TAKEN FROM PAGE 7 IN R11
+    Real*8,parameter    :: R = 0.35d0                  ! TAKEN FROM PAGE 7 IN R11
     Real*8,parameter    :: a_v = 0.71273d0               ! TAKEN FROM PAGE 16 IN R16. R16 USED B BAND (R11 V BAND), HENCE 'a_v' HERE STANDS FOR a_B 
     Real*8,parameter    :: a_cal = 0.d0                 ! AUXILIAR PARAMETER TO HAVE DIAGNONAL COVARIANCE MATRIX FOR LMC CEPHEID VARIABLES
     Real*8,parameter    :: NGC4258_distance = 7.54d0    ! TAKEN FROM PAGE 16 IN R16. UNITS : MPC
@@ -133,7 +133,7 @@ Module fiducial
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
     Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
     Integer*4,parameter :: jumping_factor_update = 100           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)
-    Integer*4,parameter :: covariance_matrix_update = 10000        ! STEPS TAKEN BEFORE UPDATING COVARIANCE MATRIX (IF NEEDED)
+    Integer*4,parameter :: covariance_matrix_update = 45000        ! STEPS TAKEN BEFORE UPDATING COVARIANCE MATRIX (IF NEEDED)
     Integer*4,parameter :: steps_taken_before_definite_run = 1000000 ! STEPS TAKEN BEFORE DEFINITE RUN
     Integer*4,parameter :: number_of_hosts_galaxies = 20 ! TOTAL NUMBER OF HOSTS GALAXIES AS IN R16 (NUMBER INCLUDES NGC4258)
     Integer*4,parameter :: UNIT_EXE_FILE = 90           ! UNIT NUMBER FOR EXECUTION INFORMATION FILE
@@ -144,7 +144,7 @@ Module fiducial
     Integer*4,parameter :: UNIT_HP_FILE = 95           ! UNIT EFFECTIVE HPS FILE
 
     Real*8,parameter    :: step_size_changes = 1.d-2             ! CHANGES IN STEP SIZE
-    Real*8,parameter    :: cepheid_Period_limit = 205.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
+    Real*8,parameter    :: cepheid_Period_limit = 60.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
     Real*8,parameter    :: cepheid_lower_Period_limit = 0.d0                    ! DISREGARD CEPHEID VARIABLES WITH PERIOD SHORTER THAN cepheid_lower_Period_limit
 
     Logical,parameter   :: separate_dataA = .false.!.true.               ! INCLUDE DATA SET A AS SINGLE POINTS IF SET IT TRUE
