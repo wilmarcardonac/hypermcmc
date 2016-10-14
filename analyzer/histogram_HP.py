@@ -18,11 +18,17 @@ P2,re2,er2,HP2,galaxy2 = np.loadtxt('../output/chains/previous_runs/fit_M1a/effe
 
 P3,re3,er3,HP3,galaxy3 = np.loadtxt('../output/chains/previous_runs/fit_M1a/effective_hyperparameters_cepheids_MW.txt',unpack=True,usecols=[0,1,2,3,4],dtype=alpha_eff)
 
-py.hist(HP1,bins=bins,alpha=0.2,label='R11')
+#py.hist(HP1,bins=bins,alpha=0.2,label='Extragalactic Cepheids')
 
-py.hist(HP2,bins=bins,alpha=0.4,label='LMC')
+#py.hist(HP2,bins=bins,alpha=0.4,label='LMC Cepheids')
 
-py.hist(HP3,bins=bins,alpha=0.5,label='MW')
+#py.hist(HP3,bins=bins,alpha=0.5,label='MW Cepheids')
+
+py.hist(HP1,bins=bins,alpha=0.2,label='Extragalactic Cepheids (46% downgraded)',normed=True)
+
+py.hist(HP2,bins=bins,alpha=0.4,label='LMC Cepheids (53% downgraded)',normed=True)
+
+py.hist(HP3,bins=bins,alpha=0.5,label='MW Cepheids (23% downgraded)',normed=True)
 
 py.legend(loc=0)
 
