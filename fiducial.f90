@@ -98,7 +98,7 @@ Module fiducial
     Integer*4,parameter :: number_hyperparameters = 0           ! NUMBER OF HYPER-PARAMETERS (MUST MATCH TOTAL NUMBER OF POINTS) 
     Integer*4,parameter :: number_of_parameters = number_model_parameters + number_hyperparameters ! TOTAL NUMBER OF PARAMETERS IN MODEL
     Integer*4,parameter :: jumping_factor_update = 100           ! NUMBER OF TAKEN STEPS BEFORE UPDATING JUMPING FACTOR (IF NEEDED)
-    Integer*4,parameter :: covariance_matrix_update = 10000        ! STEPS TAKEN BEFORE UPDATING COVARIANCE MATRIX (IF NEEDED)
+    Integer*4,parameter :: covariance_matrix_update = 20000        ! STEPS TAKEN BEFORE UPDATING COVARIANCE MATRIX (IF NEEDED)
     Integer*4,parameter :: steps_taken_before_definite_run = 1000000 ! STEPS TAKEN BEFORE DEFINITE RUN
     Integer*4,parameter :: number_of_hosts_galaxies = 9 ! TOTAL NUMBER OF HOSTS GALAXIES AS IN R11 (NUMBER INCLUDES NGC4258)
     Integer*4,parameter :: UNIT_EXE_FILE = 90           ! UNIT NUMBER FOR EXECUTION INFORMATION FILE
@@ -109,7 +109,7 @@ Module fiducial
     Integer*4,parameter :: UNIT_HP_FILE = 95           ! UNIT EFFECTIVE HPS FILE
 
     Real*8,parameter    :: step_size_changes = 1.d-2             ! CHANGES IN STEP SIZE
-    Real*8,parameter    :: cepheid_Period_limit = 205.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
+    Real*8,parameter    :: cepheid_Period_limit = 60.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
     Real*8,parameter    :: cepheid_lower_Period_limit = 0.d0                    ! DISREGARD CEPHEID VARIABLES WITH PERIOD SHORTER THAN cepheid_lower_Period_limit
 
     Logical,parameter   :: separate_dataA = .false.!.true.               ! INCLUDE DATA SET A AS SINGLE POINTS IF SET IT TRUE
@@ -140,7 +140,7 @@ Module fiducial
     Logical,parameter   :: include_only_cepheids = .false.       ! INCLUDE ONLY CEPHEIDS DATA IF SET IT TRUE
     Logical,parameter   :: all_R11_hosts = .false.             ! INCLUDE ALL CEPHEIDS IN R11 SAMPLE SIMULTANEOUSLY IF SET IT TRUE
     Logical,parameter   :: use_prior_on_zpw4258 = .false. !.true.       ! USE PRIOR ON zp_{w,4258} IS SET IT TRUE
-    Logical,parameter   :: use_prior_on_Zw = .false.!.true.              ! USE PRIOR ON Zw IF SET IT TRUE 
+    Logical,parameter   :: use_prior_on_Zw = .true.              ! USE PRIOR ON Zw IF SET IT TRUE 
     Logical,parameter   :: use_prior_on_bw = .false.              ! USE PRIOR ON bw IF SET IT TRUE
     Logical,parameter   :: use_HP_in_Zw = .false.                 ! USE HPs WHEN USING PRIOR ON THE METALLICITY IF SET IT TRUE 
     Logical,parameter   :: varying_sigma_int = .true.            ! TRUE IF VARYING sigma_int IN MCMC WHEN NO sigma_int_per_R11_host, SET TO FALSE OTHERWISE

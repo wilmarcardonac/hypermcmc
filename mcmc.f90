@@ -5532,15 +5532,15 @@ Program mcmc
 
                     End If
 
-                    If ( chi2R11_anchor_NGC4258(bestfit(9)) .le. 1.d0) then
+    !                If ( chi2R11_anchor_NGC4258(bestfit(9)) .le. 1.d0) then
 
-                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2013) IS: ',1.d0
+   !                    write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2013) IS: ',1.d0
 
-                    Else
+  !                  Else
 
-                       write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2013) IS: ',1.d0/chi2R11_anchor_NGC4258(bestfit(9))
+ !                      write(UNIT_EXE_FILE,*) 'HP FOR ANCHOR NGC4258 (2013) IS: ',1.d0/chi2R11_anchor_NGC4258(bestfit(9))
 
-                    End If
+!                    End If
 
                  Else
 
