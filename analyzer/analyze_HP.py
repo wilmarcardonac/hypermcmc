@@ -1,6 +1,7 @@
 from getdist import loadMCSamples,plots
+import numpy as np
 
-number_of_parameters = 3 # 2 IF LMC ALONE, 3,  12, 14
+number_of_parameters = 4 # 2 IF LMC ALONE : 3; IF LMC ALONE AND INCLUDING METALLICITY : 4. ,  12, 14
 
 samples = loadMCSamples('../output/chains/mcmc_final_output_HP',settings={'ignore_rows': 0.2 }) 
 
@@ -11,6 +12,10 @@ g.settings.rcSizes(axes_fontsize = 4,lab_fontsize = 7)
 g.triangle_plot(samples,filled=True)
 
 g.export('../output/chains/triangle_figure_HP.pdf')
+
+p = samples.getParams()
+
+samples.addDerived(np.power(10,p.log10sigma_int),name='sigma_int',label='\sigma_{int}')
 
 bestfit = samples.getLikeStats()
 
