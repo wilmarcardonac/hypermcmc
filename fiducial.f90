@@ -14,7 +14,7 @@ Module fiducial
     Real*8,parameter    :: prior_sigma_int_LMC = 0.113d0 ! SAME VALUE AS IN EQUATION (4a) OF EFSTATHIOU'S PAPER
     Real*8,parameter    :: prior_sigma_int_MW = 0.10d0 ! SAME VALUE AS IN SUBSECTION 4.2 OF EFSTATHIOU'S PAPER
     Real*8,parameter    :: prior_alpha_j = 5.d-1
-    Real*8,parameter    :: R = 0.35d0                  ! TAKEN FROM PAGE 7 IN R11
+    Real*8,parameter    :: R = 0.47d0                  ! TAKEN FROM PAGE 7 IN R11
     Real*8,parameter    :: a_v = 0.71273d0               ! TAKEN FROM PAGE 16 IN R16. R16 USED B BAND (R11 V BAND), HENCE 'a_v' HERE STANDS FOR a_B 
     Real*8,parameter    :: a_cal = 0.d0                 ! AUXILIAR PARAMETER TO HAVE DIAGNONAL COVARIANCE MATRIX FOR LMC CEPHEID VARIABLES
     Real*8,parameter    :: NGC4258_distance = 7.54d0    ! TAKEN FROM PAGE 16 IN R16. UNITS : MPC
@@ -144,7 +144,7 @@ Module fiducial
     Integer*4,parameter :: UNIT_HP_FILE = 95           ! UNIT EFFECTIVE HPS FILE
 
     Real*8,parameter    :: step_size_changes = 1.d-2             ! CHANGES IN STEP SIZE
-    Real*8,parameter    :: cepheid_Period_limit = 60.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
+    Real*8,parameter    :: cepheid_Period_limit = 205.d0 !205.d0 !60.d0           ! DISREGARD CEPHEID VARIABLES WITH PERIOD GREATER THAN cepheid_Period_limit
     Real*8,parameter    :: cepheid_lower_Period_limit = 0.d0                    ! DISREGARD CEPHEID VARIABLES WITH PERIOD SHORTER THAN cepheid_lower_Period_limit
 
     Logical,parameter   :: separate_dataA = .false.!.true.               ! INCLUDE DATA SET A AS SINGLE POINTS IF SET IT TRUE
@@ -160,9 +160,9 @@ Module fiducial
     Logical,parameter   :: using_jeffreys_prior = .false.        ! USE JEFFREYS PRIOR IF SET IT TRUE, OTHERWISE USE UNIFORM PRIOR [0,1] 
     Logical,parameter   :: hyperparameters_as_mcmc = .false.      ! SET HYPER-PARAMETERS AS MCMC PARAMETERS IF SET IT TRUE
     Logical,parameter   :: use_NGC4258_as_anchor = .true.       ! USE NFC4258 AS ANCHOR IF SET IT TRUE
-    Logical,parameter   :: use_LMC_as_anchor = .true.           ! USE LMC AS ANCHOR IF SET IT TRUE
-    Logical,parameter   :: use_M31_as_anchor = .true.          ! USE M31 AS ANCHOR IF SET IT TRUE
-    Logical,parameter   :: use_MW_as_anchor = .true.            ! USE MW AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_LMC_as_anchor = .false.           ! USE LMC AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_M31_as_anchor = .false.          ! USE M31 AS ANCHOR IF SET IT TRUE
+    Logical,parameter   :: use_MW_as_anchor = .false.            ! USE MW AS ANCHOR IF SET IT TRUE
     Logical,parameter   :: use_metallicity = .true.             ! USE METALLICITY DEPENDENCE IF SET IT TRUE
     Logical,parameter   :: use_H_band = .false.!.true.                   ! USE H BAND IF SET IT TRUE, OTHERWISE USE W BAND
     Logical,parameter   :: use_HP_in_SNIa = .true.               ! USE HPs WHEN COMPUTING SNIa CHI2
@@ -183,9 +183,9 @@ Module fiducial
     Logical,parameter   :: sigma_int_per_R11_host = .true.        ! TRUE FOR MAIN ANALYSIS: IT INCLUDES SIGMA INT PER R11 HOST 
     Logical,parameter   :: include_mu_0_NGC4258_2015 = .false.    ! TRUE TO INCLUDE DISTANCE TO NGC4258 FROM 2015, FALSE TO INCLUDE ONLY MEASUREMENT FROM 2016
     Logical,parameter   :: use_NGC4258_as_free_distance = .false. ! USE NGC4258 AS FREE DISTANCE IF SET IT TRUE
-    Logical,parameter   :: use_LMC_as_free_distance = .false.     ! USE LMC AS FREE DISTANCE IF SET IT TRUE
-    Logical,parameter   :: use_M31_as_free_distance = .false.     ! USE M31 AS FREE DISTANCE IF SET IT TRUE
-    Logical,parameter   :: use_MW_parallaxes = .true.            ! USE MW CEPHEID PARALLAXES IF SET IT TRUE
+    Logical,parameter   :: use_LMC_as_free_distance = .true.     ! USE LMC AS FREE DISTANCE IF SET IT TRUE
+    Logical,parameter   :: use_M31_as_free_distance = .true.     ! USE M31 AS FREE DISTANCE IF SET IT TRUE
+    Logical,parameter   :: use_MW_parallaxes = .false.            ! USE MW CEPHEID PARALLAXES IF SET IT TRUE
 
     Character(len=*),parameter :: path_to_datafileA = './data/dataA.txt'    ! PATH TO DATA SET A
     Character(len=*),parameter :: path_to_datafileB = './data/dataB.txt'    ! PATH TO DATA SET B 

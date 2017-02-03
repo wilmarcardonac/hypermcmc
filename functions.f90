@@ -4363,39 +4363,63 @@ subroutine set_covariance_matrix()
                      
                  Else
 
-                    If (number_model_parameters .eq. 16) then
+                    If (number_model_parameters .eq. 28) then
                           
-                       Covguess(1,1) = sigma_mu1**2 
+                       Covguess(1,1) = sigma_mu1**2    ! 
 
-                       Covguess(2,2) = sigma_mu2**2 
+                       Covguess(2,2) = sigma_mu2**2    !  
 
-                       Covguess(3,3) = sigma_mu3**2 
+                       Covguess(3,3) = sigma_mu3**2    ! 
 
-                       Covguess(4,4) = sigma_mu4**2 
+                       Covguess(4,4) = sigma_mu4**2    ! 
 
-                       Covguess(5,5) = sigma_mu5**2 
+                       Covguess(5,5) = sigma_mu5**2    ! 
 
-                       Covguess(6,6) = sigma_mu6**2 
+                       Covguess(6,6) = sigma_mu6**2    ! 
 
-                       Covguess(7,7) = sigma_mu7**2 
+                       Covguess(7,7) = sigma_mu7**2    ! 
 
-                       Covguess(8,8) = sigma_mu8**2 
+                       Covguess(8,8) = sigma_mu8**2    ! 
 
-                       Covguess(9,9) = sigma_mu9**2 
+                       Covguess(9,9) = sigma_mu9**2    ! 
 
-                       Covguess(10,10) = sigma_mu10**2 
+                       Covguess(10,10) = sigma_mu10**2    ! 
 
-                       Covguess(11,11) = sigma_Mw**2
+                       Covguess(11,11) = sigma_mu11**2    ! 
 
-                       Covguess(12,12) = sigma_bw**2 
+                       Covguess(12,12) = sigma_mu12**2    ! 
 
-                       Covguess(13,13) = sigma_H0**2 
+                       Covguess(13,13) = sigma_mu13**2    ! 
 
-                       Covguess(14,14) = sigma_Zw**2 
+                       Covguess(14,14) = sigma_mu14**2    ! 
 
-                       Covguess(15,15) = sigma_a_v**2
+                       Covguess(15,15) = sigma_mu15**2    ! 
 
-                       Covguess(16,16) = sigma_a_cal**2
+                       Covguess(16,16) = sigma_mu16**2    ! 
+
+                       Covguess(17,17) = sigma_mu17**2    ! 
+
+                       Covguess(18,18) = sigma_mu18**2    ! 
+
+                       Covguess(19,19) = sigma_mu19**2 !  
+
+                       Covguess(20,20) = sigma_mu20**2 ! NGC4258
+
+                       Covguess(21,21) = sigma_mu21**2 ! M31
+
+                       Covguess(22,22) = sigma_mu21**2 ! LMC
+
+                       Covguess(23,23) = sigma_Mw**2
+
+                       Covguess(24,24) = sigma_bw**2 
+
+                       Covguess(25,25) = sigma_H0**2 
+
+                       Covguess(26,26) = sigma_Zw**2 
+
+                       Covguess(27,27) = sigma_a_v**2
+
+                       Covguess(28,28) = sigma_a_cal**2
 
                     Else
                           
@@ -4437,37 +4461,63 @@ subroutine set_covariance_matrix()
 
                  Else
 
-                    If (number_model_parameters .eq. 15) then
+                    If (number_model_parameters .eq. 28) then
 
-                       Covguess(1,1) = sigma_mu1**2 
+                       Covguess(1,1) = sigma_mu1**2    ! 
 
-                       Covguess(2,2) = sigma_mu2**2 
+                       Covguess(2,2) = sigma_mu2**2    !  
 
-                       Covguess(3,3) = sigma_mu3**2 
+                       Covguess(3,3) = sigma_mu3**2    ! 
 
-                       Covguess(4,4) = sigma_mu4**2 
+                       Covguess(4,4) = sigma_mu4**2    ! 
 
-                       Covguess(5,5) = sigma_mu5**2 
+                       Covguess(5,5) = sigma_mu5**2    ! 
 
-                       Covguess(6,6) = sigma_mu6**2 
+                       Covguess(6,6) = sigma_mu6**2    ! 
 
-                       Covguess(7,7) = sigma_mu7**2 
+                       Covguess(7,7) = sigma_mu7**2    ! 
 
-                       Covguess(8,8) = sigma_mu8**2 
+                       Covguess(8,8) = sigma_mu8**2    ! 
 
-                       Covguess(9,9) = sigma_mu9**2 
+                       Covguess(9,9) = sigma_mu9**2    ! 
 
-                       Covguess(10,10) = sigma_Mw**2 
+                       Covguess(10,10) = sigma_mu10**2    ! 
 
-                       Covguess(11,11) = sigma_bw**2 
+                       Covguess(11,11) = sigma_mu11**2    ! 
 
-                       Covguess(12,12) = sigma_H0**2 
+                       Covguess(12,12) = sigma_mu12**2    ! 
 
-                       Covguess(13,13) = sigma_Zw**2 
+                       Covguess(13,13) = sigma_mu13**2    ! 
 
-                       Covguess(14,14) = sigma_a_v**2
+                       Covguess(14,14) = sigma_mu14**2    ! 
 
-                       Covguess(15,15) = sigma_a_cal**2
+                       Covguess(15,15) = sigma_mu15**2    ! 
+
+                       Covguess(16,16) = sigma_mu16**2    ! 
+
+                       Covguess(17,17) = sigma_mu17**2    ! 
+
+                       Covguess(18,18) = sigma_mu18**2    ! 
+
+                       Covguess(19,19) = sigma_mu19**2 !  
+
+                       Covguess(20,20) = sigma_mu20**2 ! NGC4258
+
+                       Covguess(21,21) = sigma_mu21**2 ! M31
+
+                       Covguess(22,22) = sigma_mu21**2 ! LMC
+
+                       Covguess(23,23) = sigma_Mw**2
+
+                       Covguess(24,24) = sigma_bw**2 
+
+                       Covguess(25,25) = sigma_H0**2 
+
+                       Covguess(26,26) = sigma_Zw**2 
+
+                       Covguess(27,27) = sigma_a_v**2
+
+                       Covguess(28,28) = sigma_a_cal**2
 
                     Else
 
@@ -4509,39 +4559,63 @@ subroutine set_covariance_matrix()
 
                  Else
 
-                    If (number_model_parameters .eq. 16) then
+                    If (number_model_parameters .eq. 28) then
 
-                       Covguess(1,1) = sigma_mu1**2 
+                       Covguess(1,1) = sigma_mu1**2    ! 
 
-                       Covguess(2,2) = sigma_mu2**2 
+                       Covguess(2,2) = sigma_mu2**2    !  
 
-                       Covguess(3,3) = sigma_mu3**2 
+                       Covguess(3,3) = sigma_mu3**2    ! 
 
-                       Covguess(4,4) = sigma_mu4**2 
+                       Covguess(4,4) = sigma_mu4**2    ! 
 
-                       Covguess(5,5) = sigma_mu5**2 
+                       Covguess(5,5) = sigma_mu5**2    ! 
 
-                       Covguess(6,6) = sigma_mu6**2 
+                       Covguess(6,6) = sigma_mu6**2    ! 
 
-                       Covguess(7,7) = sigma_mu7**2 
+                       Covguess(7,7) = sigma_mu7**2    ! 
 
-                       Covguess(8,8) = sigma_mu8**2 
+                       Covguess(8,8) = sigma_mu8**2    ! 
 
-                       Covguess(9,9) = sigma_mu9**2 
+                       Covguess(9,9) = sigma_mu9**2    ! 
 
-                       Covguess(10,10) = sigma_mu10**2 
+                       Covguess(10,10) = sigma_mu10**2    ! 
 
-                       Covguess(11,11) = sigma_Mw**2
+                       Covguess(11,11) = sigma_mu11**2    ! 
 
-                       Covguess(12,12) = sigma_bw**2 
+                       Covguess(12,12) = sigma_mu12**2    ! 
 
-                       Covguess(13,13) = sigma_H0**2 
+                       Covguess(13,13) = sigma_mu13**2    ! 
 
-                       Covguess(14,14) = sigma_Zw**2 
+                       Covguess(14,14) = sigma_mu14**2    ! 
 
-                       Covguess(15,15) = sigma_a_v**2
+                       Covguess(15,15) = sigma_mu15**2    ! 
 
-                       Covguess(16,16) = sigma_a_cal**2
+                       Covguess(16,16) = sigma_mu16**2    ! 
+
+                       Covguess(17,17) = sigma_mu17**2    ! 
+
+                       Covguess(18,18) = sigma_mu18**2    ! 
+
+                       Covguess(19,19) = sigma_mu19**2 !  
+
+                       Covguess(20,20) = sigma_mu20**2 ! NGC4258
+
+                       Covguess(21,21) = sigma_mu21**2 ! M31
+
+                       Covguess(22,22) = sigma_mu21**2 ! LMC
+
+                       Covguess(23,23) = sigma_Mw**2
+
+                       Covguess(24,24) = sigma_bw**2 
+
+                       Covguess(25,25) = sigma_H0**2 
+
+                       Covguess(26,26) = sigma_Zw**2 
+
+                       Covguess(27,27) = sigma_a_v**2
+
+                       Covguess(28,28) = sigma_a_cal**2
 
                     Else
 
@@ -4583,37 +4657,63 @@ subroutine set_covariance_matrix()
 
                  Else
 
-                    If (number_model_parameters .eq. 15) then
+                    If (number_model_parameters .eq. 28) then
 
-                       Covguess(1,1) = sigma_mu1**2 
+                       Covguess(1,1) = sigma_mu1**2    ! 
 
-                       Covguess(2,2) = sigma_mu2**2 
+                       Covguess(2,2) = sigma_mu2**2    !  
 
-                       Covguess(3,3) = sigma_mu3**2 
+                       Covguess(3,3) = sigma_mu3**2    ! 
 
-                       Covguess(4,4) = sigma_mu4**2 
+                       Covguess(4,4) = sigma_mu4**2    ! 
 
-                       Covguess(5,5) = sigma_mu5**2 
+                       Covguess(5,5) = sigma_mu5**2    ! 
 
-                       Covguess(6,6) = sigma_mu6**2 
+                       Covguess(6,6) = sigma_mu6**2    ! 
 
-                       Covguess(7,7) = sigma_mu7**2 
+                       Covguess(7,7) = sigma_mu7**2    ! 
 
-                       Covguess(8,8) = sigma_mu8**2 
+                       Covguess(8,8) = sigma_mu8**2    ! 
 
-                       Covguess(9,9) = sigma_mu9**2 
+                       Covguess(9,9) = sigma_mu9**2    ! 
 
-                       Covguess(10,10) = sigma_Mw**2 
+                       Covguess(10,10) = sigma_mu10**2    ! 
 
-                       Covguess(11,11) = sigma_bw**2 
+                       Covguess(11,11) = sigma_mu11**2    ! 
 
-                       Covguess(12,12) = sigma_H0**2 
+                       Covguess(12,12) = sigma_mu12**2    ! 
 
-                       Covguess(13,13) = sigma_Zw**2 
+                       Covguess(13,13) = sigma_mu13**2    ! 
 
-                       Covguess(14,14) = sigma_a_v**2
+                       Covguess(14,14) = sigma_mu14**2    ! 
 
-                       Covguess(15,15) = sigma_a_cal**2
+                       Covguess(15,15) = sigma_mu15**2    ! 
+
+                       Covguess(16,16) = sigma_mu16**2    ! 
+
+                       Covguess(17,17) = sigma_mu17**2    ! 
+
+                       Covguess(18,18) = sigma_mu18**2    ! 
+
+                       Covguess(19,19) = sigma_mu19**2 !  
+
+                       Covguess(20,20) = sigma_mu20**2 ! NGC4258
+
+                       Covguess(21,21) = sigma_mu21**2 ! M31
+
+                       Covguess(22,22) = sigma_mu21**2 ! LMC
+
+                       Covguess(23,23) = sigma_Mw**2
+
+                       Covguess(24,24) = sigma_bw**2 
+
+                       Covguess(25,25) = sigma_H0**2 
+
+                       Covguess(26,26) = sigma_Zw**2 
+
+                       Covguess(27,27) = sigma_a_v**2
+
+                       Covguess(28,28) = sigma_a_cal**2
 
                     Else
 
@@ -4655,39 +4755,63 @@ subroutine set_covariance_matrix()
 
                  Else
 
-                    If (number_model_parameters .eq. 16) then
+                    If (number_model_parameters .eq. 28) then
 
-                       Covguess(1,1) = sigma_mu1**2 
+                       Covguess(1,1) = sigma_mu1**2    ! 
 
-                       Covguess(2,2) = sigma_mu2**2 
+                       Covguess(2,2) = sigma_mu2**2    !  
 
-                       Covguess(3,3) = sigma_mu3**2 
+                       Covguess(3,3) = sigma_mu3**2    ! 
 
-                       Covguess(4,4) = sigma_mu4**2 
+                       Covguess(4,4) = sigma_mu4**2    ! 
 
-                       Covguess(5,5) = sigma_mu5**2 
+                       Covguess(5,5) = sigma_mu5**2    ! 
 
-                       Covguess(6,6) = sigma_mu6**2 
+                       Covguess(6,6) = sigma_mu6**2    ! 
 
-                       Covguess(7,7) = sigma_mu7**2 
+                       Covguess(7,7) = sigma_mu7**2    ! 
 
-                       Covguess(8,8) = sigma_mu8**2 
+                       Covguess(8,8) = sigma_mu8**2    ! 
 
-                       Covguess(9,9) = sigma_mu9**2 
+                       Covguess(9,9) = sigma_mu9**2    ! 
 
-                       Covguess(10,10) = sigma_mu10**2 
+                       Covguess(10,10) = sigma_mu10**2    ! 
 
-                       Covguess(11,11) = sigma_zpwLMC**2
+                       Covguess(11,11) = sigma_mu11**2    ! 
 
-                       Covguess(12,12) = sigma_bw**2 
+                       Covguess(12,12) = sigma_mu12**2    ! 
 
-                       Covguess(13,13) = sigma_H0**2 
+                       Covguess(13,13) = sigma_mu13**2    ! 
 
-                       Covguess(14,14) = sigma_Zw**2 
+                       Covguess(14,14) = sigma_mu14**2    ! 
 
-                       Covguess(15,15) = sigma_a_v**2
+                       Covguess(15,15) = sigma_mu15**2    ! 
 
-                       Covguess(16,16) = sigma_a_cal**2
+                       Covguess(16,16) = sigma_mu16**2    ! 
+
+                       Covguess(17,17) = sigma_mu17**2    ! 
+
+                       Covguess(18,18) = sigma_mu18**2    ! 
+
+                       Covguess(19,19) = sigma_mu19**2 !  
+
+                       Covguess(20,20) = sigma_mu20**2 ! NGC4258
+
+                       Covguess(21,21) = sigma_mu21**2 ! M31
+
+                       Covguess(22,22) = sigma_mu21**2 ! LMC
+
+                       Covguess(23,23) = sigma_Mw**2
+
+                       Covguess(24,24) = sigma_bw**2 
+
+                       Covguess(25,25) = sigma_H0**2 
+
+                       Covguess(26,26) = sigma_Zw**2 
+
+                       Covguess(27,27) = sigma_a_v**2
+
+                       Covguess(28,28) = sigma_a_cal**2
 
                     Else
 
@@ -4763,35 +4887,63 @@ subroutine set_covariance_matrix()
 
                  Else
 
-                    If (number_model_parameters .eq. 14) then
+                    If (number_model_parameters .eq. 28) then
 
-                       Covguess(1,1) = sigma_mu1**2 
+                       Covguess(1,1) = sigma_mu1**2    ! 
 
-                       Covguess(2,2) = sigma_mu2**2 
+                       Covguess(2,2) = sigma_mu2**2    !  
 
-                       Covguess(3,3) = sigma_mu3**2 
+                       Covguess(3,3) = sigma_mu3**2    ! 
 
-                       Covguess(4,4) = sigma_mu4**2 
+                       Covguess(4,4) = sigma_mu4**2    ! 
 
-                       Covguess(5,5) = sigma_mu5**2 
+                       Covguess(5,5) = sigma_mu5**2    ! 
 
-                       Covguess(6,6) = sigma_mu6**2 
+                       Covguess(6,6) = sigma_mu6**2    ! 
 
-                       Covguess(7,7) = sigma_mu7**2 
+                       Covguess(7,7) = sigma_mu7**2    ! 
 
-                       Covguess(8,8) = sigma_mu8**2 
+                       Covguess(8,8) = sigma_mu8**2    ! 
 
-                       Covguess(9,9) = sigma_mu9**2 
+                       Covguess(9,9) = sigma_mu9**2    ! 
 
-                       Covguess(10,10) = sigma_zpw**2
+                       Covguess(10,10) = sigma_mu10**2    ! 
 
-                       Covguess(11,11) = sigma_bw**2 
+                       Covguess(11,11) = sigma_mu11**2    ! 
 
-                       Covguess(12,12) = sigma_H0**2 
+                       Covguess(12,12) = sigma_mu12**2    ! 
 
-                       Covguess(13,13) = sigma_Zw**2 
+                       Covguess(13,13) = sigma_mu13**2    ! 
 
-                       Covguess(14,14) = sigma_a_v**2
+                       Covguess(14,14) = sigma_mu14**2    ! 
+
+                       Covguess(15,15) = sigma_mu15**2    ! 
+
+                       Covguess(16,16) = sigma_mu16**2    ! 
+
+                       Covguess(17,17) = sigma_mu17**2    ! 
+
+                       Covguess(18,18) = sigma_mu18**2    ! 
+
+                       Covguess(19,19) = sigma_mu19**2 !  
+
+                       Covguess(20,20) = sigma_mu20**2 ! NGC4258
+
+                       Covguess(21,21) = sigma_mu21**2 ! M31
+
+                       Covguess(22,22) = sigma_mu21**2 ! LMC
+
+                       Covguess(23,23) = sigma_Mw**2
+
+                       Covguess(24,24) = sigma_bw**2 
+
+                       Covguess(25,25) = sigma_H0**2 
+
+                       Covguess(26,26) = sigma_Zw**2 
+
+                       Covguess(27,27) = sigma_a_v**2
+
+                       Covguess(28,28) = sigma_a_cal**2
 
                     Else
 
